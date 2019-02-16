@@ -2,3 +2,4 @@ node_modules/
 dist/
 data/
 package-lock.json
+.vscode
