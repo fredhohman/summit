@@ -1,0 +1,42 @@
+#header-title-wrapper {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#header-title {
+    width: 70px;
+    /* enforces cursor changes only on title */
+    cursor: pointer;
+    color: #ffffff;
+}
+
+#header-icon {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: right;
+    color: #ffffff;
+}
+
+#header-icon-link {
+    cursor: pointer;
+}
+
+#header-icon-link:link, #header-icon-link:visited, #header-icon-link:link:hover, #header-icon-link:focus, #header-icon-link:active, #menu-icon {
+    color: #ffffff;
+}
+
+.header-value {
+    font-weight: 100 !important;
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 20px;
+    padding-right: 20px;
+}

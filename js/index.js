@@ -1,14 +1,6 @@
-import style from "../css/style.css";
-import * as d3 from "d3"
+import * as style from "../css/style.css";
+import * as styleHeader from "../css/header.css";
+import * as topBar from './top-bar'
+import * as classSidebar from './class-sidebar'
 
-console.log(`I'm a silly entry point`);
 
-d3.select('body').append('div').text('d3 works')
-
-d3.csv('./data/test.csv').then(function(data) {
-  console.log(data);
-});
-
-d3.json('./data/imagenet.json').then(function (data) {
-    console.log(data);
-});
