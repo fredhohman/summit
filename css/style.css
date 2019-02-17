@@ -108,7 +108,7 @@ header {
 }
 
 .class-bar:hover {
-    /* background: var(--background-color-hover); */
+    background: var(--background-color-hover);
     cursor: pointer;
     border-bottom: 1px solid var(--border-color);
     border-top: 1px solid var(--border-color);
@@ -127,6 +127,10 @@ header {
     font-size: 16px;
     color: var(--darker);
     text-decoration: none;
+    /* width: 125px; */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .class-bar-text-name a:hover {
