@@ -123,9 +123,14 @@ header {
     flex: 1;
 }
 
-.class-bar-text-name {
+.class-bar-text-name, .class-bar-text-name a {
     font-size: 16px;
     color: var(--darker);
+    text-decoration: none;
+}
+
+.class-bar-text-name a:hover {
+    text-decoration: underline;
 }
 
 .class-bar-text-instances {

@@ -83,7 +83,8 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('class-bar-text-name', true)
             .append('a')
             .text(d => d.name.replace('_', ' ').toLowerCase())
-            // attr('href', )
+            .attr('target', '_blank')
+            .attr('href', d => 'http://www.google.com/search?q=' + d.name.replace('_', '+').toLowerCase())
 
         classBarTexts.append('div')
             .classed('class-bar-text-instances', true)
