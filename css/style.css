@@ -8,8 +8,12 @@ html, body {
 
 :root {
     --main-color: #1A237E;
+    --main-light: #7986CB;
     --border-color: rgba(0, 0, 0, 0.1);
     --background-color: #fafafa;
+    --background-color-hover: #e3e3e3;
+    --darker: #444444;
+    --dark: #666666;
     /* --main-color: #311B92; */
 }
 
@@ -80,9 +84,10 @@ header {
 }
 
 #left-inner-options {
-    background: red;
+    background: var(--background-color);
     width: 100%;
     flex: 0 0 200px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 #left-inner-class-bar-wrapper {
@@ -90,6 +95,63 @@ header {
 }
 
 .class-bar {
+    /* width: 100%; */
+    height: 35px;
+    border-bottom: 1px solid var(--border-color);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background: var(--background-color);
+}
+
+.class-bar:hover {
+    /* background: var(--background-color-hover); */
+    cursor: pointer;
+}
+
+.class-bar-text-wrapper {
+    display: flex;
+    height: 25px;
+}
+
+.class-bar-text-name, .class-bar-text-instances, .class-bar-text-accuracy {
+    flex: 1;
+}
+
+.class-bar-text-name {
+    font-size: 16px;
+    color: var(--darker);
+}
+
+.class-bar-text-instances {
+    flex: 0 0 40px;
+    color: var(--dark);
+    font-size: 14px;
+}
+
+.class-bar-text-accuracy {
+    flex: 0 0 40px;
+    color: var(--dark);
+    font-size: 14px;
+}
+
+.class-bar-text-histogram {
+    flex: 0 0 100px;
+}
+
+.class-bar-bar-wrapper {
+    display: flex;
+    height: 25px;
+}
+
+.class-bar-bar-background {
+    height: 3px;
     width: 100%;
-    height: 60px;
+    background: var(--border-color)
+}
+
+.class-bar-bar-data {
+    height: 3px;
+    background: var(--main-light)
 }
