@@ -121,6 +121,7 @@ header {
 
 .class-bar-text-name, .class-bar-text-instances, .class-bar-text-accuracy {
     flex: 1;
+    align-self: flex-end;
 }
 
 .class-bar-text-name, .class-bar-text-name a {
@@ -155,11 +156,12 @@ header {
 
 .class-bar-bar-wrapper {
     display: flex;
-    height: 25px;
+    /* height: 25px; */
+    margin-top: 4px;
 }
 
 .class-bar-bar-background {
-    height: 2px;
+    height: 1px;
     margin-top: 1px;
     /* width: 100%; */
     /* border-top: 2px solid var(--border-color); */
@@ -169,6 +171,14 @@ header {
 }
 
 .class-bar-bar-data {
-    height: 4px;
+    height: 3px;
     background: var(--main-light)
+}
+
+.accuracy-bar {
+    fill: var(--gray);
+}
+
+.accuracy-x-axis path {
+    stroke: var(--dark);
 }
