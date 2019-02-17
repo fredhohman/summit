@@ -12,6 +12,7 @@ html, body {
     --border-color: rgba(0, 0, 0, 0.1);
     --background-color: #fafafa;
     --background-color-hover: #e3e3e3;
+    --gray: rgba(0, 0, 0, 0.15);
     --darker: #444444;
     --dark: #666666;
     /* --main-color: #311B92; */
@@ -97,7 +98,8 @@ header {
 .class-bar {
     /* width: 100%; */
     height: 35px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--background-color);
+    border-top: 1px solid var(--background-color);
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
@@ -108,6 +110,8 @@ header {
 .class-bar:hover {
     /* background: var(--background-color-hover); */
     cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
 }
 
 .class-bar-text-wrapper {
@@ -146,12 +150,16 @@ header {
 }
 
 .class-bar-bar-background {
-    height: 3px;
-    width: 100%;
-    background: var(--border-color)
+    height: 2px;
+    margin-top: 1px;
+    /* width: 100%; */
+    /* border-top: 2px solid var(--border-color); */
+    /* border-left: 2px solid var(--border-color); */
+    /* border-right: 2px solid var(--border-color); */
+    background: var(--gray);
 }
 
 .class-bar-bar-data {
-    height: 3px;
+    height: 4px;
     background: var(--main-light)
 }

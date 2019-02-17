@@ -1,4 +1,17 @@
 import * as d3 from "d3"
+import similarity from "compute-cosine-similarity"
+
+const layerChannelCounts = {
+    'mixed3a': 256,
+    'mixed3b': 480,
+    'mixed4a': 508,
+    'mixed4b': 512,
+    'mixed4c': 512,
+    'mixed4d': 528,
+    'mixed4e': 832,
+    'mixed5a': 832,
+    'mixed5b': 1024
+}
 
 let layer = 'mixed4e'
 let selectedClass = 0;
@@ -17,14 +30,36 @@ d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
 
     selectedClass = data[0];
+    console.log('selectedClass', selectedClass)
 
-    function computeEmbeddingDistancesFromPoint(data, point) {
+    function computeEmbeddingDistancesFromPointEuclidean(data, point) {
         for (let i = 0; i < data.length; i++) {
             let distance = Math.sqrt(Math.pow(point.embedding[layer].x - data[i].embedding[layer].x, 2) + Math.pow(point.embedding[layer].y - data[i].embedding[layer].y, 2));
             data[i].distanceFromQueryPoint = distance
         }
     }
-    computeEmbeddingDistancesFromPoint(data, selectedClass)
+    // computeEmbeddingDistancesFromPointEuclidean(data, selectedClass)
+
+    function computeEmbeddingDistancesFromPointCosine(data, point) {
+
+        function topChannelsToVector(point, layer) {
+            let pointVector = new Array(layerChannelCounts[layer]).fill(0);
+            point.topChannels[layer].forEach(channel => {
+                pointVector[channel.channel] = channel.count;
+            });
+            return pointVector
+        }
+
+        let selectedPointVector = topChannelsToVector(point, layer)
+
+        for (let i = 0; i < data.length; i++) {
+            let iterPointVector = topChannelsToVector(data[i], layer)
+
+            let distance = (1 - similarity(selectedPointVector, iterPointVector))/2
+            data[i].distanceFromQueryPoint = distance
+        }
+    }
+    computeEmbeddingDistancesFromPointCosine(data, selectedClass)
 
 
     function makeClassBars(data, selectedClass) {
@@ -34,7 +69,8 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .sort(function (x, y) {
                         return d3.ascending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
                     })
-                    .filter(d => d.distanceFromQueryPoint < 2)
+                    // .filter(d => d.distanceFromQueryPoint < 2)
+                    .slice(0, 500)
                 )
             
             .enter()
@@ -64,16 +100,19 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('class-bar-bar-wrapper', true)
         
         let classBarBarsScale = d3.scaleLinear()
-            .domain(d3.extent(data, d => d.distanceFromQueryPoint))
+            .domain([0, 1])
             .range([100, 0])
         
         console.log(d3.extent(data, d => d.distanceFromQueryPoint))
 
-        classBarBars = classBarBars.append('div')
-            .classed('class-bar-bar-background', true)
-            .append('div')
+        classBarBars.append('div')
             .classed('class-bar-bar-data', true)
             .style('width', d => classBarBarsScale(d.distanceFromQueryPoint) + '%')
+
+        classBarBars.append('div')
+            .classed('class-bar-bar-background', true)
+            .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')
+    
 
         
 
