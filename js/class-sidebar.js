@@ -54,8 +54,7 @@ d3.json('./data/imagenet.json').then(function (data) {
 
         for (let i = 0; i < data.length; i++) {
             let iterPointVector = topChannelsToVector(data[i], layer)
-
-            let distance = (1 - similarity(selectedPointVector, iterPointVector))/2
+            let distance = similarity(selectedPointVector, iterPointVector)
             data[i].distanceFromQueryPoint = distance
         }
     }
@@ -67,10 +66,10 @@ d3.json('./data/imagenet.json').then(function (data) {
         let classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
             .data(data
                     .sort(function (x, y) {
-                        return d3.ascending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
+                        return d3.descending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
                     })
                     // .filter(d => d.distanceFromQueryPoint < 2)
-                    .slice(0, 500)
+                    .slice(0, 1000)
                 )
             
             .enter()
@@ -82,7 +81,9 @@ d3.json('./data/imagenet.json').then(function (data) {
         
         classBarTexts.append('div')
             .classed('class-bar-text-name', true)
-            .text(d => d.name)
+            .append('a')
+            .text(d => d.name.replace('_', ' ').toLowerCase())
+            // attr('href', )
 
         classBarTexts.append('div')
             .classed('class-bar-text-instances', true)
@@ -100,8 +101,8 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('class-bar-bar-wrapper', true)
         
         let classBarBarsScale = d3.scaleLinear()
-            .domain([0, 1])
-            .range([100, 0])
+            .domain([0, 1]) // cosine similarity
+            .range([0, 100])
         
         console.log(d3.extent(data, d => d.distanceFromQueryPoint))
 
