@@ -47,6 +47,52 @@ header {
     letter-spacing: .8px;
 }
 
+/* material buttons */
+
+button {
+    /* background-color: var(--lighter); */
+    /* letter-spacing: .8px; */
+    border: none;
+    background: #ffffff;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    border-radius: 2px;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: 0.2s;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    /* width: 120px;  */
+    text-align: center;
+    justify-content: center;
+    text-transform: uppercase;
+    color: #222222;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 32px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    /* letter-spacing: .8px; */
+}
+
+button:hover {
+    /* background-color: var(--lighter); */
+    cursor: pointer;
+    box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.3);
+}
+
+button:focus {
+    outline: 0;
+}
+
+button:active {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    transition-delay: 0s;
+}
+
+
 #main {
     display: flex;
     height: 100%;
