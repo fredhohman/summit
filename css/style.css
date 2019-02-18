@@ -125,7 +125,7 @@ header {
 }
 
 .class-bar-text-name, .class-bar-text-name a {
-    font-size: 16px;
+    font-size: 14px;
     color: var(--darker);
     text-decoration: none;
     width: 120px;
@@ -141,13 +141,13 @@ header {
 .class-bar-text-instances {
     flex: 0 0 40px;
     color: var(--dark);
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .class-bar-text-accuracy {
     flex: 0 0 40px;
     color: var(--dark);
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .class-bar-text-histogram {

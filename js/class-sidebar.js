@@ -14,7 +14,7 @@ const layerChannelCounts = {
 }
 
 let layer = 'mixed4e';
-let selectedClass = 0;
+let selectedClassIdx = 0;
 const numClassesInClassBar = 250;
 
 let leftInner = d3.select('#left')
@@ -30,8 +30,26 @@ let leftInnerClassBarWrapper = leftInner.append('div')
 d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
 
-    selectedClass = data[0];
+    let selectedClass = data[selectedClassIdx];
     console.log('selectedClass', selectedClass)
+
+    leftInnerOptions.append('button')
+        .attr('type', 'button')
+        .text('sort class by accuracy (asc)')
+        .on('click', () => {
+            removeClassBars()
+            document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+            makeClassBars(data, selectedClass, 'asc')
+        })
+
+    leftInnerOptions.append('button')
+        .attr('type', 'button')
+        .text('sort class by accuracy (dsc)')
+        .on('click', () => {
+            removeClassBars()
+            document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+            makeClassBars(data, selectedClass, 'dsc')
+        })
 
     function computeEmbeddingDistancesFromPointEuclidean(data, point) {
         for (let i = 0; i < data.length; i++) {
@@ -62,35 +80,67 @@ d3.json('./data/imagenet.json').then(function (data) {
     computeEmbeddingDistancesFromPointCosine(data, selectedClass)
 
 
-    function makeClassBars(data, selectedClass) {
+    function makeClassBars(data, selectedClass, sortType) {
+        // sortTypes:
+        // 'dis': sort by class distance
+        // 'asc': sort by class accuracy ascending
+        // 'dsc': sort by class accuracy descending
+        console.log(sortType)
+
 
         computeEmbeddingDistancesFromPointCosine(data, selectedClass)
 
-        let classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
+        let classBars;
+
+        if (sortType === 'asc') {
+            classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
             .data(data
-                    .sort(function (x, y) {
-                        return d3.descending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
-                    })
-                    // .filter(d => d.distanceFromQueryPoint < 2)
-                    .slice(0, numClassesInClassBar) // nearest n classes
-                )
-            
+                .sort(function (x, y) {
+                    return d3.ascending(x.topOneAcc, y.topOneAcc);
+                })
+                .slice(0, numClassesInClassBar)
+            )
             .enter()
             .append('div')
             .classed('class-bar', true)
 
+        } else if (sortType === 'dsc') {
+            classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
+            .data(data
+                .sort(function (x, y) {
+                    return d3.descending(x.topOneAcc, y.topOneAcc);
+                })
+                .slice(0, numClassesInClassBar)
+            )
+            .enter()
+            .append('div')
+            .classed('class-bar', true)
+
+        } else if (sortType === 'dis') {
+            classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
+            .data(data
+                .sort(function (x, y) {
+                    return d3.descending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
+                })
+                .slice(0, numClassesInClassBar) // nearest n classes
+            )
+            .enter()
+            .append('div')
+            .classed('class-bar', true)
+        }
+
         let classBarTexts = classBars.append('div')
             .classed('class-bar-text-wrapper', true)
             .on('click', d => {
-                removeClassbars()
+                removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-                makeClassBars(data, d)
+                makeClassBars(data, d, 'dis')
             })
         
         classBarTexts.append('div')
             .classed('class-bar-text-name', true)
             .append('a')
-            .text(d => d.name.replace('_', ' ').toLowerCase())
+            .text(d => d.name.replace(/_/g, ' ').toLowerCase())
             .attr('target', '_blank')
             .attr('href', d => 'http://www.google.com/search?q=' + d.name.replace('_', '+').toLowerCase())
 
@@ -114,15 +164,13 @@ d3.json('./data/imagenet.json').then(function (data) {
             .append('svg')
             .attr("width", accuracyWidth + accuracyMargin.left + accuracyMargin.right)
             .attr("height", accuracyHeight + accuracyMargin.top + accuracyMargin.bottom)
-            // .style('border', '1px solid #eeeeee')
-            // .attr('id', d => 'accuracy-' + d.synset)
+            // .style('border', '1px solid #eeeeee') // for debugging
             .append("g")
             .attr("transform", "translate(" + accuracyMargin.left + "," + accuracyMargin.top + ")")
             .attr('id', d => 'accuracy-' + d.synset)
 
         function makeAccuracyHistogram(c) {
             let accuracySVG = d3.select('#accuracy-' + c.synset)
-            // let accuracyG = d3.select('#accuracy-g-' + c.synset)
 
             let accuracyX = d3.scaleLinear()
                 .domain(d3.extent(c.accuracies)).nice()
@@ -175,10 +223,10 @@ d3.json('./data/imagenet.json').then(function (data) {
             .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')        
 
     }
-    makeClassBars(data, selectedClass)
-
-    function removeClassbars() {
-        d3.selectAll('.class-bar').remove()
-    }
+    makeClassBars(data, selectedClass, 'dis')
 
 });
+
+function removeClassBars() {
+    d3.selectAll('.class-bar').remove()
+}
