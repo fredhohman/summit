@@ -29,9 +29,7 @@ header {
     font-size: 18px;
     font-weight: 200;
     display: flex;
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 64px;
+    flex: 0 0 64px;
     justify-content: center;
     flex-direction: row;
     padding-left: 20px;
@@ -92,7 +90,6 @@ button:active {
     transition-delay: 0s;
 }
 
-
 #main {
     display: flex;
     height: 100%;
@@ -132,9 +129,10 @@ button:active {
 
 #left-inner-options {
     background: var(--background-color);
-    width: 100%;
+    /* width: 100%; */
     flex: 0 0 200px;
     border-bottom: 1px solid var(--border-color);
+    padding: 15px;
 }
 
 #left-inner-class-bar-wrapper {
@@ -227,4 +225,29 @@ button:active {
 
 .accuracy-x-axis path {
     stroke: var(--dark);
+}
+
+/* middle */
+
+#middle-inner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#middle-inner-options {
+    background: var(--background-color);
+    /* width: 100%; */
+    flex: 0 0 64px;
+    border-bottom: 1px solid var(--border-color);
+    /* padding: 15px; */
+}
+
+.dr-point {
+    fill: var(--dark);
+}
+
+.dr-point:hover {
+    fill: #FFC107;
+    cursor: pointer;
 }
