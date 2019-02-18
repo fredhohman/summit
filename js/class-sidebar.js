@@ -39,6 +39,16 @@ let middleInnerOptions = middleInner.append('div')
 let middleInnerEmbeddingWrapper = middleInner.append('div')
     .attr('id', 'middle-inner-embedding-wrapper')
 
+// right
+let rightInner = d3.select('#right')
+    .append('div')
+    .attr('id', 'right-inner')
+
+let rightInnerOptions = rightInner.append('div')
+    .attr('id', 'right-inner-options')
+
+let rightInnerEmbeddingWrapper = rightInner.append('div')
+    .attr('id', 'right-inner-tree-wrapper')
 
 d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
@@ -267,28 +277,28 @@ d3.json('./data/imagenet.json').then(function (data) {
         let zoom = d3.zoom()
             .scaleExtent([.5, 50])
             .extent([[0, 0], [embeddingWidth, embeddingHeight]])
-            // .on("zoom", zoomed);
+            .on("zoom", zoomed);
 
-        // let k = 1;
+        let k = 1;
 
-        // let new_xScale;
-        // let new_yScale;
-        // function zoomed() {
-        //     // create new scale objects based on event
-        //     new_xScale = d3.event.transform.rescaleX(embeddingY);
-        //     new_yScale = d3.event.transform.rescaleY(embeddingY);
-        //     // update axes
-        //     // gX.call(xAxis.scale(new_xScale));
-        //     // gY.call(yAxis.scale(new_yScale));
-        //     embeddingPoints
-        //         .attr('cx', function (d) { return new_xScale(d.embedding[layer].x) })
-        //         .attr('cy', function (d) { return new_yScale(d.embedding[layer].y) })
-        //     embeddingG.selectAll('.dr-point-label')
-        //         .attr('x', d => new_xScale(d.embedding[layer].x) + 7)
-        //         .attr('y', d => new_yScale(d.embedding[layer].y) + 4)
+        let embeddingXZoomScale;
+        let embeddingYZoomScale;
+        function zoomed() {
+            // create new scale objects based on event
+            embeddingXZoomScale = d3.event.transform.rescaleX(embeddingY);
+            embeddingYZoomScale = d3.event.transform.rescaleY(embeddingY);
+            // update axes
+            // gX.call(xAxis.scale(embeddingXZoomScale));
+            // gY.call(yAxis.scale(embeddingYZoomScale));
+            embeddingPoints
+                .attr('cx', function (d) { return embeddingXZoomScale(d.embedding[layer].x) })
+                .attr('cy', function (d) { return embeddingYZoomScale(d.embedding[layer].y) })
+            embeddingG.selectAll('.dr-point-label')
+                .attr('x', d => embeddingXZoomScale(d.embedding[layer].x) + 7)
+                .attr('y', d => embeddingYZoomScale(d.embedding[layer].y) + 4)
 
-        //     k = d3.event.transform.k;
-        // }
+            k = d3.event.transform.k;
+        }
 
         embeddingSVG.append("rect")
             .attr("width", embeddingWidth)
@@ -296,7 +306,7 @@ d3.json('./data/imagenet.json').then(function (data) {
             .style("fill", "none")
             .style("pointer-events", "all")
             .attr('transform', 'translate(' + embeddingMargin.left + ',' + embeddingMargin.top + ')')
-            // .call(zoom);
+            .call(zoom);
 
         let embeddingG = embeddingSVG
             .append("g")
@@ -304,11 +314,11 @@ d3.json('./data/imagenet.json').then(function (data) {
             .attr('id', 'embedding')
         // .call(zoom);
 
-        // embeddingSVG.append("defs").append("clipPath")
-        //     .attr("id", "clip")
-        //     .append("rect")
-        //     .attr("width", embeddingWidth)
-        //     .attr("height", embeddingHeight);
+        embeddingSVG.append("defs").append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("width", embeddingWidth)
+            .attr("height", embeddingHeight);
 
         function computeEmbeddingDomain(data, layer) {
             let xExtent = d3.extent(data, d => d.embedding[layer].x)
@@ -334,8 +344,8 @@ d3.json('./data/imagenet.json').then(function (data) {
         // we are using embeddingY everywhere to make the plot 1:1, but this is hardcoded right now!
         // we just want the most negative and most positive extend on the input range domain
 
-        // new_xScale = embeddingY;
-        // new_yScale = embeddingY;
+        embeddingXZoomScale = embeddingY;
+        embeddingYZoomScale = embeddingY;
 
         // let tip = d3.tip()
         //     .attr('class', 'd3-tip')
@@ -347,7 +357,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         //     .domain(d3.extent(data, d => d.accuracy))
         //     .range([2,5])
 
-        // const distanceRadius = 0.5
+        const distanceRadius = 0.5
 
         // let drHoverCircle = embeddingG.append('circle')
         //     .attr('id', 'dr-hover-circle')
@@ -370,32 +380,32 @@ d3.json('./data/imagenet.json').then(function (data) {
             .attr('cy', d => embeddingY(d.embedding[layer].y))
             .classed('dr-point', true)
             .attr('id', d => 'point-' + d.synset)
-            // .on('mouseover', d => {
+            .on('mouseover', d => {
                 // tip.show(d, document.getElementById(d.id))
                 // colorNearPoints(d)
                 // drHoverCircle.style('visibility', 'visible')
-                //     .attr('cx', new_xScale(d.embedding[layer].x))
-                //     .attr('cy', new_yScale(d.embedding[layer].y))
+                //     .attr('cx', embeddingXZoomScale(d.embedding[layer].x))
+                //     .attr('cy', embeddingYZoomScale(d.embedding[layer].y))
                 //     .attr('r', () => {
-                //         let temp = new_xScale(d.embedding[layer].x + distanceRadius) - new_xScale(d.embedding[layer].x)
+                //         let temp = embeddingXZoomScale(d.embedding[layer].x + distanceRadius) - embeddingXZoomScale(d.embedding[layer].x)
                 //         return temp
                 //     })
-            // })
-            // .on('mouseout', () => {
+            })
+            .on('mouseout', () => {
             //     tip.hide()
-            //     d3.selectAll('.dr-point').style('fill', ' #666666')
-            //     d3.selectAll('.dr-point-label').text('')
+                d3.selectAll('.dr-point').style('fill', ' #666666')
+                d3.selectAll('.dr-point-label').text('')
             //     drHoverCircle.style('visibility', 'hidden')
-            // })
+            })
             // .on('click', d => makeProfile(d))
 
-        // let labels = embeddingG.selectAll('.dr-point-label')
-        //     .data(data)
-        //     .enter()
-        //     .append('text')
-        //     .classed('dr-point-label', true)
-        //     .attr('x', d => embeddingY(d.embedding[layer].x))
-        //     .attr('y', d => embeddingY(d.embedding[layer].y))
+        let embeddingLabels = embeddingG.selectAll('.dr-point-label')
+            .data(data)
+            .enter()
+            .append('text')
+            .classed('dr-point-label', true)
+            .attr('x', d => embeddingY(d.embedding[layer].x))
+            .attr('y', d => embeddingY(d.embedding[layer].y))
 
         // function computeDRPointDistances(data, point) {
         //     for (let i = 0; i < data.length; i++) {
@@ -403,33 +413,33 @@ d3.json('./data/imagenet.json').then(function (data) {
         //         data[i].distanceFromQueryPoint = distance
         //     }
         // }
-        // function colorNearPoints(point) {
+        function colorNearPoints(point) {
 
-            //     computeDRPointDistances(data, point)
+                // computeDRPointDistances(data, point)
 
-            //     let colorScale = d3.scaleLinear()
-            //         .domain([0, d3.max(data, d => d.distanceFromQueryPoint)])
-            //         .interpolate(d3.interpolateHcl)
-            //         .range([d3.rgb("#FFC107"), d3.rgb('#dddddd')])
+                let colorScale = d3.scaleLinear()
+                    .domain([0, d3.max(data, d => d.distanceFromQueryPoint)])
+                    .interpolate(d3.interpolateHcl)
+                    .range([d3.rgb("#FFC107"), d3.rgb('#dddddd')])
 
-            //     d3.selectAll('.dr-point')
-            //         .style('fill', d => {
-            //             if (d.distanceFromQueryPoint < distanceRadius) {
-            //                 return colorScale(d.distanceFromQueryPoint)
-            //             } else {
-            //                 return '#666666'
-            //             }
-            //         })
+                d3.selectAll('.dr-point')
+                    .style('fill', d => {
+                        if (d.distanceFromQueryPoint < distanceRadius) {
+                            return colorScale(d.distanceFromQueryPoint)
+                        } else {
+                            return '#666666'
+                        }
+                    })
 
-            //     if (k > 6) {
-            //         d3.selectAll('.dr-point-label')
-            //             .text(d => {
-            //                 if (d.distanceFromQueryPoint < distanceRadius) {
-            //                     return d.name
-            //                 }
-            //             })
-            //     }
-            // }
+                if (k > 6) {
+                    d3.selectAll('.dr-point-label')
+                        .text(d => {
+                            if (d.distanceFromQueryPoint < distanceRadius) {
+                                return d.name
+                            }
+                        })
+                }
+            }
 
 
     }

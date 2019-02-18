@@ -251,3 +251,23 @@ button:active {
     fill: #FFC107;
     cursor: pointer;
 }
+
+.dr-point-label {
+    font-size: 16px;
+}
+
+/* right */
+
+#right-inner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#right-inner-options {
+    background: var(--background-color);
+    /* width: 100%; */
+    flex: 0 0 64px;
+    border-bottom: 1px solid var(--border-color);
+    /* padding: 15px; */
+}
