@@ -64,6 +64,8 @@ d3.json('./data/imagenet.json').then(function (data) {
 
     function makeClassBars(data, selectedClass) {
 
+        computeEmbeddingDistancesFromPointCosine(data, selectedClass)
+
         let classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
             .data(data
                     .sort(function (x, y) {
@@ -79,6 +81,11 @@ d3.json('./data/imagenet.json').then(function (data) {
 
         let classBarTexts = classBars.append('div')
             .classed('class-bar-text-wrapper', true)
+            .on('click', d => {
+                removeClassbars()
+                document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+                makeClassBars(data, d)
+            })
         
         classBarTexts.append('div')
             .classed('class-bar-text-name', true)
@@ -128,7 +135,6 @@ d3.json('./data/imagenet.json').then(function (data) {
 
             let accuracyY = d3.scaleLinear()
                 .domain([0, d3.max(bins, d => d.length)]).nice()
-                // .domain([0, 1300])
                 .range([accuracyHeight, 0])
 
             let xAxis = accuracySVG
@@ -136,25 +142,6 @@ d3.json('./data/imagenet.json').then(function (data) {
                 .attr("transform", "translate(0," + accuracyHeight + ")")
                 .classed('accuracy-x-axis', true)
                 .call(d3.axisBottom(accuracyX).tickSizeOuter(0).ticks(0))
-            // .call(g => g.append("text")
-            //     .attr("x", accuracyWidth - accuracyMargin.right)
-            //     .attr("y", -4)
-            //     .attr("fill", "#000")
-            //     .attr("font-weight", "bold")
-            //     .attr("text-anchor", "end")
-            //     .text('accuracy')
-            //     )
-
-            // let yAxis = accuracySVG
-            //     .append('g')
-            //     // .attr("transform", "translate(" + accuracyMargin.left + ",0)")
-            //     .call(d3.axisLeft(accuracyY).ticks(0))
-            // .call(g => g.select(".domain").remove())
-            // // .call(g => g.select(".tick:last-of-type text").clone()
-            // //     .attr("x", 4)
-            // //     .attr("text-anchor", "start")
-            // //     .attr("font-weight", "bold")
-            // //     .text('count'))
 
             accuracySVG
                 .append("g")
@@ -185,12 +172,13 @@ d3.json('./data/imagenet.json').then(function (data) {
 
         classBarBars.append('div')
             .classed('class-bar-bar-background', true)
-            .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')
-    
-
-        
+            .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')        
 
     }
-    makeClassBars(data)
+    makeClassBars(data, selectedClass)
+
+    function removeClassbars() {
+        d3.selectAll('.class-bar').remove()
+    }
 
 });
