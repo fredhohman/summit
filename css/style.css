@@ -128,7 +128,7 @@ header {
     font-size: 16px;
     color: var(--darker);
     text-decoration: none;
-    /* width: 125px; */
+    width: 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
