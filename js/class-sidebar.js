@@ -160,6 +160,18 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('class-bar', true)
         }
 
+        classBars
+            .attr('id', d => 'class-bar-' + d.synset)
+            .on('mouseover', d => {
+                d3.select('#point-' + d.synset)
+                    .classed('embedding-point-hover', true)
+
+            })
+            .on('mouseout', () => {
+                d3.selectAll('.embedding-point')
+                    .classed('embedding-point-hover', false)
+            })
+
         let classBarTexts = classBars.append('div')
             .classed('class-bar-text-wrapper', true)
             .on('click', d => {
@@ -175,9 +187,9 @@ d3.json('./data/imagenet.json').then(function (data) {
             .attr('target', '_blank')
             .attr('href', d => 'http://www.google.com/search?q=' + d.name.replace('_', '+').toLowerCase())
 
-        classBarTexts.append('div')
-            .classed('class-bar-text-instances', true)
-            .text(d => d.numOfInstances)
+        // classBarTexts.append('div')
+        //     .classed('class-bar-text-instances', true)
+        //     .text(d => d.numOfInstances)
 
         classBarTexts.append('div')
             .classed('class-bar-text-accuracy', true)
@@ -216,7 +228,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 .domain([0, d3.max(bins, d => d.length)]).nice()
                 .range([accuracyHeight, 0])
 
-            let xAxis = accuracySVG
+            let accuracyXAxis = accuracySVG
                 .append('g')
                 .attr("transform", "translate(0," + accuracyHeight + ")")
                 .classed('accuracy-x-axis', true)
@@ -232,6 +244,16 @@ d3.json('./data/imagenet.json').then(function (data) {
                 .attr("width", d => Math.max(0, accuracyX(d.x1) - accuracyX(d.x0) - 1))
                 .attr("y", d => accuracyY(d.length))
                 .attr("height", d => accuracyY(0) - accuracyY(d.length));
+
+            // accuracySVG
+            //     .append('text')
+            //     // .attr('x', accuracyWidth / 2)
+            //     // .attr('y', accuracyHeight / 2)
+            //     .attr('x', accuracyMargin.left)
+            //     .attr('y', accuracyHeight - accuracyMargin.bottom)
+            //     // .attr('text-anchor', 'middle')
+            //     .text(d => (100 * d.topOneAcc).toFixed(1) + '%')
+            //     .classed('class-bar-text-accuracy-svg', true)
         }
 
         for (let i = 0; i < data.length; i++) {
@@ -293,7 +315,7 @@ d3.json('./data/imagenet.json').then(function (data) {
             embeddingPoints
                 .attr('cx', function (d) { return embeddingXZoomScale(d.embedding[layer].x) })
                 .attr('cy', function (d) { return embeddingYZoomScale(d.embedding[layer].y) })
-            embeddingG.selectAll('.dr-point-label')
+            embeddingG.selectAll('.embedding-point-label')
                 .attr('x', d => embeddingXZoomScale(d.embedding[layer].x) + 7)
                 .attr('y', d => embeddingYZoomScale(d.embedding[layer].y) + 4)
 
@@ -378,11 +400,11 @@ d3.json('./data/imagenet.json').then(function (data) {
             .attr('r', 5)
             .attr('cx', d => embeddingY(d.embedding[layer].x))
             .attr('cy', d => embeddingY(d.embedding[layer].y))
-            .classed('dr-point', true)
+            .classed('embedding-point', true)
             .attr('id', d => 'point-' + d.synset)
             .on('mouseover', d => {
                 // tip.show(d, document.getElementById(d.id))
-                // colorNearPoints(d)
+                colorNearPoints(d)
                 // drHoverCircle.style('visibility', 'visible')
                 //     .attr('cx', embeddingXZoomScale(d.embedding[layer].x))
                 //     .attr('cy', embeddingYZoomScale(d.embedding[layer].y))
@@ -393,17 +415,17 @@ d3.json('./data/imagenet.json').then(function (data) {
             })
             .on('mouseout', () => {
             //     tip.hide()
-                d3.selectAll('.dr-point').style('fill', ' #666666')
-                d3.selectAll('.dr-point-label').text('')
+                // d3.selectAll('.embedding-point').style('fill', ' #666666')
+                d3.selectAll('.embedding-point-label').text('')
             //     drHoverCircle.style('visibility', 'hidden')
             })
             // .on('click', d => makeProfile(d))
 
-        let embeddingLabels = embeddingG.selectAll('.dr-point-label')
+        let embeddingLabels = embeddingG.selectAll('.embedding-point-label')
             .data(data)
             .enter()
             .append('text')
-            .classed('dr-point-label', true)
+            .classed('embedding-point-label', true)
             .attr('x', d => embeddingY(d.embedding[layer].x))
             .attr('y', d => embeddingY(d.embedding[layer].y))
 
@@ -422,17 +444,24 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .interpolate(d3.interpolateHcl)
                     .range([d3.rgb("#FFC107"), d3.rgb('#dddddd')])
 
-                d3.selectAll('.dr-point')
-                    .style('fill', d => {
-                        if (d.distanceFromQueryPoint < distanceRadius) {
-                            return colorScale(d.distanceFromQueryPoint)
-                        } else {
-                            return '#666666'
-                        }
-                    })
+                // d3.selectAll('.embedding-point')
+                //     .style('fill', d => {
+                //         if (d.distanceFromQueryPoint < distanceRadius) {
+                //             return colorScale(d.distanceFromQueryPoint)
+                //         } else {
+                //             return '#666666'
+                //         }
+                //     })
 
                 if (k > 6) {
-                    d3.selectAll('.dr-point-label')
+
+                    // data
+                    //     .sort(function (x, y) {
+                    //         return d3.descending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
+                    //     })
+                    //     .slice(0, numClassesInClassBar) // nearest n classes
+
+                    d3.selectAll('.embedding-point-label')
                         .text(d => {
                             if (d.distanceFromQueryPoint < distanceRadius) {
                                 return d.name
@@ -450,3 +479,4 @@ d3.json('./data/imagenet.json').then(function (data) {
 function removeClassBars() {
     d3.selectAll('.class-bar').remove()
 }
+

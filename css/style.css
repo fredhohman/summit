@@ -194,6 +194,17 @@ button:active {
     font-size: 12px;
 }
 
+.class-bar-text-accuracy-svg {
+    font-size: 12px;
+    /* font-weight: 600; */
+    fill: var(--dark);
+    stroke: white;
+    paint-order: stroke;
+    stroke-width: 2px;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+}
+
 .class-bar-text-histogram {
     flex: 0 0 100px;
 }
@@ -202,6 +213,7 @@ button:active {
     display: flex;
     /* height: 25px; */
     margin-top: 4px;
+    width: 120px; /* same as class-bar-text-name */
 }
 
 .class-bar-bar-background {
