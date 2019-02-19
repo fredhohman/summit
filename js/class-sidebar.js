@@ -282,9 +282,25 @@ d3.json('./data/imagenet.json').then(function (data) {
     function makeEmbedding(data, layer) {
         console.log('make embedding')
 
-        middleInnerOptions
-        .append('div')
-        .text(layer)
+        let embeddingSelect = middleInnerOptions
+            .append('select')
+            .attr('id', 'embedding-select')
+
+        embeddingSelect
+            .selectAll('.embedding-select-options')
+            .data(Object.keys(layerChannelCounts))
+            .enter()
+            .append('option')
+            .text(d => { return d })
+            .attr('value', d => { return d })     
+        
+        embeddingSelect
+            .on('change', () => {
+                layer = document.getElementById('embedding-select').value
+                center()
+                updateEmbedding(layer)
+            
+            })   
 
         const embeddingMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
         const embeddingWidth = 700 - embeddingMargin.left - embeddingMargin.right
@@ -322,7 +338,18 @@ d3.json('./data/imagenet.json').then(function (data) {
             k = d3.event.transform.k;
         }
 
-        embeddingSVG.append("rect")
+        function center() {
+            // embeddingSVG = d3.select("#container");
+            // zoom.translate([0, 0]); // Resetting translate
+            // zoom.scale(1);          // Resetting scale
+            // embeddingSVG.transition()
+            //     .duration(750)
+            //     .attr("transform", "translate(0, 0)scale(1)");
+            zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(1));
+
+        }
+
+        let zoomRect = embeddingSVG.append("rect")
             .attr("width", embeddingWidth)
             .attr("height", embeddingHeight)
             .style("fill", "none")
@@ -392,7 +419,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         //     .style('stroke-width', '2px')
 
         let embeddingPoints = embeddingG.append('g')
-            .selectAll('.point')
+            .selectAll('.embedding-point')
             .data(data)
             .enter()
             .append('circle')
@@ -470,6 +497,31 @@ d3.json('./data/imagenet.json').then(function (data) {
                 }
             }
 
+        function updateEmbedding(newLayer) {
+
+            embeddingDomain = computeEmbeddingDomain(data, newLayer)
+
+            embeddingX = d3.scaleLinear()
+                // .domain(d3.extent(data, d => d.embedding[layer].x))
+                .domain(embeddingDomain)
+                .range([0, embeddingWidth])
+
+            embeddingY = d3.scaleLinear()
+                // .domain(d3.extent(data, d => d.embedding[layer].y))
+                .domain(embeddingDomain)
+                .range([0, embeddingHeight])
+
+            embeddingXZoomScale = embeddingY;
+            embeddingYZoomScale = embeddingY;
+
+            d3.selectAll('.embedding-point')
+                .transition()
+                .duration(1000)
+                .attr('cx', d => embeddingY(d.embedding[newLayer].x))
+                .attr('cy', d => embeddingY(d.embedding[newLayer].y))
+
+
+        }
 
     }
     makeEmbedding(data, layer)
