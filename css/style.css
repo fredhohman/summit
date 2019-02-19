@@ -275,12 +275,3 @@ button:active {
     border-bottom: 1px solid var(--border-color);
     /* padding: 15px; */
 }
-
-#test-div {
-    height: 100px;
-    width: 100px;
-    border: 1px solid #cccccc;
-    background: url('../data/feature-vis/mixed4b-00310--mixed4b-00319.jpg');
-}
-
-#test-span {}
