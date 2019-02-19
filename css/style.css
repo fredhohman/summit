@@ -243,16 +243,20 @@ button:active {
     /* padding: 15px; */
 }
 
-.dr-point {
+.embedding-point {
     fill: var(--dark);
 }
 
-.dr-point:hover {
+.embedding-point:hover {
     fill: #FFC107;
     cursor: pointer;
 }
 
-.dr-point-label {
+.embedding-point-hover {
+    fill: #FFC107;
+}
+
+.embedding-point-label {
     font-size: 16px;
 }
 
@@ -271,3 +275,12 @@ button:active {
     border-bottom: 1px solid var(--border-color);
     /* padding: 15px; */
 }
+
+#test-div {
+    height: 100px;
+    width: 100px;
+    border: 1px solid #cccccc;
+    background: url('../data/feature-vis/mixed4b-00310--mixed4b-00319.jpg');
+}
+
+#test-span {}
