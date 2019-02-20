@@ -282,25 +282,111 @@ d3.json('./data/imagenet.json').then(function (data) {
     function makeEmbedding(data, layer) {
         console.log('make embedding')
 
-        let embeddingSelect = middleInnerOptions
-            .append('select')
-            .attr('id', 'embedding-select')
+        // let embeddingSelect = middleInnerOptions
+        //     .append('select')
+        //     .attr('id', 'embedding-select')
 
-        embeddingSelect
-            .selectAll('.embedding-select-options')
-            .data(Object.keys(layerChannelCounts))
-            .enter()
-            .append('option')
-            .text(d => { return d })
-            .attr('value', d => { return d })     
+        // embeddingSelect
+        //     .selectAll('.embedding-select-options')
+        //     .data(Object.keys(layerChannelCounts))
+        //     .enter()
+        //     .append('option')
+        //     .text(d => { return d })
+        //     .attr('value', d => { return d })
+
+        // embeddingSelect
+        //     .on('change', () => {
+        //         layer = document.getElementById('embedding-select').value
+        //         center()
+        //         updateEmbedding(layer)
+        //     })
+
+        const netMargin = ({ top: 0, right: 20, bottom: 0, left: 20 })
+        const netWidth = 300 - netMargin.left - netMargin.right
+        const netHeight = 64 - netMargin.top - netMargin.bottom
+        const middleLineHeight = 25;
+
+        let networkSVG = middleInnerOptions
+            .append('svg')
+            .attr('width', netWidth + 'px')
+            .attr('height', netHeight + 'px')
+            .append("g")
+            .attr("transform", "translate(" + netMargin.left + "," + netMargin.top + ")")
+            .attr('id', 'net')
         
-        embeddingSelect
-            .on('change', () => {
-                layer = document.getElementById('embedding-select').value
+        networkSVG
+            .append('line')
+            .attr('x1', 0)
+            .attr('x1', netWidth)
+            .attr('y1', middleLineHeight)
+            .attr('y2', middleLineHeight)
+            .style('stroke', '#666666')
+
+        let layers = Object.keys(layerChannelCounts);
+
+        const netLayerWidth = 10
+        const netLayerPadding = (netWidth - netMargin.left - (layers.length-1) * netLayerWidth) / layers.length
+
+        networkSVG
+            .selectAll('.layer-glyph')
+            .data(layers)
+            .enter()
+            .append('rect')
+            .attr('x', (d, i) => i * (netLayerWidth + netLayerPadding))
+            .attr('y', 10)
+            .attr('width', netLayerWidth)
+            .attr('height', middleLineHeight+5)
+            .classed('layer-glyph', true)
+            .attr('id', d => 'layer-glyph-' + d)
+            .on('click', (d) => {
+                layer = d
                 center()
                 updateEmbedding(layer)
-            
-            })   
+                d3.selectAll('.layer-glyph')
+                    .classed('layer-glyph-selected', false)
+                d3.select('#layer-glyph-' + layer)
+                    .classed('layer-glyph-selected', true)
+            })
+
+        networkSVG
+            .selectAll('.layer-glyph-label')
+            .data(layers)
+            .enter()
+            .append('text')
+            .text(d => d.slice(5))
+            .attr('x', (d, i) => i * (netLayerWidth + netLayerPadding) + netLayerWidth/2)
+            .attr('y', netHeight - 10)
+            .attr('text-anchor', 'middle')
+            .classed('layer-glyph-label', true)
+            .on('click', (d) => {
+                layer = d
+                center()
+                updateEmbedding(layer)
+                d3.selectAll('.layer-glyph')
+                    .classed('layer-glyph-selected', false)
+                d3.select('#layer-glyph-' + layer)
+                    .classed('layer-glyph-selected', true)
+            })
+        
+        middleInnerOptions
+            .append('div')
+            .style('display', 'flex')
+            .style('flex-direction', 'column')
+            .style('justify-content', 'center')
+            .style('padding-left', '10px')
+            .append('button')
+                .attr('type', 'button')
+                .classed('square-button', true)
+                .on('click', () => {
+                    center()
+                })
+                .append('i')
+                .classed('material-icons', true)
+                .classed('md-24', true)
+                .text('home')
+
+        d3.select('#layer-glyph-' + layer)
+            .classed('layer-glyph-selected', true) // init selected layer
 
         const embeddingMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
         const embeddingWidth = 700 - embeddingMargin.left - embeddingMargin.right
@@ -309,10 +395,10 @@ d3.json('./data/imagenet.json').then(function (data) {
         let embeddingSVG = middleInnerEmbeddingWrapper
             .append('svg')
             .attr('viewBox', '0 0 ' + (embeddingWidth + embeddingMargin.left + embeddingMargin.right) + ' ' + (embeddingHeight + embeddingMargin.top + embeddingMargin.bottom))
-            .attr('width', 'auto')
+            .attr('width', '100%')
             // .attr("width", embeddingWidth + embeddingMargin.left + embeddingMargin.right)
             // .attr("height", embeddingHeight + embeddingMargin.top + embeddingMargin.bottom)
-            .style('border', '1px solid #eeeeee')
+            // .style('border', '1px solid #eeeeee') // for debugging
 
         let zoom = d3.zoom()
             .scaleExtent([.5, 50])

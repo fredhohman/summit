@@ -75,6 +75,11 @@ button {
     /* letter-spacing: .8px; */
 }
 
+.square-button {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 button:hover {
     /* background-color: var(--lighter); */
     cursor: pointer;
@@ -88,6 +93,22 @@ button:focus {
 button:active {
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
     transition-delay: 0s;
+}
+
+.md-18 {
+    font-size: 18px;
+}
+
+.md-24 {
+    font-size: 24px;
+}
+
+.md-36 {
+    font-size: 36px;
+}
+
+.md-48 {
+    font-size: 48px;
 }
 
 #main {
@@ -213,7 +234,8 @@ button:active {
     display: flex;
     /* height: 25px; */
     margin-top: 4px;
-    width: 120px; /* same as class-bar-text-name */
+    width: 120px;
+    /* same as class-bar-text-name */
 }
 
 .class-bar-bar-background {
@@ -253,6 +275,33 @@ button:active {
     flex: 0 0 64px;
     border-bottom: 1px solid var(--border-color);
     /* padding: 15px; */
+    display: flex;
+}
+
+.layer-glyph {
+    /* fill: var(--gray); */
+    fill: rgb(213, 213, 213);
+    rx: 3px;
+    ry: 3px;
+}
+
+.layer-glyph:hover {
+    fill: var(--main-color);
+    cursor: pointer;
+}
+
+.layer-glyph-label {
+    font-size: 12px;
+    fill: var(--dark);
+}
+
+.layer-glyph-label:hover {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.layer-glyph-selected {
+    fill: var(--main-light);
 }
 
 .embedding-point {
