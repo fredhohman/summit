@@ -309,16 +309,30 @@ button:active {
 }
 
 .embedding-point:hover {
-    fill: #FFC107;
+    fill: var(--main-light);
     cursor: pointer;
 }
 
 .embedding-point-hover {
-    fill: #FFC107;
+    fill: var(--main-light);
 }
 
 .embedding-point-label {
+    fill: var(--dark);
     font-size: 16px;
+    stroke: white;
+    paint-order: stroke;
+    stroke-width: 2px;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+}
+
+.embedding-point-label {
+    cursor: pointer;
+}
+
+.embedding-point-label-selected {
+    fill: var(--main-light);
 }
 
 /* right */
