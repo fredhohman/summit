@@ -304,12 +304,14 @@ d3.json('./data/imagenet.json').then(function (data) {
 
         const embeddingMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
         const embeddingWidth = 700 - embeddingMargin.left - embeddingMargin.right
-        const embeddingHeight = 700 - embeddingMargin.top - embeddingMargin.bottom
+        const embeddingHeight = 790 - embeddingMargin.top - embeddingMargin.bottom // 790 based on laptop screen height
 
         let embeddingSVG = middleInnerEmbeddingWrapper
             .append('svg')
-            .attr("width", embeddingWidth + embeddingMargin.left + embeddingMargin.right)
-            .attr("height", embeddingHeight + embeddingMargin.top + embeddingMargin.bottom)
+            .attr('viewBox', '0 0 ' + (embeddingWidth + embeddingMargin.left + embeddingMargin.right) + ' ' + (embeddingHeight + embeddingMargin.top + embeddingMargin.bottom))
+            .attr('width', 'auto')
+            // .attr("width", embeddingWidth + embeddingMargin.left + embeddingMargin.right)
+            // .attr("height", embeddingHeight + embeddingMargin.top + embeddingMargin.bottom)
             .style('border', '1px solid #eeeeee')
 
         let zoom = d3.zoom()
