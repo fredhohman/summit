@@ -46,6 +46,7 @@
     background-position-x: -147px;
 }
 
+73*2
 /* sprite negative */
 
 .dataset-negative .sprite.index-0 {
@@ -161,4 +162,10 @@
 
 .sprite.index-9 {
     background-position-y: -1323px;
+}
+
+/* single feature vis */
+
+.fv-channel:hover {
+    cursor: pointer;
 }
