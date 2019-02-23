@@ -1,7 +1,7 @@
 import * as d3 from "d3"
 import similarity from "compute-cosine-similarity"
 
-const layerChannelCounts = {
+export const layerChannelCounts = {
     'mixed3a': 256,
     'mixed3b': 480,
     'mixed4a': 508,
@@ -13,7 +13,7 @@ const layerChannelCounts = {
     'mixed5b': 1024
 }
 
-let layer = 'mixed4d';
+export let layer = 'mixed4d';
 let selectedClassIdx = 0;
 const numClassesInClassBar = 250;
 let k = 1; // embedding zoom scale
@@ -49,12 +49,11 @@ let rightInner = d3.select('#right')
 let rightInnerOptions = rightInner.append('div')
     .attr('id', 'right-inner-options')
 
-let rightInnerEmbeddingWrapper = rightInner.append('div')
-    .attr('id', 'right-inner-tree-wrapper')
+let rightInnerDagWrapper = rightInner.append('div')
+    .attr('id', 'right-inner-dag-wrapper')
 
 d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
-    window.data = data;
 
     let selectedClass = data[selectedClassIdx];
     console.log('selectedClass', selectedClass)
@@ -338,8 +337,8 @@ d3.json('./data/imagenet.json').then(function (data) {
 
         let layers = Object.keys(layerChannelCounts);
 
-        const netLayerWidth = 10
-        const netLayerPadding = (netWidth - netMargin.left - (layers.length-1) * netLayerWidth) / layers.length
+        const netLayerWidth = 20
+        const netLayerPadding = (netWidth - netMargin.left - netMargin.right - (layers.length-1) * netLayerWidth) / layers.length
 
         networkSVG
             .selectAll('.layer-glyph')
@@ -579,6 +578,20 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('embedding-point-label', true)
             .attr('x', d => embeddingY(d.embedding[layer].x))
             .attr('y', d => embeddingY(d.embedding[layer].y))
+            .on('mouseover', d => {
+                d3.select('#embedding-point-label-' + d.synset)
+                    .text(d => d.name.replace(/_/g, ' ').toLowerCase())
+                    .classed('embedding-point-label-selected', true)
+            })
+            .on('mouseout', (d) => {
+                d3.selectAll('.embedding-point-label')
+                    .classed('embedding-point-label-selected', false)
+
+                if (k < kZoomLabelThreshold) {
+                    d3.selectAll('.embedding-point-label')
+                        .text('')
+                }
+            })
             .on('click', (d) => {
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
