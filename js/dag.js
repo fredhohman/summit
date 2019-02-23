@@ -1,5 +1,6 @@
 import * as d3 from "d3"
 import { layerChannelCounts, layer } from './class-sidebar'
+import { createGunzip } from "zlib";
 
 console.log(layerChannelCounts)
 let rightInner = d3.select('#right-inner')
@@ -87,7 +88,8 @@ const fvHeight = fvWidth
 const deWidth = 49
 const deHeight = deWidth
 
-const layerVerticalSpace = 150
+const layerVerticalSpace = 200
+const fvHorizontalSpace = 50
 
 const layerIndex = {
     'mixed3a': 8,
@@ -129,10 +131,8 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .attr('r', 10)
             .attr('cx', 0)
             .attr('cy', 0)
-
     }
     drawOrigin()
-
 
     function drawExamplesForLayer(layer) {
         for (let i = 0; i < 10; i++) {
@@ -160,6 +160,17 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .classed(layer + '-' + channel + '-' + 'dataset-p', true)
     }
 
+    function computeChannelCoordinates(layer){
+
+        let i = 0
+        dag[layer].forEach(ch => {
+            ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length - 1) * fvHorizontalSpace) / 2))
+            ch.y = layerIndex[layer] * layerVerticalSpace
+            i = i + 1
+        });
+
+    }
+    
     function drawChannels(layer) {
         
         dagG.selectAll('.fv-ch-' + layer)
@@ -171,29 +182,39 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .attr('width', fvWidth)
             .attr('height', fvHeight)
             .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel.png')
-            .classed('fv-channel', true)
             .attr('clip-path', 'url(#fv-clip-path)')
-            .attr("transform", (d, i) => "translate(" + ((100 + 50) * i) + "," + layerIndex[layer] * layerVerticalSpace  + " )")
+            // .attr("transform", (d, i) => "translate(" + 
+            //     // x: feature vis width and feature vis spacing * i, then subtract total feature vis and horizontal space to center
+            //     (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length-1) * fvHorizontalSpace) / 2)) + "," +
+            //     layerIndex[layer] * layerVerticalSpace  + " )"
+            // )
+            .attr("transform", (d, i) => "translate(" +
+                d.x + ',' +
+                d.y + " )"
+            )
             .attr('id', d => layer + '-' + d.channel + '-channel')
-            .on('mouseover', () => {
+            .classed('fv-ch', true)
+            .classed('fv-ch-' + layer, true)
+            .on('mouseover', function() {
+                d3.selectAll('.fv-ch').attr('filter', 'url(#grayscale)')
+                d3.select(this).attr('filter', null)
 
                 // hard coded below! expand to the right
-                d3.selectAll('.' + layer + '-376-dataset-p')
-                    .transition()
-                    .duration(750)
-                    .attr("transform", (d, i) => {
-                        if (i < 5) {
-                            console.log(layer,i)
-                            return "translate(" + (100 + fvWidth + i * deWidth + (i + 1) * 2) + ", " + 0 + ")"
-                        } else if (i >= 5) {
-                            return "translate(" + (100 + fvWidth + (i - 5) * deWidth + (i - 5 + 1) * 2) + ", " + (fvWidth/2 + 1) + ")"
-                        }
-                    })
+                // d3.selectAll('.' + layer + '-376-dataset-p')
+                //     .transition()
+                //     .duration(750)
+                //     .attr("transform", (d, i) => {
+                //         if (i < 5) {
+                //             console.log(layer,i)
+                //             return "translate(" + (100 + fvWidth + i * deWidth + (i + 1) * 2) + ", " + 0 + ")"
+                //         } else if (i >= 5) {
+                //             return "translate(" + (100 + fvWidth + (i - 5) * deWidth + (i - 5 + 1) * 2) + ", " + (fvWidth/2 + 1) + ")"
+                //         }
+                //     })
 
                 // let t = setInterval(() => {
 
-                d3.select('#mixed4d-101-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-0.png')
-                .attr('filter', 'url(#grayscale)')
+                // d3.select('#mixed4d-101-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-0.png')
                 // // d3.select('#mixed4d-376-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-1.png')
                 // // d3.select('#mixed4d-376-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-2.png')
                 // // d3.select('#mixed4d-376-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-3.png')
@@ -201,7 +222,9 @@ d3.json('./data/test-dag.json').then(function (dag) {
                 // }, 1000);
 
             })
-            .on('mouseout', () => {
+            .on('mouseout', function(d) {
+                d3.selectAll('.fv-ch').attr('filter', null)
+
                 d3.selectAll('.' + layer + '-376-dataset-p')
                     .transition()
                     .duration(750)
@@ -215,10 +238,49 @@ d3.json('./data/test-dag.json').then(function (dag) {
             })
     }
     
-    ['mixed4d', 'mixed4c'].forEach(l => {
+    let layers = ['mixed4d', 'mixed4c', 'mixed4b']
+    // let layers = Object.keys(layerChannelCounts)
+
+    layers.forEach(l => {
+        computeChannelCoordinates(l)
+    });    
+    layers.forEach(l => {
         drawChannels(l) 
     });
 
+    function drawLayerLabels() {
+        dagG.selectAll('.dag-layer-label')
+            .data(layers)
+            .enter()    
+            .append('text')
+            // .attr('x', d => 0 - ((dag[d].length * fvWidth + (dag[d].length - 1) * fvHorizontalSpace) / 2))
+            // .attr('y', (d, i) => layerIndex[d] * layerVerticalSpace)
+            .text(d => d)
+            .attr('transform', d => 'translate(' + (0 - (fvWidth/4 + ((dag[d].length * fvWidth + (dag[d].length - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight/2) + ')rotate(-90)')
+            .attr('text-anchor', 'middle')
+            .classed('dag-layer-label', true)
+
+    }
+    drawLayerLabels()
+
+    function drawEdges(layer, channel) {
+
+        dagG.selectAll('.dag-edges-' + layer)
+            .data(channel)
+            .enter()
+            .append('line')
+            .attr('x1', (d, i) => (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length - 1) * fvHorizontalSpace) / 2)))
+            .attr('y1', 0)
+            .attr('x2', 0)  
+            .attr('y2', 0)
+
+    }
+
+    layers.forEach(l => {
+        dag[l].forEach(ch => {
+            drawEdges(l, ch)
+        });
+    });
 
 })
 
