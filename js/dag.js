@@ -103,6 +103,18 @@ const layerIndex = {
     'mixed5b': 0
 }
 
+const indexLayer = {
+    8: 'mixed3a',
+    7: 'mixed3b',
+    6: 'mixed4a',
+    5: 'mixed4b',
+    4: 'mixed4c',
+    3: 'mixed4d',
+    2: 'mixed4e',
+    1: 'mixed5a',
+    0: 'mixed5b'
+}
+
 dagDefs.append('clipPath')
     .attr('id', 'fv-clip-path')
     .append('rect')
@@ -266,13 +278,23 @@ d3.json('./data/test-dag.json').then(function (dag) {
     function drawEdges(layer, channel) {
 
         dagG.selectAll('.dag-edges-' + layer)
-            .data(channel)
+            .data(channel['prev_channels'])
             .enter()
             .append('line')
-            .attr('x1', (d, i) => (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length - 1) * fvHorizontalSpace) / 2)))
-            .attr('y1', 0)
-            .attr('x2', 0)  
-            .attr('y2', 0)
+            .attr('x1', channel.x + fvWidth/2)
+            .attr('y1', channel.y)
+            .attr('x2', d => {
+                console.log(d)
+                // console.log(dag[indexLayer[layerIndex[layer] + 1]][channel][d['prev_channel']].x)
+                return 0
+            })
+            .attr('y2', d => {
+                console.log(d)
+                // console.log(dag[indexLayer[layerIndex[layer] + 1]][channel][d].y)
+                return 0
+            })
+            .style('stroke', 'black')
+            .style('stroke-width', '2px')
 
     }
 
