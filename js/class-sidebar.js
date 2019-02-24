@@ -213,6 +213,9 @@ d3.json('./data/imagenet.json').then(function (data) {
         //     .classed('class-bar-text-instances', true)
         //     .text(d => d.numOfInstances)
 
+        // classBarTexts.append('div')
+        //     .classed('class-bar-text-image', true)
+
         classBarTexts.append('div')
             .classed('class-bar-text-accuracy', true)
             .text(d => (100 * d.topOneAcc).toFixed(1) + '%')

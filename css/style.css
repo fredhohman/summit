@@ -232,6 +232,11 @@ button:active {
     font-size: 12px;
 }
 
+.class-bar-text-image {
+    flex: 0 0 100px;
+    background-image: url(../data/kit_fox.jpg);
+}
+
 .class-bar-text-accuracy {
     flex: 0 0 40px;
     color: var(--dark);
