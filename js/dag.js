@@ -39,8 +39,8 @@ let rightInnerDagWrapper = d3.select('#right-inner-dag-wrapper')
 
 
 const dagMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
-const dagWidth = 700 - dagMargin.left - dagMargin.right
-const dagHeight = 700 - dagMargin.top - dagMargin.bottom // 790 based on laptop screen height
+const dagWidth = 1000 - dagMargin.left - dagMargin.right
+const dagHeight = 800 - dagMargin.top - dagMargin.bottom // 790 based on laptop screen height
 let k = 1; // dag zoom scale
 
 let zoom = d3.zoom()
@@ -57,7 +57,7 @@ let dagSVG = rightInnerDagWrapper
     .append('svg')
     .attr('viewBox', '0 0 ' + (dagWidth + dagMargin.left + dagMargin.right) + ' ' + (dagHeight + dagMargin.top + dagMargin.bottom))
     .attr('width', '100%')
-    .style('border', '1px solid #eeeeee') // for debugging
+    .style('border-bottom', '1px solid black') // for debugging
     .attr('id', 'dag')
     // .call(zoom)
 
@@ -284,12 +284,12 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .attr('x1', channel.x + fvWidth/2)
             .attr('y1', channel.y)
             .attr('x2', d => {
-                console.log(d)
+                // console.log(d)
                 // console.log(dag[indexLayer[layerIndex[layer] + 1]][channel][d['prev_channel']].x)
                 return 0
             })
             .attr('y2', d => {
-                console.log(d)
+                // console.log(d)
                 // console.log(dag[indexLayer[layerIndex[layer] + 1]][channel][d].y)
                 return 0
             })

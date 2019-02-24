@@ -24,22 +24,28 @@ let leftInner = d3.select('#left')
     .append('div')
     .attr('id', 'left-inner')
 
-let leftInnerOptions = leftInner.append('div')
-    .attr('id', 'left-inner-options')
+let leftInnerEmbeddingOptions = leftInner.append('div')
+    .attr('id', 'left-inner-embedding-options')
 
+let leftInnerEmbedding = leftInner.append('div')
+    .attr('id', 'left-inner-embedding')
+
+let leftInnerClassBarOptions = leftInner.append('div')
+    .attr('id', 'left-inner-class-bar-options')
+    
 let leftInnerClassBarWrapper = leftInner.append('div')
     .attr('id', 'left-inner-class-bar-wrapper')
 
 // middle
-let middleInner = d3.select('#middle')
-    .append('div')
-    .attr('id', 'middle-inner')
+// let middleInner = d3.select('#middle')
+//     .append('div')
+//     .attr('id', 'middle-inner')
 
-let middleInnerOptions = middleInner.append('div')
-    .attr('id', 'middle-inner-options')
+// let middleInnerOptions = middleInner.append('div')
+//     .attr('id', 'middle-inner-options')
 
-let middleInnerEmbeddingWrapper = middleInner.append('div')
-    .attr('id', 'middle-inner-embedding-wrapper')
+// let middleInnerEmbeddingWrapper = middleInner.append('div')
+//     .attr('id', 'middle-inner-embedding-wrapper')
 
 // right
 let rightInner = d3.select('#right')
@@ -58,7 +64,10 @@ d3.json('./data/imagenet.json').then(function (data) {
     let selectedClass = data[selectedClassIdx];
     console.log('selectedClass', selectedClass)
 
-    leftInnerOptions.append('button')
+    leftInnerClassBarOptions
+        .append('div')
+        .classed('left-inner-option-wrapper', true)
+        .append('button')
         .attr('type', 'button')
         .text('Accuracy ascending')
         .on('click', () => {
@@ -71,10 +80,10 @@ d3.json('./data/imagenet.json').then(function (data) {
         // .classed('md-24', true)
         // .text('arrow_downward')
 
-    leftInnerOptions.append('br')
-    leftInnerOptions.append('br')
-
-    leftInnerOptions.append('button')
+    leftInnerClassBarOptions
+        .append('div')
+        .classed('left-inner-option-wrapper', true)
+        .append('button')
         .attr('type', 'button')
         .text('Accuracy descending')
         .on('click', () => {
@@ -295,6 +304,26 @@ d3.json('./data/imagenet.json').then(function (data) {
     function makeEmbedding(data, layer) {
         console.log('make embedding')
 
+            {/* < div class="header-content" >
+                <span id="dataset-name" class="smalltext-header">dataset</span>
+                <div id="dataset-value" class="header-value">ImageNet</div>
+                </div > */}
+
+        let leftInnerEmbeddingOptionsLabel = leftInnerEmbeddingOptions
+            .append('div')
+            .classed('left-inner-option-wrapper', true)
+
+        leftInnerEmbeddingOptionsLabel
+            .append('span')
+            .classed("smalltext-header", true)
+            .style('color', '#666666')
+            .text('layer')
+
+        leftInnerEmbeddingOptionsLabel
+            .append('div')
+            .classed("header-value", true)
+            .text('mixed')
+        
         // let embeddingSelect = middleInnerOptions
         //     .append('select')
         //     .attr('id', 'embedding-select')
@@ -319,7 +348,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         const netHeight = 64 - netMargin.top - netMargin.bottom
         const middleLineHeight = 25;
 
-        let networkSVG = middleInnerOptions
+        let networkSVG = leftInnerEmbeddingOptions
             .append('svg')
             .attr('width', netWidth + 'px')
             .attr('height', netHeight + 'px')
@@ -381,12 +410,9 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .classed('layer-glyph-selected', true)
             })
         
-        middleInnerOptions
+        leftInnerEmbeddingOptions
             .append('div')
-            .style('display', 'flex')
-            .style('flex-direction', 'column')
-            .style('justify-content', 'center')
-            .style('padding-left', '10px')
+            .classed('left-inner-option-wrapper', true)
             .append('button')
                 .attr('type', 'button')
                 .classed('square-button', true)
@@ -402,10 +428,10 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('layer-glyph-selected', true) // init selected layer
 
         const embeddingMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
-        const embeddingWidth = 700 - embeddingMargin.left - embeddingMargin.right
-        const embeddingHeight = 790 - embeddingMargin.top - embeddingMargin.bottom // 790 based on laptop screen height
+        const embeddingWidth = 500 - embeddingMargin.left - embeddingMargin.right // 500 from #left.flex
+        const embeddingHeight = 500 - embeddingMargin.top - embeddingMargin.bottom // 500 from #left.flex
 
-        let embeddingSVG = middleInnerEmbeddingWrapper
+        let embeddingSVG = leftInnerEmbedding
             .append('svg')
             .attr('viewBox', '0 0 ' + (embeddingWidth + embeddingMargin.left + embeddingMargin.right) + ' ' + (embeddingHeight + embeddingMargin.top + embeddingMargin.bottom))
             .attr('width', '100%')

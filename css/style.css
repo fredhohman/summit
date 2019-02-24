@@ -118,7 +118,8 @@ button:active {
 
 #left {
     background: var(--background-color);
-    flex: 0 0 320px;
+    /* flex: 0 0 320px; */
+    flex: 0 0 500px;
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border-color);
@@ -137,7 +138,7 @@ button:active {
     flex: 1;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid var(--border-color);
+    /* border-left: 1px solid var(--border-color); */
 }
 
 /* left */
@@ -148,16 +149,38 @@ button:active {
     flex-direction: column;
 }
 
-#left-inner-options {
+#left-inner-embedding-options {
     background: var(--background-color);
     /* width: 100%; */
-    flex: 0 0 200px;
+    flex: 0 0 64px;
+    /* padding: 15px; */
+    display: flex;
+}
+
+#left-inner-embedding {
     border-bottom: 1px solid var(--border-color);
-    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    height: 500px;
+}
+
+#left-inner-class-bar-options {
+    background: var(--background-color);
+    /* width: 100%; */
+    flex: 0 0 64px;
+    /* padding: 15px; */
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
 }
 
 #left-inner-class-bar-wrapper {
     overflow: scroll;
+}
+
+.left-inner-option-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 10px;
 }
 
 .class-bar {
