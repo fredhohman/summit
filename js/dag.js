@@ -88,7 +88,7 @@ const fvHeight = fvWidth
 const deWidth = 49
 const deHeight = deWidth
 
-const layerVerticalSpace = 200
+const layerVerticalSpace = 300
 const fvHorizontalSpace = 50
 
 const layerIndex = {
@@ -291,24 +291,52 @@ d3.json('./data/test-dag.json').then(function (dag) {
 
     function drawEdgesPerLayer(layer, channel) {
 
-        dagG.selectAll('.dag-edges-' + layer)
+        // dagG.selectAll('.dag-edge-' + layer)
+        //     .data(channel['prev_channels'])
+        //     .enter()
+        //     .append('line')
+        //     .attr('x1', channel.x + fvWidth/2)
+        //     .attr('y1', channel.y)
+        //     .attr('x2', d => {
+        //         let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
+        //         // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
+        //         let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+        //         return channelToConnectTo.x + fvWidth / 2
+        //     })
+        //     .attr('y2', d => {
+        //         let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
+        //         // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
+        //         let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+        //         return channelToConnectTo.y + fvHeight / 2
+        //     })
+        //     .style('stroke-width', d => edgeScale(d.count))
+        //     .classed('dag-edge', true)
+        //     // .classed('dag-edge-' + layer, true)
+
+        dagG.selectAll('.dag-edge-' + layer)
             .data(channel['prev_channels'])
             .enter()
-            .append('line')
-            .attr('x1', channel.x + fvWidth/2)
-            .attr('y1', channel.y)
-            .attr('x2', d => {
+            .append('path')
+            // .attr('x1', channel.x + fvWidth / 2)
+            // .attr('y1', channel.y)
+            .attr('d', d => {
                 let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
+                // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
                 let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
-                return channelToConnectTo.x + fvWidth / 2
+                // return channelToConnectTo.x + fvWidth / 2
+                return "M" + (channel.x + fvWidth/2) + "," + (channel.y + fvHeight)
+                    + "C" + channel.x + "," + (channel.y + channelToConnectTo.y) / 2
+                    + " " + channelToConnectTo.x + "," + (channel.y + channelToConnectTo.y) / 2
+                    + " " + (channelToConnectTo.x + fvWidth/2) + "," + channelToConnectTo.y;
             })
-            .attr('y2', d => {
-                let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
-                let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
-                return channelToConnectTo.y + fvHeight / 2
-            })
-            .style('stroke', 'black')
             .style('stroke-width', d => edgeScale(d.count))
+            .classed('dag-edge', true)
+            // .classed('dag-edge-' + layer, true)
+
+        // return "M" + d.x + "," + d.y
+        //     + "C" + d.x + "," + (d.y + d.parent.y) / 2
+        //     + " " + d.parent.x + "," + (d.y + d.parent.y) / 2
+        //     + " " + d.parent.x + "," + d.parent.y;
 
     }
 
