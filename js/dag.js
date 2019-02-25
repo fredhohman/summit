@@ -210,7 +210,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .attr('xlink:href', '../data/feature-vis/dataset-p/' + layer + '-' + channel.channel + '-' + 'dataset-p-' + index + '.png')
             .classed('fv-de', true)
             .attr('clip-path', 'url(#de-clip-path)')
-            .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 2) + ")")
+            .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 4) + ")")
             .attr('id', layer + '-' + channel.channel + '-' + 'dataset-p-' + index)
             .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
     }
@@ -276,7 +276,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
                     .transition()
                     .duration(750)
                     .attr("transform", (d, i) => {
-                        return "translate(" + curr_channel.x + ", " + (curr_channel.y + fvHeight/2)  + ")"
+                        return "translate(" + curr_channel.x + ", " + (curr_channel.y + fvHeight / 4)  + ")"
                     })
             })
 
