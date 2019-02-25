@@ -385,6 +385,14 @@ button:active {
     font-weight: 700;
 }
 
+.fv-ch:hover {
+    cursor: pointer;
+}
+
+.fv-de:hover {
+    cursor: pointer;
+}
+
 .fv-ch-label {
     font-size: 12px;
     fill: var(--dark);
@@ -393,4 +401,9 @@ button:active {
 .dag-edge {
     stroke: var(--gray);
     fill: none;
+}
+
+.dag-edge:hover {
+    stroke: var(--main-light);
+    cursor: crosshair;
 }

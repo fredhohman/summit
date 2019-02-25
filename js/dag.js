@@ -267,7 +267,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
                 // }, 1000);
 
             })
-            .on('mouseout', function(d) {
+            .on('mouseout', function() {
                 d3.selectAll('.fv-ch').attr('filter', null)
 
                 let curr_channel = d3.select(this).data()[0]
@@ -354,6 +354,25 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .style('stroke-width', d => edgeScale(d.count))
             .classed('dag-edge', true)
             .classed('dag-edge-' + layer, true)
+            .attr('id', d => {
+                let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
+                let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+                return 'dag-edge-' + layer + '-' + channel.channel + '-' + layerToConnectTo + '-' + channelToConnectTo.channel
+            })
+            .on('mouseover', function() {
+                let edgeID = d3.select(this).attr('id').split('-')
+                let topLayer = edgeID[2]
+                let topChannel = edgeID[3]
+                let bottomLayer = edgeID[4]
+                let bottomChannel = edgeID[5]
+
+                d3.selectAll('.fv-ch').attr('filter', 'url(#grayscale)')
+                d3.select('#' + topLayer + '-' + topChannel + '-channel').attr('filter', null)
+                d3.select('#' + bottomLayer + '-' + bottomChannel + '-channel').attr('filter', null)
+            })
+            .on('mouseout', function () {
+                d3.selectAll('.fv-ch').attr('filter', null)
+            })
     }
 
     function drawEdges() {
