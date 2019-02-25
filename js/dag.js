@@ -285,7 +285,11 @@ d3.json('./data/test-dag.json').then(function (dag) {
     }
     drawLayerLabels()
 
-    function drawEdges(layer, channel) {
+    let edgeScale = d3.scaleLinear()
+        .domain([0, 1300]) // check this, do d3.max instead?
+        .range([0, 5])
+
+    function drawEdgesPerLayer(layer, channel) {
 
         dagG.selectAll('.dag-edges-' + layer)
             .data(channel['prev_channels'])
@@ -294,32 +298,36 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .attr('x1', channel.x + fvWidth/2)
             .attr('y1', channel.y)
             .attr('x2', d => {
-                console.log(d)
-                // console.log(dag[indexLayer[layerIndex[layer] + 1]][channel][d['prev_channel']].x)
-                return 0
+                let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
+                let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+                return channelToConnectTo.x + fvWidth / 2
             })
             .attr('y2', d => {
-                // console.log(d)
-                // console.log(dag[indexLayer[layerIndex[layer] + 1]][channel][d].y)
-                return 0
+                let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
+                let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+                return channelToConnectTo.y + fvHeight / 2
             })
             .style('stroke', 'black')
-            .style('stroke-width', '2px')
+            .style('stroke-width', d => edgeScale(d.count))
 
     }
 
-    layers.forEach(l => {
-        // 
-        // HARD CODED, REPLACED WITH MIXED5B
-        // 
-        console.log(l)
-        // if (l !== 'mixed4d') {
-        if (l === 'mixed4c') {
-            dag[l].forEach(ch => {
-                drawEdges(l, ch)
-            });   
-        }
-    });
+    function drawEdges() {
+        layers.forEach(l => {
+            // 
+            // HARD CODED, REPLACED WITH MIXED5B
+            // 
+            console.log(l)
+            // if (l !== 'mixed4d') {
+            if (l === 'mixed4c') {
+                dag[l].forEach(ch => {
+                    drawEdgesPerLayer(l, ch)
+                });
+            }
+        });
+    }
+    drawEdges()
+
 
 })
 
