@@ -436,8 +436,8 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('layer-glyph-selected', true) // init selected layer
 
         const embeddingMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
-        const embeddingWidth = 500 - embeddingMargin.left - embeddingMargin.right // 500 from #left.flex
-        const embeddingHeight = 500 - embeddingMargin.top - embeddingMargin.bottom // 500 from #left.flex
+        const embeddingWidth = 400 - embeddingMargin.left - embeddingMargin.right // 400 from #left.flex
+        const embeddingHeight = 400 - embeddingMargin.top - embeddingMargin.bottom // 400 from #left.flex
 
         let embeddingSVG = leftInnerEmbedding
             .append('svg')

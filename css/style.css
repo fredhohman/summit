@@ -119,7 +119,7 @@ button:active {
 #left {
     background: var(--background-color);
     /* flex: 0 0 320px; */
-    flex: 0 0 500px;
+    flex: 0 0 400px;
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border-color);
