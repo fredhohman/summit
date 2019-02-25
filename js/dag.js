@@ -248,6 +248,16 @@ d3.json('./data/test-dag.json').then(function (dag) {
                         }
                     })
             })
+
+        dagG.selectAll('.fv-ch-label-' + layer)
+            .data(dag[layer])
+            .enter()
+            .append('text')
+            .attr('x', d => d.x)
+            .attr('y', d => d.y - 3)
+            .text(d => d.channel)
+            .classed('fv-ch-label', true)
+
     }
     
     let layers = ['mixed4d', 'mixed4c', 'mixed4b']
@@ -284,7 +294,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .attr('x1', channel.x + fvWidth/2)
             .attr('y1', channel.y)
             .attr('x2', d => {
-                // console.log(d)
+                console.log(d)
                 // console.log(dag[indexLayer[layerIndex[layer] + 1]][channel][d['prev_channel']].x)
                 return 0
             })
@@ -299,9 +309,16 @@ d3.json('./data/test-dag.json').then(function (dag) {
     }
 
     layers.forEach(l => {
-        dag[l].forEach(ch => {
-            drawEdges(l, ch)
-        });
+        // 
+        // HARD CODED, REPLACED WITH MIXED5B
+        // 
+        console.log(l)
+        // if (l !== 'mixed4d') {
+        if (l === 'mixed4c') {
+            dag[l].forEach(ch => {
+                drawEdges(l, ch)
+            });   
+        }
     });
 
 })

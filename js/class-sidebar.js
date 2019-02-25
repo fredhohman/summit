@@ -58,8 +58,13 @@ let rightInnerOptions = rightInner.append('div')
 let rightInnerDagWrapper = rightInner.append('div')
     .attr('id', 'right-inner-dag-wrapper')
 
+const formatNumberThousands = d3.format(',')
+
 d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
+
+    d3.select('#classes-value').text(formatNumberThousands(data.length))
+    d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
 
     let selectedClass = data[selectedClassIdx];
     console.log('selectedClass', selectedClass)
@@ -359,19 +364,19 @@ d3.json('./data/imagenet.json').then(function (data) {
             .attr("transform", "translate(" + netMargin.left + "," + netMargin.top + ")")
             .attr('id', 'net')
         
-        networkSVG
-            .append('line')
-            .attr('x1', 0)
-            .attr('x1', netWidth)
-            .attr('y1', middleLineHeight)
-            .attr('y2', middleLineHeight)
-            .style('stroke', 'rgba(0, 0, 0, 0.15)')
-
         let layers = Object.keys(layerChannelCounts);
 
         const netLayerWidth = 20
         const netLayerPadding = (netWidth - netMargin.left - netMargin.right - (layers.length-1) * netLayerWidth) / layers.length
 
+        networkSVG
+            .append('line')
+            .attr('x1', 0)
+            .attr('x2', layers.length * netLayerWidth + (layers.length - 1) * netLayerPadding)
+            .attr('y1', middleLineHeight)
+            .attr('y2', middleLineHeight)
+            .style('stroke', 'rgba(0, 0, 0, 0.15)')
+            
         networkSVG
             .selectAll('.layer-glyph')
             .data(layers)

@@ -383,3 +383,8 @@ button:active {
     font-size: 18px;
     color: var(--darker);
 }
+
+.fv-ch-label {
+    font-size: 12px;
+    fill: var(--dark);
+}
