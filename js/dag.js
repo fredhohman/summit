@@ -146,19 +146,37 @@ d3.json('./data/test-dag.json').then(function (dag) {
     }
     drawOrigin()
 
-    function drawExamplesForLayer(layer) {
+    function computeChannelCoordinates(layer) {
+
+        let i = 0
+        dag[layer].forEach(ch => {
+            ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length - 1) * fvHorizontalSpace) / 2))
+            ch.y = layerIndex[layer] * layerVerticalSpace
+            i = i + 1
+        });
+
+    }
+
+    let layers = ['mixed4d', 'mixed4c', 'mixed4b']
+    // let layers = Object.keys(layerChannelCounts)
+
+    layers.forEach(l => {
+        computeChannelCoordinates(l)
+    });
+
+    function drawExamplesForLayerOne(layer) {
         for (let i = 0; i < 10; i++) {
             if (i < 5) {
-                drawDatasetExamples(layer, 376, i, 0, 0)
+                drawDatasetExamplesOne(layer, 376, i)
             } else if (i >= 5) {
-                drawDatasetExamples(layer, 376, i, 0, fvWidth/2 + 1)
+                drawDatasetExamplesOne(layer, 376, i)
             }
         }
     }
-    // drawExamplesForLayer(layer)
+    // drawExamplesForLayerOne(layer)
 
 
-    function drawDatasetExamples(layer, channel, index, x, y) {
+    function drawDatasetExamplesOne(layer, channel, index) {
         dagG.append('image')
             .attr('x', 0)
             .attr('y', 0)
@@ -172,15 +190,29 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .classed(layer + '-' + channel + '-' + 'dataset-p', true)
     }
 
-    function computeChannelCoordinates(layer){
+    function drawExamplesForLayerTwo(layer) {
+        for (let ch = 0; ch < dag[layer].length; ch++) {
+            for (let i = 0; i < 10; i++) {
+                drawDatasetExamplesTwo(layer, dag[layer][ch], i)
+            }   
+        }
+    }
+    layers.forEach(l => {
+        drawExamplesForLayerTwo(l)
+    });
 
-        let i = 0
-        dag[layer].forEach(ch => {
-            ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length - 1) * fvHorizontalSpace) / 2))
-            ch.y = layerIndex[layer] * layerVerticalSpace
-            i = i + 1
-        });
-
+    function drawDatasetExamplesTwo(layer, channel, index) {
+        dagG.append('image')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', deWidth)
+            .attr('height', deHeight)
+            .attr('xlink:href', '../data/feature-vis/dataset-p/' + layer + '-' + channel.channel + '-' + 'dataset-p-' + index + '.png')
+            .classed('fv-de', true)
+            .attr('clip-path', 'url(#de-clip-path)')
+            .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 2) + ")")
+            .attr('id', layer + '-' + channel.channel + '-' + 'dataset-p-' + index)
+            .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
     }
     
     function drawChannels(layer) {
@@ -211,18 +243,19 @@ d3.json('./data/test-dag.json').then(function (dag) {
                 d3.selectAll('.fv-ch').attr('filter', 'url(#grayscale)')
                 d3.select(this).attr('filter', null)
 
+                let curr_channel = d3.select(this).data()[0]
+
                 // hard coded below! expand to the right
-                // d3.selectAll('.' + layer + '-376-dataset-p')
-                //     .transition()
-                //     .duration(750)
-                //     .attr("transform", (d, i) => {
-                //         if (i < 5) {
-                //             console.log(layer,i)
-                //             return "translate(" + (100 + fvWidth + i * deWidth + (i + 1) * 2) + ", " + 0 + ")"
-                //         } else if (i >= 5) {
-                //             return "translate(" + (100 + fvWidth + (i - 5) * deWidth + (i - 5 + 1) * 2) + ", " + (fvWidth/2 + 1) + ")"
-                //         }
-                //     })
+                d3.selectAll('.' + layer + '-' + curr_channel.channel + '-dataset-p')
+                    .transition()
+                    .duration(750)
+                    .attr("transform", (d, i) => {
+                        if (i < 5) {
+                            return "translate(" + (curr_channel.x + i * deWidth + (i + 1) * 2) + ", " + (curr_channel.y - deHeight - 1) + ")"
+                        } else if (i >= 5) {
+                            return "translate(" + (curr_channel.x + (i-5) * deWidth + (i - 5 + 1) * 2) + ", " + (curr_channel.y - 2*(deHeight + 1)) + ")"
+                        }
+                    })
 
                 // let t = setInterval(() => {
 
@@ -237,15 +270,13 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .on('mouseout', function(d) {
                 d3.selectAll('.fv-ch').attr('filter', null)
 
-                d3.selectAll('.' + layer + '-376-dataset-p')
+                let curr_channel = d3.select(this).data()[0]
+
+                d3.selectAll('.' + layer + '-' + curr_channel.channel + '-dataset-p')
                     .transition()
                     .duration(750)
                     .attr("transform", (d, i) => {
-                        if (i < 5) {
-                            return "translate(" + 125 + ", " + 100 + ")"
-                        } else if (i >= 5) {
-                            return "translate(" + 125 + ", " + (150 + 1) + ")"
-                        }
+                        return "translate(" + curr_channel.x + ", " + (curr_channel.y + fvHeight/2)  + ")"
                     })
             })
 
@@ -259,17 +290,11 @@ d3.json('./data/test-dag.json').then(function (dag) {
             .classed('fv-ch-label', true)
 
     }
-    
-    let layers = ['mixed4d', 'mixed4c', 'mixed4b']
-    // let layers = Object.keys(layerChannelCounts)
-
     layers.forEach(l => {
-        computeChannelCoordinates(l)
-    });    
-    layers.forEach(l => {
-        drawChannels(l) 
+        drawChannels(l)
     });
 
+    
     function drawLayerLabels() {
         dagG.selectAll('.dag-layer-label')
             .data(layers)
@@ -313,17 +338,14 @@ d3.json('./data/test-dag.json').then(function (dag) {
         //     .classed('dag-edge', true)
         //     // .classed('dag-edge-' + layer, true)
 
-        dagG.selectAll('.dag-edge-' + layer)
+        dagG.selectAll('.dag-edge-temp-' + layer) // need the throwaway class since we do this for every channel and use multiple classes
             .data(channel['prev_channels'])
             .enter()
             .append('path')
-            // .attr('x1', channel.x + fvWidth / 2)
-            // .attr('y1', channel.y)
             .attr('d', d => {
                 let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
                 // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
                 let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
-                // return channelToConnectTo.x + fvWidth / 2
                 return "M" + (channel.x + fvWidth/2) + "," + (channel.y + fvHeight)
                     + "C" + channel.x + "," + (channel.y + channelToConnectTo.y) / 2
                     + " " + channelToConnectTo.x + "," + (channel.y + channelToConnectTo.y) / 2
@@ -331,13 +353,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
             })
             .style('stroke-width', d => edgeScale(d.count))
             .classed('dag-edge', true)
-            // .classed('dag-edge-' + layer, true)
-
-        // return "M" + d.x + "," + d.y
-        //     + "C" + d.x + "," + (d.y + d.parent.y) / 2
-        //     + " " + d.parent.x + "," + (d.y + d.parent.y) / 2
-        //     + " " + d.parent.x + "," + d.parent.y;
-
+            .classed('dag-edge-' + layer, true)
     }
 
     function drawEdges() {
@@ -346,8 +362,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
             // HARD CODED, REPLACED WITH MIXED5B
             // 
             console.log(l)
-            // if (l !== 'mixed4d') {
-            if (l === 'mixed4c') {
+            if (l !== 'mixed4b') {
                 dag[l].forEach(ch => {
                     drawEdgesPerLayer(l, ch)
                 });

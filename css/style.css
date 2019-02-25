@@ -382,6 +382,7 @@ button:active {
 .dag-layer-label {
     font-size: 18px;
     color: var(--darker);
+    font-weight: 700;
 }
 
 .fv-ch-label {
