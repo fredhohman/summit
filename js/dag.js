@@ -187,18 +187,18 @@ d3.json('./data/test-dag.json').then(function (dag) {
         computeChannelCoordinates(l)
     });
 
-    function drawExamplesForLayerTwo(layer) {
+    function drawExamplesForLayer(layer) {
         for (let ch = 0; ch < dag[layer].length; ch++) {
             for (let i = 0; i < 10; i++) {
-                drawDatasetExamplesTwo(layer, dag[layer][ch], i)
+                drawDatasetExamples(layer, dag[layer][ch], i)
             }   
         }
     }
     layers.forEach(l => {
-        drawExamplesForLayerTwo(l)
+        drawExamplesForLayer(l)
     });
 
-    function drawDatasetExamplesTwo(layer, channel, index) {
+    function drawDatasetExamples(layer, channel, index) {
         dagG.append('image')
             .attr('x', 0)
             .attr('y', 0)
