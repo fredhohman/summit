@@ -187,32 +187,6 @@ d3.json('./data/test-dag.json').then(function (dag) {
         computeChannelCoordinates(l)
     });
 
-    function drawExamplesForLayerOne(layer) {
-        for (let i = 0; i < 10; i++) {
-            if (i < 5) {
-                drawDatasetExamplesOne(layer, 376, i)
-            } else if (i >= 5) {
-                drawDatasetExamplesOne(layer, 376, i)
-            }
-        }
-    }
-    // drawExamplesForLayerOne(layer)
-
-
-    function drawDatasetExamplesOne(layer, channel, index) {
-        dagG.append('image')
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('width', deWidth)
-            .attr('height', deHeight)
-            .attr('xlink:href', '../data/feature-vis/' + layer + '-' + channel + '-' + 'dataset-p-' + index + '.png')
-            .classed('fv-de', true)
-            .attr('clip-path', 'url(#de-clip-path)')
-            .attr("transform", "translate(" + x + ", " + y + ")")
-            .attr('id', layer + '-' + channel + '-' + 'dataset-p-' + index)
-            .classed(layer + '-' + channel + '-' + 'dataset-p', true)
-    }
-
     function drawExamplesForLayerTwo(layer) {
         for (let ch = 0; ch < dag[layer].length; ch++) {
             for (let i = 0; i < 10; i++) {
