@@ -347,7 +347,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         // embeddingSelect
         //     .on('change', () => {
         //         layer = document.getElementById('embedding-select').value
-        //         center()
+        //         centerEmbedding()
         //         updateEmbedding(layer)
         //     })
 
@@ -390,7 +390,7 @@ d3.json('./data/imagenet.json').then(function (data) {
             .attr('id', d => 'layer-glyph-' + d)
             .on('click', (d) => {
                 layer = d
-                center()
+                centerEmbedding()
                 updateEmbedding(layer)
                 d3.selectAll('.layer-glyph')
                     .classed('layer-glyph-selected', false)
@@ -410,7 +410,7 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('layer-glyph-label', true)
             .on('click', (d) => {
                 layer = d
-                center()
+                centerEmbedding()
                 updateEmbedding(layer)
                 d3.selectAll('.layer-glyph')
                     .classed('layer-glyph-selected', false)
@@ -425,7 +425,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 .attr('type', 'button')
                 .classed('square-button', true)
                 .on('click', () => {
-                    center()
+                    centerEmbedding()
                 })
                 .append('i')
                 .classed('material-icons', true)
@@ -479,15 +479,8 @@ d3.json('./data/imagenet.json').then(function (data) {
             }
         }
 
-        function center() {
-            // embeddingSVG = d3.select("#container");
-            // zoom.translate([0, 0]); // Resetting translate
-            // zoom.scale(1);          // Resetting scale
-            // embeddingSVG.transition()
-            //     .duration(750)
-            //     .attr("transform", "translate(0, 0)scale(1)");
+        function centerEmbedding() {
             zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(1));
-
         }
 
         let zoomRect = embeddingSVG.append("rect")
@@ -565,7 +558,7 @@ d3.json('./data/imagenet.json').then(function (data) {
             .enter()
             .append('circle')
             // .attr('r', d => drPointSizeScale(d.accuracy))
-            .attr('r', 5)
+            .attr('r', 3)
             .attr('cx', d => embeddingY(d.embedding[layer].x))
             .attr('cy', d => embeddingY(d.embedding[layer].y))
             .classed('embedding-point', true)

@@ -377,7 +377,16 @@ button:active {
     flex: 0 0 64px;
     border-bottom: 1px solid var(--border-color);
     /* padding: 15px; */
+    display: flex;
 }
+
+.right-inner-option-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 10px;
+}
+
 
 .dag-layer-label {
     font-size: 18px;

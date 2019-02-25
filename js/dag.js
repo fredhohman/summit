@@ -36,7 +36,8 @@ let rightInnerDagWrapper = d3.select('#right-inner-dag-wrapper')
 //     // .append('span')
 //         // .attr('id', 'test-span')
 
-
+let layers = ['mixed4d', 'mixed4c', 'mixed4b']
+        // let layers = Object.keys(layerChannelCounts)
 
 const dagMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
 const dagWidth = 1000 - dagMargin.left - dagMargin.right
@@ -146,6 +147,32 @@ d3.json('./data/test-dag.json').then(function (dag) {
     }
     drawOrigin()
 
+    function centerDag() {
+        let centerY = layers.length * (fvHeight + layerVerticalSpace)
+        let layerLengths = []
+        layers.forEach(l => {
+            layerLengths.push(dag[l].length)
+        })
+        let centerX = d3.max(layerLengths) * (fvWidth + fvHorizontalSpace) / 2
+
+        console.log(centerX, centerY)
+        zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(0.2).translate(centerX, centerY));
+    }
+
+    rightInnerOptions
+        .append('div')
+        .classed('right-inner-option-wrapper', true)
+        .append('button')
+        .attr('type', 'button')
+        .classed('square-button', true)
+        .on('click', () => {
+            centerDag()
+        })
+        .append('i')
+        .classed('material-icons', true)
+        .classed('md-24', true)
+        .text('home')
+
     function computeChannelCoordinates(layer) {
 
         let i = 0
@@ -156,10 +183,6 @@ d3.json('./data/test-dag.json').then(function (dag) {
         });
 
     }
-
-    let layers = ['mixed4d', 'mixed4c', 'mixed4b']
-    // let layers = Object.keys(layerChannelCounts)
-
     layers.forEach(l => {
         computeChannelCoordinates(l)
     });
