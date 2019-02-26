@@ -148,15 +148,16 @@ d3.json('./data/test-dag.json').then(function (dag) {
     drawOrigin()
 
     function centerDag() {
-        let centerY = layers.length * (fvHeight + layerVerticalSpace)
         let layerLengths = []
         layers.forEach(l => {
             layerLengths.push(dag[l].length)
         })
-        let centerX = d3.max(layerLengths) * (fvWidth + fvHorizontalSpace) / 2
+        let centerX = (d3.max(layerLengths) * (fvWidth + fvHorizontalSpace))
+
+        let centerY = layers.length * (fvHeight + layerVerticalSpace) / 2
 
         console.log(centerX, centerY)
-        zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(0.2).translate(centerX, centerY));
+        zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(0.1).translate(centerX, centerY));
     }
 
     rightInnerOptions
