@@ -212,7 +212,25 @@ d3.json('./data/chain_270.json').then(function (dag) {
             .attr('xlink:href', '../data/feature-vis/dataset-p/' + layer + '-' + channel.channel + '-' + 'dataset-p-' + index + '.png')
             .classed('fv-de', true)
             .attr('clip-path', 'url(#de-clip-path)')
-            .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 4) + ")")
+            // .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, left
+            // .attr("transform", "translate(" + (channel.x + fvWidth / 4) + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, center
+            // .attr("transform", () => { // above channel
+            //     if (index < 5) {
+            //         return "translate(" + (channel.x + index * deWidth + (index + 1) * 2) + ", " + (channel.y - deHeight - 1) + ")"
+            //     } else if (index >= 5) {
+            //         return "translate(" + (channel.x + (index - 5) * deWidth + (index - 5 + 1) * 2) + ", " + (channel.y - 2 * (deHeight + 1)) + ")"
+            //     }
+            // })
+            .attr("transform", () => { // centered up top
+                if (index < 5) {
+                    return "translate(" + ((channel.x + index * deWidth + (index + 1) * 2)-deWidth*1.5 - 1.5*2) + ", " + (channel.y - deHeight - 1) + ")"
+                } else if (index >= 5) {
+                    return "translate(" + ((channel.x + (index - 5) * deWidth + (index - 5 + 1) * 2)-deWidth*1.5 - 1.5*2) + ", " + (channel.y - 2 * (deHeight + 1)) + ")"
+                }
+            })
+            .style('opacity', 0)
+            .style('display', 'none')
+
             .attr('id', layer + '-' + channel.channel + '-' + 'dataset-p-' + index)
             .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
     }
@@ -249,15 +267,24 @@ d3.json('./data/chain_270.json').then(function (dag) {
 
                 // hard coded below! expand to the right
                 d3.selectAll('.' + layer + '-' + curr_channel.channel + '-dataset-p')
-                    .transition()
-                    .duration(750)
-                    .attr("transform", (d, i) => {
-                        if (i < 5) {
-                            return "translate(" + (curr_channel.x + i * deWidth + (i + 1) * 2) + ", " + (curr_channel.y - deHeight - 1) + ")"
-                        } else if (i >= 5) {
-                            return "translate(" + (curr_channel.x + (i-5) * deWidth + (i - 5 + 1) * 2) + ", " + (curr_channel.y - 2*(deHeight + 1)) + ")"
-                        }
-                    })
+                    // .transition()
+                    // .duration(750)
+                    .style('display', 'block')
+                    .style('opacity', 1)
+                    // .attr("transform", (d,i) => { // centered up top
+                    //     if (i < 5) {
+                    //         return "translate(" + ((curr_channel.x + i * deWidth + (i + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (curr_channel.y - deHeight - 1) + ")"
+                    //     } else if (i >= 5) {
+                    //         return "translate(" + ((curr_channel.x + (i - 5) * deWidth + (i - 5 + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (curr_channel.y - 2 * (deHeight + 1)) + ")"
+                    //     }
+                    // })
+                    // .attr("transform", (d, i) => { // centered starting at left corner
+                    //     if (i < 5) {
+                    //         return "translate(" + (curr_channel.x + i * deWidth + (i + 1) * 2) + ", " + (curr_channel.y - deHeight - 1) + ")"
+                    //     } else if (i >= 5) {
+                    //         return "translate(" + (curr_channel.x + (i-5) * deWidth + (i - 5 + 1) * 2) + ", " + (curr_channel.y - 2*(deHeight + 1)) + ")"
+                    //     }
+                    // })
 
                 // let t = setInterval(() => {
 
@@ -277,9 +304,12 @@ d3.json('./data/chain_270.json').then(function (dag) {
                 d3.selectAll('.' + layer + '-' + curr_channel.channel + '-dataset-p')
                     .transition()
                     .duration(750)
-                    .attr("transform", (d, i) => {
-                        return "translate(" + curr_channel.x + ", " + (curr_channel.y + fvHeight / 4)  + ")"
-                    })
+                    // .attr("transform", (d, i) => {
+                        // return "translate(" + curr_channel.x + ", " + (curr_channel.y + fvHeight / 4)  + ")" // center left
+                        // return "translate(" + (curr_channel.x+fvWidth/4) + ", " + (curr_channel.y + fvHeight / 4) + ")"
+                    // })
+                    .style('opacity', 0)
+                    .style('display', 'none')
             })
 
         dagG.selectAll('.fv-ch-label-' + layer)
