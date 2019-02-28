@@ -36,8 +36,9 @@ let rightInnerDagWrapper = d3.select('#right-inner-dag-wrapper')
 //     // .append('span')
 //         // .attr('id', 'test-span')
 
-let layers = ['mixed4d', 'mixed4c', 'mixed4b']
-        // let layers = Object.keys(layerChannelCounts)
+// let layers = ['mixed5b', 'mixed5a', 'mixed4e', 'mixed4d']
+let layers = ['mixed5b', 'mixed5a', 'mixed4e']
+// let layers = Object.keys(layerChannelCounts)
 
 const dagMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
 const dagWidth = 1000 - dagMargin.left - dagMargin.right
@@ -136,8 +137,9 @@ dagDefs.append('clipPath')
     .attr('rx', 4)
     .attr('ry', 4)
     
-d3.json('./data/test-dag.json').then(function (dag) {
+d3.json('./data/chain_270.json').then(function (dag) {
     console.log(dag);
+
 
     function drawOrigin(){
         dagG.append('circle')
@@ -148,6 +150,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
     drawOrigin()
 
     function centerDag() {
+        // this needs some tweaking to be exact
         let layerLengths = []
         layers.forEach(l => {
             layerLengths.push(dag[l].length)
@@ -157,7 +160,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
         let centerY = layers.length * (fvHeight + layerVerticalSpace) / 2
 
         console.log(centerX, centerY)
-        zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(0.1).translate(centerX, centerY));
+        zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(0.2).translate(centerX, centerY));
     }
 
     rightInnerOptions
@@ -185,6 +188,7 @@ d3.json('./data/test-dag.json').then(function (dag) {
 
     }
     layers.forEach(l => {
+        console.log('compute layer ', l)
         computeChannelCoordinates(l)
     });
 
@@ -310,31 +314,9 @@ d3.json('./data/test-dag.json').then(function (dag) {
 
     let edgeScale = d3.scaleLinear()
         .domain([0, 1300]) // check this, do d3.max instead?
-        .range([0, 5])
+        .range([0, 6])
 
     function drawEdgesPerLayer(layer, channel) {
-
-        // dagG.selectAll('.dag-edge-' + layer)
-        //     .data(channel['prev_channels'])
-        //     .enter()
-        //     .append('line')
-        //     .attr('x1', channel.x + fvWidth/2)
-        //     .attr('y1', channel.y)
-        //     .attr('x2', d => {
-        //         let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
-        //         // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
-        //         let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
-        //         return channelToConnectTo.x + fvWidth / 2
-        //     })
-        //     .attr('y2', d => {
-        //         let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
-        //         // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
-        //         let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
-        //         return channelToConnectTo.y + fvHeight / 2
-        //     })
-        //     .style('stroke-width', d => edgeScale(d.count))
-        //     .classed('dag-edge', true)
-        //     // .classed('dag-edge-' + layer, true)
 
         dagG.selectAll('.dag-edge-temp-' + layer) // need the throwaway class since we do this for every channel and use multiple classes
             .data(channel['prev_channels'])
@@ -344,12 +326,14 @@ d3.json('./data/test-dag.json').then(function (dag) {
                 let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
                 // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
                 let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
-                return "M" + (channel.x + fvWidth/2) + "," + (channel.y + fvHeight)
-                    + "C" + channel.x + "," + (channel.y + channelToConnectTo.y) / 2
-                    + " " + channelToConnectTo.x + "," + (channel.y + channelToConnectTo.y) / 2
-                    + " " + (channelToConnectTo.x + fvWidth/2) + "," + channelToConnectTo.y;
+
+                return "M" + (channel.x + fvWidth / 2) + "," + (channel.y + fvHeight)
+                    + "C" + (channel.x + fvWidth / 2) + " " + (channel.y + fvHeight
+                        + layerVerticalSpace/2) + "," + (channelToConnectTo.x + fvWidth/2) + " "
+                        + (channelToConnectTo.y - layerVerticalSpace / 2) + ","
+                        + (channelToConnectTo.x + fvWidth/2) + " " + channelToConnectTo.y
             })
-            .style('stroke-width', d => edgeScale(d.count))
+            .style('stroke-width', d => edgeScale(d.inf))
             .classed('dag-edge', true)
             .classed('dag-edge-' + layer, true)
             .attr('id', d => {
@@ -374,12 +358,12 @@ d3.json('./data/test-dag.json').then(function (dag) {
     }
 
     function drawEdges() {
+        // 
+        // HARD CODED, REPLACED WITH ALL LAYERS
+        // 
         layers.forEach(l => {
-            // 
-            // HARD CODED, REPLACED WITH MIXED5B
-            // 
             console.log(l)
-            if (l !== 'mixed4b') {
+            if (l !== layers[layers.length - 1]) { // don't draw edges from the last layer downward
                 dag[l].forEach(ch => {
                     drawEdgesPerLayer(l, ch)
                 });
