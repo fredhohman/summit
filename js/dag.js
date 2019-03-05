@@ -36,9 +36,10 @@ let rightInnerDagWrapper = d3.select('#right-inner-dag-wrapper')
 //     // .append('span')
 //         // .attr('id', 'test-span')
 
-// let layers = ['mixed5b', 'mixed5a', 'mixed4e', 'mixed4d']
-let layers = ['mixed5b', 'mixed5a', 'mixed4e']
-// let layers = Object.keys(layerChannelCounts)
+// let layers = ['mixed5b', 'mixed5a', 'mixed4e', 'mixed4d', 'mixed4c', 'mixed4b']
+// let layers = ['mixed5b', 'mixed5a', 'mixed4e']
+// let layers = ['mixed5a', 'mixed4e']
+let layers = Object.keys(layerChannelCounts).reverse()
 
 const dagMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
 const dagWidth = 1000 - dagMargin.left - dagMargin.right
@@ -46,7 +47,7 @@ const dagHeight = 800 - dagMargin.top - dagMargin.bottom // 790 based on laptop 
 let k = 1; // dag zoom scale
 
 let zoom = d3.zoom()
-    .scaleExtent([.1, 10])
+    .scaleExtent([.05, 5])
     .extent([[0, 0], [dagWidth, dagHeight]])
     .on("zoom", zoomed);
 
@@ -90,7 +91,7 @@ const fvHeight = fvWidth
 const deWidth = 49
 const deHeight = deWidth
 
-const layerVerticalSpace = 300
+const layerVerticalSpace = 450
 const fvHorizontalSpace = 50
 
 const layerIndex = {
@@ -137,7 +138,7 @@ dagDefs.append('clipPath')
     .attr('rx', 4)
     .attr('ry', 4)
     
-d3.json('./data/chain_270.json').then(function (dag) {
+d3.json('./data/chain_555.json').then(function (dag) {
     console.log(dag);
 
 
@@ -187,10 +188,6 @@ d3.json('./data/chain_270.json').then(function (dag) {
         });
 
     }
-    layers.forEach(l => {
-        console.log('compute layer ', l)
-        computeChannelCoordinates(l)
-    });
 
     function drawExamplesForLayer(layer) {
         for (let ch = 0; ch < dag[layer].length; ch++) {
@@ -199,9 +196,6 @@ d3.json('./data/chain_270.json').then(function (dag) {
             }   
         }
     }
-    layers.forEach(l => {
-        drawExamplesForLayer(l)
-    });
 
     function drawDatasetExamples(layer, channel, index) {
         dagG.append('image')
@@ -302,8 +296,8 @@ d3.json('./data/chain_270.json').then(function (dag) {
                 let curr_channel = d3.select(this).data()[0]
 
                 d3.selectAll('.' + layer + '-' + curr_channel.channel + '-dataset-p')
-                    .transition()
-                    .duration(750)
+                    // .transition()
+                    // .duration(750)
                     // .attr("transform", (d, i) => {
                         // return "translate(" + curr_channel.x + ", " + (curr_channel.y + fvHeight / 4)  + ")" // center left
                         // return "translate(" + (curr_channel.x+fvWidth/4) + ", " + (curr_channel.y + fvHeight / 4) + ")"
@@ -322,9 +316,6 @@ d3.json('./data/chain_270.json').then(function (dag) {
             .classed('fv-ch-label', true)
 
     }
-    layers.forEach(l => {
-        drawChannels(l)
-    });
 
     
     function drawLayerLabels() {
@@ -340,10 +331,9 @@ d3.json('./data/chain_270.json').then(function (dag) {
             .classed('dag-layer-label', true)
 
     }
-    drawLayerLabels()
 
     let edgeScale = d3.scaleLinear()
-        .domain([0, 1300]) // check this, do d3.max instead?
+        .domain([0, 25]) // check this, do d3.max instead? OR 1300
         .range([0, 6])
 
     function drawEdgesPerLayer(layer, channel) {
@@ -355,7 +345,12 @@ d3.json('./data/chain_270.json').then(function (dag) {
             .attr('d', d => {
                 let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
                 // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
-                let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+                // let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+                let channelToConnectTo = dag[layerToConnectTo].find(function (element) {
+                    return element.channel === d['prev_channel'];
+                });
+
+                // console.log(channelToConnectTo, channelToConnectToDirect)
 
                 return "M" + (channel.x + fvWidth / 2) + "," + (channel.y + fvHeight)
                     + "C" + (channel.x + fvWidth / 2) + " " + (channel.y + fvHeight
@@ -368,7 +363,10 @@ d3.json('./data/chain_270.json').then(function (dag) {
             .classed('dag-edge-' + layer, true)
             .attr('id', d => {
                 let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
-                let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+                // let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
+                let channelToConnectTo = dag[layerToConnectTo].find(function (element) {
+                    return element.channel === d['prev_channel'];
+                });
                 return 'dag-edge-' + layer + '-' + channel.channel + '-' + layerToConnectTo + '-' + channelToConnectTo.channel
             })
             .on('mouseover', function() {
@@ -394,13 +392,34 @@ d3.json('./data/chain_270.json').then(function (dag) {
         layers.forEach(l => {
             console.log(l)
             if (l !== layers[layers.length - 1]) { // don't draw edges from the last layer downward
+            console.log('draw edges for ', l)
                 dag[l].forEach(ch => {
                     drawEdgesPerLayer(l, ch)
                 });
             }
         });
     }
-    drawEdges()
+
+    function drawDAG() {
+        layers.forEach(l => {
+            console.log('compute layer ', l)
+            computeChannelCoordinates(l)
+        });
+        
+        drawEdges()
+
+        layers.forEach(l => {
+            drawExamplesForLayer(l)
+        });
+        
+        layers.forEach(l => {
+            drawChannels(l)
+        });
+        
+        drawLayerLabels()
+    }
+
+    drawDAG()
 
 
 })
