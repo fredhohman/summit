@@ -17,7 +17,7 @@ export let layer = 'mixed4d';
 let selectedClassIdx = 0;
 const numClassesInClassBar = 250;
 let k = 1; // embedding zoom scale
-const kZoomLabelThreshold = 8;
+const kZoomLabelThreshold = 10;
 
 // left
 let leftInner = d3.select('#left')
@@ -62,6 +62,7 @@ const formatNumberThousands = d3.format(',')
 
 d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
+    window.data = data
 
     d3.select('#classes-value').text(formatNumberThousands(data.length))
     d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
@@ -448,7 +449,7 @@ d3.json('./data/imagenet.json').then(function (data) {
             // .style('border', '1px solid #eeeeee') // for debugging
 
         let zoom = d3.zoom()
-            .scaleExtent([.5, 90])
+            .scaleExtent([.4, 150])
             .extent([[0, 0], [embeddingWidth, embeddingHeight]])
             .on("zoom", zoomed);
 
@@ -695,7 +696,6 @@ d3.json('./data/imagenet.json').then(function (data) {
 
     }
     makeEmbedding(data, layer)
-
 });
 
 function removeClassBars() {
