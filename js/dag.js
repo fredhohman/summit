@@ -344,13 +344,9 @@ d3.json('./data/chain_555.json').then(function (dag) {
             .append('path')
             .attr('d', d => {
                 let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
-                // may have to change, since we select DOM element to get data, may need to get data directly to draw edges before channels
-                // let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
                 let channelToConnectTo = dag[layerToConnectTo].find(function (element) {
                     return element.channel === d['prev_channel'];
                 });
-
-                // console.log(channelToConnectTo, channelToConnectToDirect)
 
                 return "M" + (channel.x + fvWidth / 2) + "," + (channel.y + fvHeight)
                     + "C" + (channel.x + fvWidth / 2) + " " + (channel.y + fvHeight
@@ -363,7 +359,6 @@ d3.json('./data/chain_555.json').then(function (dag) {
             .classed('dag-edge-' + layer, true)
             .attr('id', d => {
                 let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
-                // let channelToConnectTo = d3.select('#' + layerToConnectTo + '-' + d['prev_channel'] + '-channel').data()[0]
                 let channelToConnectTo = dag[layerToConnectTo].find(function (element) {
                     return element.channel === d['prev_channel'];
                 });
