@@ -133,6 +133,17 @@ dagDefs.append('clipPath')
     .attr('rx', 4)
     .attr('ry', 4)
 
+rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+    .append('button')
+    .attr('type', 'button')
+    .classed('square-button', true)
+    .append('i')
+    .classed('material-icons', true)
+    .classed('md-24', true)
+    .text('home')
+    .attr('id', 'dag-home')
 
 export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
@@ -157,20 +168,9 @@ export function dagVIS(selectedClass) {
             zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(1).translate(dagWidth/2, 50));
         }
         centerDag()
-
-        rightInnerOptions
-            .append('div')
-            .classed('right-inner-option-wrapper', true)
-            .append('button')
-            .attr('type', 'button')
-            .classed('square-button', true)
-            .on('click', () => {
-                centerDag()
-            })
-            .append('i')
-            .classed('material-icons', true)
-            .classed('md-24', true)
-            .text('home')
+        d3.select('#dag-home').on('click', () => {
+            centerDag()
+        })
 
         function computeChannelCoordinates(layer) {
 
