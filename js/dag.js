@@ -133,6 +133,56 @@ dagDefs.append('clipPath')
     .attr('rx', 4)
     .attr('ry', 4)
 
+// class name
+let rightInnerOptionsClassName = rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+    .style('padding-right', '20px')
+
+rightInnerOptionsClassName
+    .append('span')
+    .classed("smalltext-header", true)
+    .style('color', '#666666')
+    .text('class')
+
+let className = rightInnerOptionsClassName
+    .append('div')
+    .classed("header-value", true)
+    .attr('id', 'selected-class-value')
+
+// class number of instances
+let rightInnerOptionsClassInstances = rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+    .style('padding-right', '20px')
+
+rightInnerOptionsClassInstances
+    .append('span')
+    .classed("smalltext-header", true)
+    .style('color', '#666666')
+    .text('instances')
+
+let classInstances = rightInnerOptionsClassInstances
+    .append('div')
+    .classed("header-value", true)
+
+// class accuracy
+let rightInnerOptionsClassAcc = rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+    .style('padding-right', '20px')
+
+rightInnerOptionsClassAcc
+    .append('span')
+    .classed("smalltext-header", true)
+    .style('color', '#666666')
+    .text('accuracy')
+
+let classAcc = rightInnerOptionsClassAcc
+    .append('div')
+    .classed("header-value", true)
+
+// home zoom button
 rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
@@ -145,10 +195,32 @@ rightInnerOptions
     .text('home')
     .attr('id', 'dag-home')
 
+// channel slider
+rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+    .append('input')
+    .attr('type', 'range')
+    .attr('id', 'dag-channel-filter-slider')
+    .attr('min', 0)
+    .attr('max', 10)
+    .attr('value', 0)
+
+// edge slider
+rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+    .append('input')
+    .attr('type', 'range')
+    .attr('id', 'dag-edge-filter-slider')
+    .attr('min', 0)
+    .attr('max', 1300)
+    .attr('value', 0)
+
 export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
         
-    d3.json('./data/dag/dag-' + selectedClass + '.json').then(function (dag) {
+    d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
         console.log(dag);
 
         let dagG = dagSVG
@@ -409,21 +481,63 @@ export function dagVIS(selectedClass) {
         }
 
         function drawDAG() {
+
+            className
+                .text(selectedClass.name)
+            classInstances
+                .text(selectedClass.numOfInstances)
+            classAcc
+                .text(selectedClass.topOneAcc.toFixed(2))
+
+            let maxNumEdgesIn = []
             layers.forEach(l => {
                 console.log('compute layer ', l)
                 computeChannelCoordinates(l)
                 initializeChannelEdgeCount(l)
             });
 
-            
             drawEdges()
 
             layers.forEach(l => {
+
+                let temp = d3.max(dag[l], d => {
+                    return d.numOfEdgesIn
+                })
+                maxNumEdgesIn.push(temp)
+
                 drawExamplesForLayer(l)
                 drawChannels(l)
             });
             
             drawLayerLabels()
+
+            d3.select('#dag-channel-filter-slider')
+                .attr('max', d3.max(maxNumEdgesIn))
+                .on('input', function() {
+                    d3.selectAll('.fv-ch')
+                        .attr('display', d => {
+                            if (d.numOfEdgesIn < this.value) {
+                                return 'none'
+                            } else {
+                                return 'block'
+                            }
+                        })
+                })
+
+            d3.select('#dag-edge-filter-slider')
+                .on('input', function () {
+                    console.log(this.value)
+                    d3.selectAll('.dag-edge')
+                        .attr('display', d => {
+                            if (d.inf < this.value) {
+                                return 'none'
+                            } else {
+                                return 'block'
+                            }
+                        })
+                })
+
+
         }
 
         drawDAG()

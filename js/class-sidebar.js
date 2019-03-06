@@ -208,7 +208,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis')
                 removeDagVIS()
-                dagVIS(d['target_class'])
+                dagVIS(d)
             })
         
         classBarTexts.append('div')
@@ -600,7 +600,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis')
                 removeDagVIS()
-                dagVIS(d['target_class'])
+                dagVIS(d)
             })
 
         let embeddingLabels = embeddingG.selectAll('.embedding-point-label')
@@ -630,7 +630,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis')
                 removeDagVIS()
-                dagVIS(d['target_class'])
+                dagVIS(d)
             })
             
 
@@ -703,9 +703,10 @@ d3.json('./data/imagenet.json').then(function (data) {
 
     }
     makeEmbedding(data, layer)
+
+    dagVIS(data[selectedClassIdx])
 });
 
 function removeClassBars() {
     d3.selectAll('.class-bar').remove()
 }
-
