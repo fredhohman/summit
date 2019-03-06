@@ -205,6 +205,7 @@ rightInnerOptions
     .attr('min', 0)
     .attr('max', 10)
     .attr('value', 0)
+    .classed('slider', true)
 
 // edge slider
 rightInnerOptions
@@ -216,6 +217,7 @@ rightInnerOptions
     .attr('min', 0)
     .attr('max', 1300)
     .attr('value', 0)
+    .classed('slider', true)
 
 export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)

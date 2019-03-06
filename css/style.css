@@ -387,7 +387,6 @@ button:active {
     padding-left: 10px;
 }
 
-
 .dag-layer-label {
     font-size: 18px;
     color: var(--darker);
@@ -416,3 +415,52 @@ button:active {
     stroke: var(--main-light);
     cursor: crosshair;
 }
+
+/* slider */
+
+.slider {
+    -webkit-appearance: none;
+    width: 120px;
+    height: 3px;
+    /* border-radius: 5px;    */
+    /* background: var(--light); */
+    background: #bbbbbb;
+    outline: none;
+    /* opacity: 0.7; */
+    /* -webkit-transition: .2s; */
+    /* transition: opacity .2s; */
+    display: inline;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--main-light);
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--main-light);
+    cursor: pointer;
+}
+
+.slider:hover {
+    background: var(--dark);
+    cursor: pointer;
+}
+
+/* .slider::-webkit-slider-thumb:hover, .slider::-moz-range-thumb:hover {
+    background: var(--main-color)
+} */
+
+/* 
+.slider::-ms-fill-lower {
+    background: #777;
+    border-radius: 10px;
+} */
