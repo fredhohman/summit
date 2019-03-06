@@ -183,6 +183,15 @@ export function dagVIS(selectedClass) {
 
         }
 
+        function initializeChannelEdgeCount(layer) {
+
+            dag[layer].forEach(ch => {
+                ch.numOfEdgesIn = 0
+                ch.numOfEdgesOut = 3
+            });
+
+        }
+
         function drawExamplesForLayer(layer) {
             for (let ch = 0; ch < dag[layer].length; ch++) {
                 for (let i = 0; i < 10; i++) {
@@ -332,6 +341,16 @@ export function dagVIS(selectedClass) {
 
         function drawEdgesPerLayer(layer, channel) {
 
+            // update dag data with edge count
+            let layerToUpdate = indexLayer[layerIndex[layer] + 1]
+            channel['prev_channels'].forEach(prevChannel => {
+                let channelToUpdate = dag[layerToUpdate].find(function (element) {
+                    return element.channel === prevChannel['prev_channel'];
+                });
+
+                channelToUpdate.numOfEdgesIn += 1
+            })
+
             dagG.selectAll('.dag-edge-temp-' + layer) // need the throwaway class since we do this for every channel and use multiple classes
                 .data(channel['prev_channels'])
                 .enter()
@@ -393,7 +412,9 @@ export function dagVIS(selectedClass) {
             layers.forEach(l => {
                 console.log('compute layer ', l)
                 computeChannelCoordinates(l)
+                initializeChannelEdgeCount(l)
             });
+
             
             drawEdges()
 
@@ -401,10 +422,6 @@ export function dagVIS(selectedClass) {
                 drawExamplesForLayer(l)
                 drawChannels(l)
             });
-            
-            // layers.forEach(l => {
-            //     drawChannels(l)
-            // });
             
             drawLayerLabels()
         }
