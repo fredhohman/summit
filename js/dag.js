@@ -133,9 +133,6 @@ dagDefs.append('clipPath')
     .attr('rx', 4)
     .attr('ry', 4)
 
-function resetZoom() {
-    zoomRect.call(zoom.transform, d3.zoomIdentity.scale(1).translate(dagWidth/2, 50));
-}
 
 export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
@@ -157,16 +154,6 @@ export function dagVIS(selectedClass) {
         drawOrigin()
 
         function centerDag() {
-            // this needs some tweaking to be exact
-            let layerLengths = []
-            layers.forEach(l => {
-                layerLengths.push(dag[l].length)
-            })
-            let centerX = (d3.max(layerLengths) * (fvWidth + fvHorizontalSpace))
-
-            let centerY = layers.length * (fvHeight + layerVerticalSpace) / 2
-
-            console.log(centerX, centerY)
             zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(1).translate(dagWidth/2, 50));
         }
         centerDag()
@@ -430,5 +417,4 @@ export function dagVIS(selectedClass) {
 
 export function removeDagVIS() {
     d3.select("#dagG").remove()
-    resetZoom()
 }
