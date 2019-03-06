@@ -525,6 +525,7 @@ export function dagVIS(selectedClass) {
                             }
                         })
                 })
+                .property('value', 0)
 
             d3.select('#dag-edge-filter-slider')
                 .on('input', function () {
@@ -538,6 +539,7 @@ export function dagVIS(selectedClass) {
                             }
                         })
                 })
+                .property('value', 0)
 
 
         }
