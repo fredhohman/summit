@@ -1,5 +1,6 @@
 import * as d3 from "d3"
 import similarity from "compute-cosine-similarity"
+import { dagVIS, removeDagVIS } from "./dag";
 
 export const layerChannelCounts = {
     'mixed3a': 256,
@@ -206,6 +207,8 @@ d3.json('./data/imagenet.json').then(function (data) {
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis')
+                removeDagVIS()
+                dagVIS(d['target_class'])
             })
         
         classBarTexts.append('div')
@@ -596,6 +599,8 @@ d3.json('./data/imagenet.json').then(function (data) {
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis')
+                removeDagVIS()
+                dagVIS(d['target_class'])
             })
 
         let embeddingLabels = embeddingG.selectAll('.embedding-point-label')
