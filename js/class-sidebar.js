@@ -629,6 +629,8 @@ d3.json('./data/imagenet.json').then(function (data) {
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis')
+                removeDagVIS()
+                dagVIS(d['target_class'])
             })
             
 

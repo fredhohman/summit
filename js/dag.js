@@ -399,11 +399,12 @@ export function dagVIS(selectedClass) {
 
             layers.forEach(l => {
                 drawExamplesForLayer(l)
-            });
-            
-            layers.forEach(l => {
                 drawChannels(l)
             });
+            
+            // layers.forEach(l => {
+            //     drawChannels(l)
+            // });
             
             drawLayerLabels()
         }
