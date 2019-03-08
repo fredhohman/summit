@@ -334,6 +334,7 @@ button:active {
 
 .embedding-point {
     fill: var(--dark);
+    opacity: 0.5;
 }
 
 .embedding-point:hover {

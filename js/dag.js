@@ -113,6 +113,8 @@ const indexLayer = {
     0: 'mixed5b'
 }
 
+let channelsHidden = new Set()
+
 dagDefs.append('clipPath')
     .attr('id', 'fv-clip-path')
     .append('rect')
@@ -207,6 +209,18 @@ rightInnerOptions
     .attr('value', 0)
     .classed('slider', true)
 
+// channel count slider
+rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+    .append('input')
+    .attr('type', 'range')
+    .attr('id', 'dag-channel-count-filter-slider')
+    .attr('min', 0)
+    .attr('max', 1300)
+    .attr('value', 0)
+    .classed('slider', true)
+
 // edge slider
 rightInnerOptions
     .append('div')
@@ -221,8 +235,10 @@ rightInnerOptions
 
 export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
-        
-    d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
+    
+    // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
+    d3.json('./data/dag/pagerank/dag-0.json').then(function (dag) {
+    // d3.json('./data/dag/pagerank/dag-0noinnerlayer.json').then(function (dag) {
         console.log(dag);
 
         let dagG = dagSVG
@@ -424,7 +440,7 @@ export function dagVIS(selectedClass) {
 
                 channelToUpdate.numOfEdgesIn += 1
             })
-
+        
             dagG.selectAll('.dag-edge-temp-' + layer) // need the throwaway class since we do this for every channel and use multiple classes
                 .data(channel['prev_channels'])
                 .enter()
@@ -442,8 +458,20 @@ export function dagVIS(selectedClass) {
                             + (channelToConnectTo.x + fvWidth/2) + " " + channelToConnectTo.y
                 })
                 .style('stroke-width', d => edgeScale(d.inf))
-                .classed('dag-edge', true)
-                .classed('dag-edge-' + layer, true)
+                // .classed('dag-edge', true)
+                // .classed('dag-edge-' + layer, true)
+                // .classed('dag-edge-' + layer + '-' + channel.channel + '-out', true)
+                // .classed(d => {
+                //     return 'dag-edge-' + layer + '-' + d['prev_channel'] + '-in'
+                // })
+                .attr('class', d => {
+                    return 'dag-edge' +
+                        ' ' + 'dag-edge-' + layer +
+                        ' ' + 'dag-edge-' + layer + '-' + channel.channel +
+                        ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel']
+                        // ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] + '-in'
+                        // ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-in'
+                })
                 .attr('id', d => {
                     let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
                     let channelToConnectTo = dag[layerToConnectTo].find(function (element) {
@@ -527,9 +555,48 @@ export function dagVIS(selectedClass) {
                 })
                 .property('value', 0)
 
+            d3.select('#dag-channel-count-filter-slider')
+                .on('input', function () {
+                    d3.selectAll('.fv-ch')
+                        .attr('display', d => {
+
+                            if (d.count > this.value) {
+                                channelsHidden.delete(d.layer + '-' + d.channel)
+                                // console.log(d)
+                                // console.log(d.layer)
+                                // d.visible = true;
+                                // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel)
+                                //     .attr('display', 'block')
+
+                                // console.log(d.layer, d.channel, temp)
+
+                                // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel + '-in')
+                                //     .attr('display', 'none')
+
+                                return 'block'
+                            } else {
+                                channelsHidden.add(d.layer + '-' + d.channel)
+                                // d.visible = false;
+                                // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel)
+                                //     .attr('display', 'none')
+
+
+                                // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel + '-in')
+                                //     .attr('display', 'block')
+                                return 'none'
+                            }
+                        })
+                    console.log(channelsHidden)
+                    d3.selectAll('.dag-edge').attr('display', 'block')
+                    channelsHidden.forEach(ch => {
+                        d3.selectAll('.dag-edge-' + ch)
+                                .attr('display', 'none')
+                    })
+                })
+                .property('value', 0)
+
             d3.select('#dag-edge-filter-slider')
                 .on('input', function () {
-                    console.log(this.value)
                     d3.selectAll('.dag-edge')
                         .attr('display', d => {
                             if (d.inf < this.value) {
