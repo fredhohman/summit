@@ -339,7 +339,6 @@ export function dagVIS(selectedClass) {
                 })
                 .style('opacity', 0)
                 .style('display', 'none')
-
                 .attr('id', layer + '-' + channel.channel + '-' + 'dataset-p-' + index)
                 .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
         }
@@ -566,7 +565,25 @@ export function dagVIS(selectedClass) {
                     .duration(filterTransitionSpeed)
                     .attr('transform', d => 'translate(' + (0 - (fvWidth / 4 + ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight / 2) + ')rotate(-90)')
             })
+        }
 
+        function updateDatasetExamples() {
+            layers.forEach(layer =>{
+                for (let channel = 0; channel < dag[layer].length; channel++) {
+                    for (let index = 0; index < 10; index++) {
+
+                        d3.select('#' + layer + '-' + dag[layer][channel].channel + '-' + 'dataset-p-' + index)
+                            .attr("transform", () => { // centered up top
+                                if (index < 5) {
+                                    return "translate(" + ((dag[layer][channel].x + index * deWidth + (index + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1) + ")"
+                                } else if (index >= 5) {
+                                    return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth + (index - 5 + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1)) + ")"
+                                }
+                            })
+
+                    }
+                }
+            })
         }
 
         function updateEdges() {
@@ -685,6 +702,7 @@ export function dagVIS(selectedClass) {
                     updateChannelLabels()
                     updateLayerLabels(filterValue)
                     updateEdges()
+                    updateDatasetExamples()
 
                 })
                 .property('value', 0)
