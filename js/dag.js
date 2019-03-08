@@ -407,6 +407,7 @@ export function dagVIS(selectedClass) {
                 .attr('y', d => d.y - 3)
                 .text(d => d.channel)
                 .classed('fv-ch-label', true)
+                .attr('id', d => 'fv-ch-label-' + layer + '-' + d.channel)
 
         }
 
@@ -562,6 +563,9 @@ export function dagVIS(selectedClass) {
 
                             if (d.count > this.value) {
                                 channelsHidden.delete(d.layer + '-' + d.channel)
+
+                                d3.select('#fv-ch-label-' + d.layer + '-' + d.channel)
+                                    .attr('display', 'block')
                                 // console.log(d)
                                 // console.log(d.layer)
                                 // d.visible = true;
@@ -576,6 +580,10 @@ export function dagVIS(selectedClass) {
                                 return 'block'
                             } else {
                                 channelsHidden.add(d.layer + '-' + d.channel)
+
+                                d3.select('#fv-ch-label-' + d.layer + '-' + d.channel)
+                                    .attr('display', 'none')
+
                                 // d.visible = false;
                                 // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel)
                                 //     .attr('display', 'none')
@@ -586,7 +594,6 @@ export function dagVIS(selectedClass) {
                                 return 'none'
                             }
                         })
-                    console.log(channelsHidden)
                     d3.selectAll('.dag-edge').attr('display', 'block')
                     channelsHidden.forEach(ch => {
                         d3.selectAll('.dag-edge-' + ch)
