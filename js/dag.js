@@ -36,7 +36,7 @@ let rightInnerDagWrapper = d3.select('#right-inner-dag-wrapper')
 //     // .append('span')
 //         // .attr('id', 'test-span')
 
-// let layers = ['mixed5b', 'mixed5a', 'mixed4e', 'mixed4d', 'mixed4c', 'mixed4b']
+// let layers = ['mixed5a', 'mixed4e', 'mixed4d', 'mixed4c', 'mixed4b', 'mixed4a', 'mixed3b', 'mixed3a']
 // let layers = ['mixed5b', 'mixed5a', 'mixed4e']
 // let layers = ['mixed5a', 'mixed4e']
 let layers = Object.keys(layerChannelCounts).reverse()
@@ -45,6 +45,7 @@ const dagMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
 const dagWidth = 1000 - dagMargin.left - dagMargin.right
 const dagHeight = 800 - dagMargin.top - dagMargin.bottom // 790 based on laptop screen height
 let k = 1; // dag zoom scale
+const filterTransitionSpeed = 1000
 
 let zoom = d3.zoom()
     .scaleExtent([.05, 5])
@@ -273,6 +274,27 @@ export function dagVIS(selectedClass) {
 
         }
 
+        function computeChannelCoordinatesFilter(layer, filterValue) {
+
+            let i = 0
+            let dagFiltered = dag[layer].filter(function (ch) {
+                return ch.count > filterValue
+            })
+
+            let currLayerLength = dagFiltered.length
+
+            dag[layer].forEach(ch => {
+                if (ch.count > filterValue) {
+                    ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))
+                    ch.y = layerIndex[layer] * layerVerticalSpace
+                    i = i + 1
+                } else {
+                    ch.x = 0 - fvWidth/2
+                }
+            });
+
+        }
+
         function initializeChannelEdgeCount(layer) {
 
             dag[layer].forEach(ch => {
@@ -407,6 +429,7 @@ export function dagVIS(selectedClass) {
                 .attr('y', d => d.y - 3)
                 .text(d => d.channel)
                 .classed('fv-ch-label', true)
+                .classed('fv-ch-label-' + layer, true)
                 .attr('id', d => 'fv-ch-label-' + layer + '-' + d.channel)
 
         }
@@ -423,9 +446,9 @@ export function dagVIS(selectedClass) {
                 .attr('transform', d => 'translate(' + (0 - (fvWidth/4 + ((dag[d].length * fvWidth + (dag[d].length - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight/2) + ')rotate(-90)')
                 .attr('text-anchor', 'middle')
                 .classed('dag-layer-label', true)
+                .attr('id', d => 'dag-layer-label-' + d)
 
         }
-
         let edgeScale = d3.scaleLinear()
             .domain([0, 1300]) // check this, do d3.max instead? OR 1300
             .range([0, 6])
@@ -469,7 +492,9 @@ export function dagVIS(selectedClass) {
                     return 'dag-edge' +
                         ' ' + 'dag-edge-' + layer +
                         ' ' + 'dag-edge-' + layer + '-' + channel.channel +
-                        ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel']
+                        ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] +
+                        ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
+                        
                         // ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] + '-in'
                         // ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-in'
                 })
@@ -497,15 +522,78 @@ export function dagVIS(selectedClass) {
         }
 
         function drawEdges() {
-            // 
-            // HARD CODED, REPLACED WITH ALL LAYERS
-            // 
             layers.forEach(l => {
                 console.log(l)
                 if (l !== layers[layers.length - 1]) { // don't draw edges from the last layer downward
                 console.log('draw edges for ', l)
                     dag[l].forEach(ch => {
                         drawEdgesPerLayer(l, ch)
+                    });
+                }
+            });
+        }
+
+        function updateChannels() {
+            d3.selectAll('.fv-ch')
+                .transition()
+                .duration(filterTransitionSpeed)
+                .attr("transform", (d, i) => "translate(" +
+                    d.x + ',' +
+                    d.y + " )"
+                )
+        }
+
+        function updateChannelLabels(){
+            layers.forEach(layer => {
+                dagG.selectAll('.fv-ch-label-' + layer)
+                    .transition()
+                    .duration(filterTransitionSpeed)
+                    .attr('x', d => d.x)
+                    .attr('y', d => d.y - 3)
+            })
+        }
+
+        function updateLayerLabels(filterValue) {
+            layers.forEach(layer =>{
+                let dagFiltered = dag[layer].filter(function (ch) {
+                    return ch.count > filterValue
+                })
+
+                let currLayerLength = dagFiltered.length
+
+                d3.select('#dag-layer-label-' + layer)
+                    .transition()
+                    .duration(filterTransitionSpeed)
+                    .attr('transform', d => 'translate(' + (0 - (fvWidth / 4 + ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight / 2) + ')rotate(-90)')
+            })
+
+        }
+
+        function updateEdges() {
+            layers.forEach(l => {
+
+                // console.log(l)
+                if (l !== layers[layers.length - 1]) { // don't draw edges from the last layer downward
+                    // console.log('draw edges for ', l)
+
+                    dag[l].forEach(ch => {
+
+                        d3.selectAll('.dag-edge-' + l + '-' + ch.channel + '-out')
+                            .transition()
+                            .duration(filterTransitionSpeed)
+                            .attr('d', d => {
+
+                                let layerToConnectTo = indexLayer[layerIndex[l] + 1]
+                                let channelToConnectTo = dag[layerToConnectTo].find(function (element) {
+                                    return element.channel === d['prev_channel'];
+                                });
+
+                                return "M" + (ch.x + fvWidth / 2) + "," + (ch.y + fvHeight)
+                                    + "C" + (ch.x + fvWidth / 2) + " " + (ch.y + fvHeight
+                                        + layerVerticalSpace / 2) + "," + (channelToConnectTo.x + fvWidth / 2) + " "
+                                    + (channelToConnectTo.y - layerVerticalSpace / 2) + ","
+                                    + (channelToConnectTo.x + fvWidth / 2) + " " + channelToConnectTo.y
+                            })
                     });
                 }
             });
@@ -558,24 +646,17 @@ export function dagVIS(selectedClass) {
 
             d3.select('#dag-channel-count-filter-slider')
                 .on('input', function () {
+
+                    let filterValue = this.value
+
                     d3.selectAll('.fv-ch')
                         .attr('display', d => {
 
-                            if (d.count > this.value) {
+                            if (d.count > filterValue) {
                                 channelsHidden.delete(d.layer + '-' + d.channel)
 
                                 d3.select('#fv-ch-label-' + d.layer + '-' + d.channel)
                                     .attr('display', 'block')
-                                // console.log(d)
-                                // console.log(d.layer)
-                                // d.visible = true;
-                                // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel)
-                                //     .attr('display', 'block')
-
-                                // console.log(d.layer, d.channel, temp)
-
-                                // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel + '-in')
-                                //     .attr('display', 'none')
 
                                 return 'block'
                             } else {
@@ -584,21 +665,27 @@ export function dagVIS(selectedClass) {
                                 d3.select('#fv-ch-label-' + d.layer + '-' + d.channel)
                                     .attr('display', 'none')
 
-                                // d.visible = false;
-                                // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel)
-                                //     .attr('display', 'none')
-
-
-                                // d3.selectAll('.dag-edge-' + d.layer + '-' + d.channel + '-in')
-                                //     .attr('display', 'block')
                                 return 'none'
                             }
-                        })
+                        }
+                    )
+
+                    // move fv and edges on filter change
+                    layers.forEach(l => {
+                        computeChannelCoordinatesFilter(l, filterValue)
+                    });
+                        
                     d3.selectAll('.dag-edge').attr('display', 'block')
                     channelsHidden.forEach(ch => {
                         d3.selectAll('.dag-edge-' + ch)
-                                .attr('display', 'none')
+                            .attr('display', 'none')
                     })
+
+                    updateChannels()
+                    updateChannelLabels()
+                    updateLayerLabels(filterValue)
+                    updateEdges()
+
                 })
                 .property('value', 0)
 
