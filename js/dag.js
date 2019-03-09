@@ -116,7 +116,18 @@ const indexLayer = {
 
 let channelsHidden = new Set()
 
-let fvClipPaths = {}
+function newChannelClipPath(layer, channel) {
+    dagDefs.append('clipPath')
+        .attr('id', 'fv-clip-path-' + layer + '-' + channel.channel)
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', channel.width)
+        .attr('height', channel.width)
+        .attr('rx', 8)
+        .attr('ry', 8)
+
+}
 
 dagDefs.append('clipPath')
     .attr('id', 'fv-clip-path')
@@ -125,8 +136,8 @@ dagDefs.append('clipPath')
     .attr('y', 0)
     .attr('width', fvWidth)
     .attr('height', fvHeight)
-    .attr('rx', 10)
-    .attr('ry', 10)
+    .attr('rx', 8)
+    .attr('ry', 8)
 
 dagDefs.append('clipPath')
     .attr('id', 'de-clip-path')
@@ -200,18 +211,6 @@ rightInnerOptions
     .text('home')
     .attr('id', 'dag-home')
 
-// channel slider
-rightInnerOptions
-    .append('div')
-    .classed('right-inner-option-wrapper', true)
-    .append('input')
-    .attr('type', 'range')
-    .attr('id', 'dag-channel-filter-slider')
-    .attr('min', 0)
-    .attr('max', 10)
-    .attr('value', 0)
-    .classed('slider', true)
-
 // channel count slider
 rightInnerOptions
     .append('div')
@@ -250,7 +249,6 @@ export function dagVIS(selectedClass) {
             let tempExtent = d3.extent(dag[layer], d => {
                 return d.pagerank
             })
-            console.log(tempExtent)
             tempMins.push(tempExtent[0])
             tempMaxs.push(tempExtent[1])
         })
@@ -365,6 +363,14 @@ export function dagVIS(selectedClass) {
                 .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
         }
 
+        function makeChannelClipPaths() {
+            layers.forEach(layer =>{
+                dag[layer].forEach(channel =>{
+                    newChannelClipPath(layer, channel)
+                })
+            })
+        }
+
         function drawChannels(layer) {
             
             dagG.selectAll('.fv-ch-' + layer)
@@ -379,6 +385,7 @@ export function dagVIS(selectedClass) {
                 // .attr('height', d => fvHeight)
                 .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel.png')
                 // .attr('clip-path', 'url(#fv-clip-path)')
+                .attr('clip-path', d => 'url(#fv-clip-path-' + layer + '-' + d.channel + ')')
                 // .attr("transform", (d, i) => "translate(" + 
                 //     // x: feature vis width and feature vis spacing * i, then subtract total feature vis and horizontal space to center
                 //     (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length-1) * fvHorizontalSpace) / 2)) + "," +
@@ -669,6 +676,7 @@ export function dagVIS(selectedClass) {
                 initializeChannelEdgeCount(l)
             });
 
+            makeChannelClipPaths()
             drawEdges()
 
             layers.forEach(l => {
@@ -683,20 +691,6 @@ export function dagVIS(selectedClass) {
             });
             
             drawLayerLabels()
-
-            d3.select('#dag-channel-filter-slider')
-                .attr('max', d3.max(maxNumEdgesIn))
-                .on('input', function() {
-                    d3.selectAll('.fv-ch')
-                        .attr('display', d => {
-                            if (d.numOfEdgesIn < this.value) {
-                                return 'none'
-                            } else {
-                                return 'block'
-                            }
-                        })
-                })
-                .property('value', 0)
 
             d3.select('#dag-channel-count-filter-slider')
                 .on('input', function () {
