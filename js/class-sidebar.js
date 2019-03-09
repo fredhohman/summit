@@ -488,12 +488,20 @@ d3.json('./data/imagenet.json').then(function (data) {
         }
 
         let zoomRect = embeddingSVG.append("rect")
-            .attr("width", embeddingWidth)
-            .attr("height", embeddingHeight)
+            .attr("width", embeddingWidth + embeddingMargin.left + embeddingMargin.right)
+            .attr("height", embeddingHeight + embeddingMargin.top + embeddingMargin.bottom)
             .style("fill", "none")
             .style("pointer-events", "all")
-            .attr('transform', 'translate(' + embeddingMargin.left + ',' + embeddingMargin.top + ')')
-            .call(zoom);
+            // .attr('transform', 'translate(' + embeddingMargin.left + ',' + embeddingMargin.top + ')')
+            .call(zoom)
+            // .on('mouseover', function () {
+            //     console.log('over')
+            //     d3.select(this).style("cursor", "grab");
+            // })
+            // .on('mousedown', function () {
+            //     console.log('down')
+            //     d3.select(this).style("cursor", "grabbing");
+            // })
 
         let embeddingG = embeddingSVG
             .append("g")

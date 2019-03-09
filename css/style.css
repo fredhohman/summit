@@ -161,6 +161,11 @@ button:active {
     border-bottom: 1px solid var(--border-color);
     border-top: 1px solid var(--border-color);
     height: 500px;
+    cursor: grab;
+}
+
+#left-inner-embedding:active {
+    cursor: grabbing;
 }
 
 #left-inner-class-bar-options {
@@ -386,6 +391,14 @@ button:active {
     flex-direction: column;
     justify-content: center;
     padding-left: 10px;
+}
+
+#dag {
+    cursor: grab;
+}
+
+#dag:active {
+    cursor: grabbing;
 }
 
 .dag-layer-label {

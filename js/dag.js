@@ -72,11 +72,11 @@ dagSVG.append('filter')
     .attr('values','0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0')  
 
 let zoomRect = dagSVG.append("rect")
-    .attr("width", dagWidth)
-    .attr("height", dagHeight)
+    .attr("width", dagWidth + dagMargin.left + dagMargin.right)
+    .attr("height", dagHeight + dagMargin.top + dagMargin.bottom)
     .style("fill", "none")
     .style("pointer-events", "all")
-    .attr('transform', 'translate(' + dagMargin.left + ',' + dagMargin.top + ')')
+    // .attr('transform', 'translate(' + dagMargin.left + ',' + dagMargin.top + ')')
     .call(zoom);
 
 let dagDefs = dagSVG.append('defs')
@@ -258,7 +258,7 @@ export function dagVIS(selectedClass) {
 
         let fvScale = d3.scaleLinear()
             .domain([0, 1300])
-            .range([fvWidth/2, fvWidth])
+            .range([fvWidth/3, fvWidth])
 
         let dagG = dagSVG
             .append("g")
