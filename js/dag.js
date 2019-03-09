@@ -352,9 +352,9 @@ export function dagVIS(selectedClass) {
                 // })
                 .attr("transform", () => { // centered up top
                     if (index < 5) {
-                        return "translate(" + ((channel.x + index * deWidth + (index + 1) * 2)-deWidth*1.5 - 1.5*2) + ", " + (channel.y - deHeight - 1) + ")"
+                        return "translate(" + ((channel.x + index * deWidth) + (index + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (channel.y - deHeight - 1) + ")"
                     } else if (index >= 5) {
-                        return "translate(" + ((channel.x + (index - 5) * deWidth + (index - 5 + 1) * 2)-deWidth*1.5 - 1.5*2) + ", " + (channel.y - 2 * (deHeight + 1)) + ")"
+                        return "translate(" + ((channel.x + (index-5) * deWidth) + (index -5 + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (channel.y - 2 * (deHeight + 1)) + ")"
                     }
                 })
                 .style('opacity', 0)
@@ -551,9 +551,22 @@ export function dagVIS(selectedClass) {
                     d3.selectAll('.fv-ch').attr('filter', 'url(#grayscale)')
                     d3.select('#' + topLayer + '-' + topChannel + '-channel').attr('filter', null)
                     d3.select('#' + bottomLayer + '-' + bottomChannel + '-channel').attr('filter', null)
+
+                    d3.selectAll('.' + topLayer + '-' + topChannel + '-dataset-p')
+                        .style('display', 'block')
+                        .style('opacity', 1)
+
+                    d3.selectAll('.' + bottomLayer + '-' + bottomChannel + '-dataset-p')
+                        .style('display', 'block')
+                        .style('opacity', 1)
+
                 })
                 .on('mouseout', function () {
                     d3.selectAll('.fv-ch').attr('filter', null)
+
+                    d3.selectAll('.fv-de')
+                        .style('display', 'none')
+                        .style('opacity', 0)
                 })
         }
 
@@ -612,11 +625,18 @@ export function dagVIS(selectedClass) {
                         d3.select('#' + layer + '-' + dag[layer][channel].channel + '-' + 'dataset-p-' + index)
                             .attr("transform", () => { // centered up top
                                 if (index < 5) {
-                                    return "translate(" + ((dag[layer][channel].x + index * deWidth + (index + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1) + ")"
+                                    return "translate(" + ((dag[layer][channel].x + index * deWidth) + (index + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1) + ")"
                                 } else if (index >= 5) {
-                                    return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth + (index - 5 + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1)) + ")"
+                                    return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth) + (index - 5 + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1)) + ")"
                                 }
                             })
+                            // .attr("transform", () => { // centered up top
+                            //     if (index < 5) {
+                            //         return "translate(" + ((dag[layer][channel].x + index * deWidth + (index + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1) + ")"
+                            //     } else if (index >= 5) {
+                            //         return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth + (index - 5 + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1)) + ")"
+                            //     }
+                            // })
 
                     }
                 }
