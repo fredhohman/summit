@@ -425,9 +425,17 @@ button:active {
     fill: none;
 }
 
+@keyframes dash {
+    to {
+        stroke-dashoffset: 200;
+    }
+}
+
 .dag-edge:hover {
     stroke: var(--main-light);
     cursor: crosshair;
+    stroke-dasharray: 50 5;
+    animation: dash 5s linear;
 }
 
 /* slider */
