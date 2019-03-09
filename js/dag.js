@@ -238,9 +238,27 @@ export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
     
     // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-    d3.json('./data/dag/pagerank/dag-0.json').then(function (dag) {
+    d3.json('./data/dag/pagerank/dag-270.json').then(function (dag) {
     // d3.json('./data/dag/pagerank/dag-0noinnerlayer.json').then(function (dag) {
         console.log(dag);
+
+        let tempMins = []
+        let tempMaxs = []
+        layers.forEach(layer => {
+            let tempExtent = d3.extent(dag[layer], d => {
+                return d.pagerank
+            })
+            console.log(tempExtent)
+            tempMins.push(tempExtent[0])
+            tempMaxs.push(tempExtent[1])
+        })
+
+        const fvScaleMax = d3.max(tempMaxs)
+        const fvScaleMin = d3.min(tempMins)
+
+        let fvScale = d3.scaleLinear()
+            .domain([0, 1300])
+            .range([fvWidth/2, fvWidth])
 
         let dagG = dagSVG
             .append("g")
@@ -267,8 +285,9 @@ export function dagVIS(selectedClass) {
 
             let i = 0
             dag[layer].forEach(ch => {
-                ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length - 1) * fvHorizontalSpace) / 2))
-                ch.y = layerIndex[layer] * layerVerticalSpace
+                let fvActualWidth = fvScale(ch.count)
+                ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length - 1) * fvHorizontalSpace) / 2)) + (fvWidth - fvActualWidth) / 2
+                ch.y = layerIndex[layer] * layerVerticalSpace + (fvWidth - fvActualWidth) / 2
                 i = i + 1
             });
 
@@ -285,8 +304,10 @@ export function dagVIS(selectedClass) {
 
             dag[layer].forEach(ch => {
                 if (ch.count > filterValue) {
-                    ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))
-                    ch.y = layerIndex[layer] * layerVerticalSpace
+                    let fvActualWidth = fvScale(ch.count)
+                    ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2)) + (fvWidth - fvActualWidth) / 2
+                    // ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))
+                    ch.y = layerIndex[layer] * layerVerticalSpace + (fvWidth - fvActualWidth) / 2
                     i = i + 1
                 } else {
                     ch.x = 0 - fvWidth/2
@@ -342,7 +363,7 @@ export function dagVIS(selectedClass) {
                 .attr('id', layer + '-' + channel.channel + '-' + 'dataset-p-' + index)
                 .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
         }
-        
+
         function drawChannels(layer) {
             
             dagG.selectAll('.fv-ch-' + layer)
@@ -351,10 +372,12 @@ export function dagVIS(selectedClass) {
                 .append('image')
                 .attr('x', 0)
                 .attr('y', 0)
-                .attr('width', fvWidth)
-                .attr('height', fvHeight)
+                .attr('width', d => fvScale(d.count))
+                .attr('height', d => fvScale(d.count))
+                // .attr('width', d => fvWidth)
+                // .attr('height', d => fvHeight)
                 .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel.png')
-                .attr('clip-path', 'url(#fv-clip-path)')
+                // .attr('clip-path', 'url(#fv-clip-path)')
                 // .attr("transform", (d, i) => "translate(" + 
                 //     // x: feature vis width and feature vis spacing * i, then subtract total feature vis and horizontal space to center
                 //     (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length-1) * fvHorizontalSpace) / 2)) + "," +
@@ -474,11 +497,17 @@ export function dagVIS(selectedClass) {
                         return element.channel === d['prev_channel'];
                     });
 
-                    return "M" + (channel.x + fvWidth / 2) + "," + (channel.y + fvHeight)
-                        + "C" + (channel.x + fvWidth / 2) + " " + (channel.y + fvHeight
-                            + layerVerticalSpace/2) + "," + (channelToConnectTo.x + fvWidth/2) + " "
-                            + (channelToConnectTo.y - layerVerticalSpace / 2) + ","
-                            + (channelToConnectTo.x + fvWidth/2) + " " + channelToConnectTo.y
+                    // return "M" + (channel.x + fvWidth / 2) + "," + (channel.y + fvHeight)
+                    //     + "C" + (channel.x + fvWidth / 2) + " " + (channel.y + fvHeight
+                    //         + layerVerticalSpace/2) + "," + (channelToConnectTo.x + fvWidth/2) + " "
+                    //         + (channelToConnectTo.y - layerVerticalSpace / 2) + ","
+                    //         + (channelToConnectTo.x + fvWidth/2) + " " + channelToConnectTo.y
+
+                    return "M" + (channel.x + fvScale(channel.count) / 2) + "," + (channel.y + fvHeight - (fvHeight - fvScale(channel.count)))
+                        + "C" + (channel.x + fvScale(channel.count) / 2) + " " + (channel.y + fvHeight - (fvHeight - fvScale(channel.count))
+                            + layerVerticalSpace / 2) + "," + (channelToConnectTo.x + fvScale(channelToConnectTo.count) / 2) + " "
+                        + (channelToConnectTo.y - layerVerticalSpace / 2 - (fvHeight - fvScale(channelToConnectTo.count))) + ","
+                        + (channelToConnectTo.x + fvScale(channelToConnectTo.count) / 2) + " " + channelToConnectTo.y
                 })
                 .style('stroke-width', d => edgeScale(d.inf))
                 // .classed('dag-edge', true)
@@ -593,9 +622,9 @@ export function dagVIS(selectedClass) {
                 if (l !== layers[layers.length - 1]) { // don't draw edges from the last layer downward
                     // console.log('draw edges for ', l)
 
-                    dag[l].forEach(ch => {
+                    dag[l].forEach(channel => {
 
-                        d3.selectAll('.dag-edge-' + l + '-' + ch.channel + '-out')
+                        d3.selectAll('.dag-edge-' + l + '-' + channel.channel + '-out')
                             .transition()
                             .duration(filterTransitionSpeed)
                             .attr('d', d => {
@@ -605,11 +634,18 @@ export function dagVIS(selectedClass) {
                                     return element.channel === d['prev_channel'];
                                 });
 
-                                return "M" + (ch.x + fvWidth / 2) + "," + (ch.y + fvHeight)
-                                    + "C" + (ch.x + fvWidth / 2) + " " + (ch.y + fvHeight
-                                        + layerVerticalSpace / 2) + "," + (channelToConnectTo.x + fvWidth / 2) + " "
-                                    + (channelToConnectTo.y - layerVerticalSpace / 2) + ","
-                                    + (channelToConnectTo.x + fvWidth / 2) + " " + channelToConnectTo.y
+                                // return "M" + (ch.x + fvWidth / 2) + "," + (ch.y + fvHeight)
+                                //     + "C" + (ch.x + fvWidth / 2) + " " + (ch.y + fvHeight
+                                //         + layerVerticalSpace / 2) + "," + (channelToConnectTo.x + fvWidth / 2) + " "
+                                //     + (channelToConnectTo.y - layerVerticalSpace / 2) + ","
+                                //     + (channelToConnectTo.x + fvWidth / 2) + " " + channelToConnectTo.y
+
+                                return "M" + (channel.x + fvScale(channel.count) / 2) + "," + (channel.y + fvHeight - (fvHeight - fvScale(channel.count)))
+                                    + "C" + (channel.x + fvScale(channel.count) / 2) + " " + (channel.y + fvHeight - (fvHeight - fvScale(channel.count))
+                                    + layerVerticalSpace / 2) + "," + (channelToConnectTo.x + fvScale(channelToConnectTo.count) / 2) + " "
+                                    + (channelToConnectTo.y - layerVerticalSpace / 2 - (fvHeight - fvScale(channelToConnectTo.count))) + ","
+                                    + (channelToConnectTo.x + fvScale(channelToConnectTo.count) / 2) + " " + channelToConnectTo.y
+
                             })
                     });
                 }
