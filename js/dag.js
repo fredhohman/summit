@@ -245,19 +245,24 @@ export function dagVIS(selectedClass) {
 
         let tempMins = []
         let tempMaxs = []
+        let tempCountMaxs = []
         layers.forEach(layer => {
             let tempExtent = d3.extent(dag[layer], d => {
                 return d.pagerank
             })
             tempMins.push(tempExtent[0])
             tempMaxs.push(tempExtent[1])
+            tempCountMaxs.push(d3.max(dag[layer], d => { return d.count }))
         })
 
         const fvScaleMax = d3.max(tempMaxs)
         const fvScaleMin = d3.min(tempMins)
+        const cvScaleCountMAx = d3.max(tempCountMaxs)
+
+        let countMax = d3.max(dag)
 
         let fvScale = d3.scaleLinear()
-            .domain([0, 1300])
+            .domain([0, cvScaleCountMAx]) // max = 1300 for all class comparison
             .range([fvWidth/3, fvWidth])
 
         let dagG = dagSVG
@@ -352,9 +357,9 @@ export function dagVIS(selectedClass) {
                 // })
                 .attr("transform", () => { // centered up top
                     if (index < 5) {
-                        return "translate(" + ((channel.x + index * deWidth) + (index + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (channel.y - deHeight - 1) + ")"
+                        return "translate(" + ((channel.x + index * deWidth) + (index + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (channel.y - deHeight - 1 - 15) + ")" // -15 to raise above label
                     } else if (index >= 5) {
-                        return "translate(" + ((channel.x + (index-5) * deWidth) + (index -5 + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (channel.y - 2 * (deHeight + 1)) + ")"
+                        return "translate(" + ((channel.x + (index-5) * deWidth) + (index -5 + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (channel.y - 2 * (deHeight + 1) - 15) + ")"
                     }
                 })
                 .style('opacity', 0)
@@ -433,6 +438,18 @@ export function dagVIS(selectedClass) {
                     // // d3.select('#mixed4d-376-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-3.png')
 
                     // }, 1000);
+                    
+                    d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-in')
+                        .classed('dag-edge-animate', true)
+
+                    d3.selectAll('.fv-ch-' + indexLayer[layerIndex[layer] - 1])
+                        .filter(d => {
+                            let tempPrevChannels = d['prev_channels'].map(pv => pv['prev_channel'])
+                            if (tempPrevChannels.includes(curr_channel.channel)) {
+                                return d    
+                            }
+                        })
+                        .attr('filter', null)
 
                 })
                 .on('mouseout', function() {
@@ -449,6 +466,9 @@ export function dagVIS(selectedClass) {
                         // })
                         .style('opacity', 0)
                         .style('display', 'none')
+
+                    d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-in')
+                        .classed('dag-edge-animate', false)
                 })
 
             dagG.selectAll('.fv-ch-label-' + layer)
@@ -525,11 +545,19 @@ export function dagVIS(selectedClass) {
                 //     return 'dag-edge-' + layer + '-' + d['prev_channel'] + '-in'
                 // })
                 .attr('class', d => {
-                    return 'dag-edge' +
+
+                    let classString = 'dag-edge' +
                         ' ' + 'dag-edge-' + layer +
                         ' ' + 'dag-edge-' + layer + '-' + channel.channel +
                         ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] +
                         ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
+
+                        if (d.layer != 'mixed5b') {
+                            classString += ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] + '-in'
+                            
+                        }
+
+                    return classString
                         
                         // ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] + '-in'
                         // ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-in'
@@ -625,9 +653,9 @@ export function dagVIS(selectedClass) {
                         d3.select('#' + layer + '-' + dag[layer][channel].channel + '-' + 'dataset-p-' + index)
                             .attr("transform", () => { // centered up top
                                 if (index < 5) {
-                                    return "translate(" + ((dag[layer][channel].x + index * deWidth) + (index + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1) + ")"
+                                    return "translate(" + ((dag[layer][channel].x + index * deWidth) + (index + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1 - 15) + ")"
                                 } else if (index >= 5) {
-                                    return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth) + (index - 5 + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1)) + ")"
+                                    return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth) + (index - 5 + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1) - 15) + ")"
                                 }
                             })
                             // .attr("transform", () => { // centered up top

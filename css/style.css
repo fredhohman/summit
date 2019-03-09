@@ -438,6 +438,12 @@ button:active {
     animation: dash 5s linear;
 }
 
+.dag-edge-animate {
+    stroke: var(--main-light);
+    stroke-dasharray: 50 5;
+    animation: dash 5s linear;
+}
+
 /* slider */
 
 .slider {
