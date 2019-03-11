@@ -279,7 +279,7 @@ export function dagVIS(selectedClass) {
         drawOrigin()
 
         function centerDag() {
-            zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.scale(1).translate(dagWidth/2, 50));
+            zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(dagWidth / 2, 50).scale(0.2));
         }
         centerDag()
         d3.select('#dag-home').on('click', () => {
@@ -440,7 +440,10 @@ export function dagVIS(selectedClass) {
                     // }, 1000);
                     
                     d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-in')
-                        .classed('dag-edge-animate', true)
+                        .classed('dag-edge-animate-in', true)
+
+                    d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-out')
+                        .classed('dag-edge-animate-out', true)
 
                     d3.selectAll('.fv-ch-' + indexLayer[layerIndex[layer] - 1])
                         .filter(d => {
@@ -468,7 +471,11 @@ export function dagVIS(selectedClass) {
                         .style('display', 'none')
 
                     d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-in')
-                        .classed('dag-edge-animate', false)
+                        .classed('dag-edge-animate-in', false)
+                    
+                    d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-out')
+                        .classed('dag-edge-animate-out', false)
+
                 })
 
             dagG.selectAll('.fv-ch-label-' + layer)
