@@ -1,6 +1,7 @@
 import * as d3 from "d3"
 import similarity from "compute-cosine-similarity"
 import { dagVIS, removeDagVIS } from "./dag";
+// let dropdown = require('semantic-ui-dropdown')
 
 export const layerChannelCounts = {
     'mixed3a': 256,

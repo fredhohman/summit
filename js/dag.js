@@ -46,6 +46,7 @@ const dagWidth = 1000 - dagMargin.left - dagMargin.right
 const dagHeight = 800 - dagMargin.top - dagMargin.bottom // 790 based on laptop screen height
 let k = 1; // dag zoom scale
 const filterTransitionSpeed = 1000
+const fv_type = '.jpg'
 
 let zoom = d3.zoom()
     .scaleExtent([.05, 5])
@@ -126,7 +127,6 @@ function newChannelClipPath(layer, channel) {
         .attr('height', channel.width)
         .attr('rx', 8)
         .attr('ry', 8)
-
 }
 
 dagDefs.append('clipPath')
@@ -239,8 +239,8 @@ export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
     
     // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-    d3.json('./data/dag/pagerank/dag-270.json').then(function (dag) {
-    // d3.json('./data/dag/pagerank/dag-0noinnerlayer.json').then(function (dag) {
+    // d3.json('./data/dag/pagerank/dag-496.json').then(function (dag) {
+    d3.json('./data/dag/pagerank/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
         console.log(dag);
 
         let tempMins = []
@@ -343,7 +343,7 @@ export function dagVIS(selectedClass) {
                 .attr('y', 0)
                 .attr('width', deWidth)
                 .attr('height', deHeight)
-                .attr('xlink:href', '../data/feature-vis/dataset-p/' + layer + '-' + channel.channel + '-' + 'dataset-p-' + index + '.png')
+                .attr('xlink:href', '../data/feature-vis/dataset-p/' + layer + '-' + channel.channel + '-' + 'dataset-p-' + index + fv_type)
                 .classed('fv-de', true)
                 .attr('clip-path', 'url(#de-clip-path)')
                 // .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, left
@@ -388,7 +388,7 @@ export function dagVIS(selectedClass) {
                 .attr('height', d => fvScale(d.count))
                 // .attr('width', d => fvWidth)
                 // .attr('height', d => fvHeight)
-                .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel.png')
+                .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
                 // .attr('clip-path', 'url(#fv-clip-path)')
                 .attr('clip-path', d => 'url(#fv-clip-path-' + layer + '-' + d.channel + ')')
                 // .attr("transform", (d, i) => "translate(" + 
@@ -811,4 +811,5 @@ export function dagVIS(selectedClass) {
 
 export function removeDagVIS() {
     d3.select("#dagG").remove()
+    d3.selectAll("#dag defs > clipPath").remove()
 }
