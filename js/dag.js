@@ -88,7 +88,7 @@ const fvHeight = fvWidth
 const deWidth = 49
 const deHeight = deWidth
 
-const layerVerticalSpace = 450
+const layerVerticalSpace = 300
 const fvHorizontalSpace = 50
 
 const layerIndex = {
@@ -239,7 +239,7 @@ export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
     
     // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-    // d3.json('./data/dag/pagerank/dag-496.json').then(function (dag) {
+    // d3.json('./data/dag/pagerank/dag-270.json').then(function (dag) {
     d3.json('./data/dag/pagerank/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
         console.log(dag);
 
@@ -500,8 +500,8 @@ export function dagVIS(selectedClass) {
                 // .attr('x', d => 0 - ((dag[d].length * fvWidth + (dag[d].length - 1) * fvHorizontalSpace) / 2))
                 // .attr('y', (d, i) => layerIndex[d] * layerVerticalSpace)
                 .text(d => d)
-                .attr('transform', d => 'translate(' + (0 - (fvWidth/4 + ((dag[d].length * fvWidth + (dag[d].length - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight/2) + ')rotate(-90)')
-                .attr('text-anchor', 'middle')
+                .attr('transform', d => 'translate(' + (0 - (fvWidth/4 + ((dag[d].length * fvWidth + (dag[d].length - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight/2) + ')')
+                .attr('text-anchor', 'end')
                 .classed('dag-layer-label', true)
                 .attr('id', d => 'dag-layer-label-' + d)
 
@@ -648,7 +648,8 @@ export function dagVIS(selectedClass) {
                 d3.select('#dag-layer-label-' + layer)
                     .transition()
                     .duration(filterTransitionSpeed)
-                    .attr('transform', d => 'translate(' + (0 - (fvWidth / 4 + ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight / 2) + ')rotate(-90)')
+                    .attr('transform', d => 'translate(' + (0 - (fvWidth / 4 + ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight / 2) + ')')
+
             })
         }
 
