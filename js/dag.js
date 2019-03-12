@@ -171,6 +171,21 @@ let classAcc = rightInnerOptionsClassAcc
     .append('div')
     .classed("header-value", true)
 
+// class accuracy histogram
+let rightInnerOptionsClassAccHist = rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+
+const accuracyMargin = { top: 7, right: 0, bottom: 2, left: 0 }
+const accuracyWidth = 100 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
+const accuracyHeight = 25 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
+
+rightInnerOptionsClassAccHist
+    .append('svg')
+    .attr("width", accuracyWidth + accuracyMargin.left + accuracyMargin.right)
+    .attr("height", accuracyHeight + accuracyMargin.top + accuracyMargin.bottom)
+    .attr('id', 'accuracy-hist')
+
 // home zoom button
 rightInnerOptions
     .append('div')
@@ -692,7 +707,12 @@ export function dagVIS(selectedClass) {
             classInstances
                 .text(selectedClass.numOfInstances)
             classAcc
-                .text(selectedClass.topOneAcc.toFixed(2))
+                .text((100 * selectedClass.topOneAcc).toFixed(1) + '%')
+
+            let accHistFromClassBar = document.getElementById("accuracy-" + selectedClass.synset);
+            let accHistFromClassBarCopy = accHistFromClassBar.cloneNode(true);
+            document.getElementById('accuracy-hist')
+                .appendChild(accHistFromClassBarCopy)
 
             let maxNumEdgesIn = []
             layers.forEach(l => {
@@ -774,4 +794,5 @@ export function dagVIS(selectedClass) {
 export function removeDagVIS() {
     d3.select("#dagG").remove()
     d3.selectAll("#dag defs > clipPath").remove()
+    d3.select("#accuracy-hist > *").remove()
 }
