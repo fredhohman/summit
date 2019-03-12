@@ -159,6 +159,7 @@ button:active {
     flex: 0 0 64px;
     /* padding: 15px; */
     display: flex;
+    justify-content: space-between;
 }
 
 #left-inner-embedding {
@@ -190,7 +191,7 @@ button:active {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 10px;
+    padding-left: 16px;
 }
 
 .class-bar {
@@ -200,8 +201,8 @@ button:active {
     border-top: 1px solid var(--background-color);
     padding-top: 10px;
     padding-bottom: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 16px;
+    padding-right: 16px;
     background: var(--background-color);
 }
 

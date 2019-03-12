@@ -443,6 +443,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         leftInnerEmbeddingOptions
             .append('div')
             .classed('left-inner-option-wrapper', true)
+            .style('padding-right', '16px')
             .append('button')
                 .attr('type', 'button')
                 .classed('square-button', true)
