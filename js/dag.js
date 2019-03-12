@@ -224,8 +224,8 @@ export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
     
     // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-    // d3.json('./data/dag/pagerank/dag-270.json').then(function (dag) {
-    d3.json('./data/dag/pagerank/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
+    d3.json('./data/dag/pagerank/dag-55.json').then(function (dag) {
+    // d3.json('./data/dag/pagerank/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
         console.log(dag);
 
         let tempMins = []
@@ -264,7 +264,7 @@ export function dagVIS(selectedClass) {
         drawOrigin()
 
         function centerDag() {
-            zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(dagWidth / 2, 50).scale(0.2));
+            zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(dagWidth / 2, 50).scale(0.26));
         }
         centerDag()
         d3.select('#dag-home').on('click', () => {
@@ -434,17 +434,36 @@ export function dagVIS(selectedClass) {
                         d3.selectAll('#' + indexLayer[layerIndex[layer] + 1] + '-' + pc['prev_channel'] + '-channel')
                             .attr('filter', null) 
                     });
+                })
+                .on('mousemove', function(d) {
+                    // diversity hovering
+                    let coordinates = d3.mouse(this)
+                    let mouseX = coordinates[0]
+                    let mouseY = coordinates[1]
+                    let channelSelection = d3.select(this)
+                    // console.log(mouseX, mouseY, channelSelection)
 
-                    console.log(d3.mouse(this))
+                    let diversity;
+                    if (mouseX < d.width/4) {
+                        diversity = 0
+                    } else if ((mouseX > d.width * (1 / 4)) && (mouseX < d.width * (1 / 2))) {
+                        diversity = 1
+                    } else if ((mouseX > d.width * (1 / 2)) && (mouseX < d.width * (3 / 4))) {
+                        diversity = 2
+                    } else if (mouseX > d.width * (3 / 4)) {
+                        diversity = 3
+                    }
 
+                    channelSelection.attr('xlink:href', '../data/feature-vis/diversity-' + diversity+ '/' + d.layer + '-' + d.channel + '-diversity-' + diversity + fv_type)
 
                 })
-                .on('mouseout', function() {
+                .on('mouseout', function(d) {
+
+                    let channelSelection = d3.select(this)
+
                     d3.selectAll('.fv-ch').attr('filter', null)
 
-                    let curr_channel = d3.select(this).data()[0]
-
-                    d3.selectAll('.' + layer + '-' + curr_channel.channel + '-dataset-p')
+                    d3.selectAll('.' + layer + '-' + d.channel + '-dataset-p')
                         // .transition()
                         // .duration(750)
                         // .attr("transform", (d, i) => {
@@ -454,11 +473,13 @@ export function dagVIS(selectedClass) {
                         .style('opacity', 0)
                         .style('display', 'none')
 
-                    d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-in')
+                    d3.selectAll('.dag-edge-' + layer + '-' + d.channel + '-in')
                         .classed('dag-edge-animate-in', false)
                     
-                    d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-out')
+                    d3.selectAll('.dag-edge-' + layer + '-' + d.channel + '-out')
                         .classed('dag-edge-animate-out', false)
+
+                    channelSelection.attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
 
                 })
 
