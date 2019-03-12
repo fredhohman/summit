@@ -454,6 +454,11 @@ export function dagVIS(selectedClass) {
                         })
                         .attr('filter', null)
 
+                    curr_channel['prev_channels'].forEach(pc => {
+                        d3.selectAll('#' + indexLayer[layerIndex[layer] + 1] + '-' + pc['prev_channel'] + '-channel')
+                            .attr('filter', null) 
+                    });
+
                 })
                 .on('mouseout', function() {
                     d3.selectAll('.fv-ch').attr('filter', null)
