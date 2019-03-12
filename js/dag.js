@@ -126,7 +126,7 @@ dagDefs.append('clipPath')
 let rightInnerOptionsClassName = rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
-    .style('padding-right', '20px')
+    // .style('padding-right', '20px')
 
 rightInnerOptionsClassName
     .append('span')
@@ -143,7 +143,7 @@ let className = rightInnerOptionsClassName
 let rightInnerOptionsClassInstances = rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
-    .style('padding-right', '20px')
+    // .style('padding-right', '20px')
 
 rightInnerOptionsClassInstances
     .append('span')
@@ -159,7 +159,7 @@ let classInstances = rightInnerOptionsClassInstances
 let rightInnerOptionsClassAcc = rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
-    .style('padding-right', '20px')
+    // .style('padding-right', '20px')
 
 rightInnerOptionsClassAcc
     .append('span')
@@ -185,9 +185,18 @@ rightInnerOptions
     .attr('id', 'dag-home')
 
 // channel count slider
-rightInnerOptions
+let rightInnerOptionsFilter = rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
+
+rightInnerOptionsFilter.append('span')
+    .classed("smalltext-header", true)
+    .style('color', '#666666')
+    .text('filter graph')
+
+rightInnerOptionsFilter
+    .append('div')
+    .classed('header-value', true)
     .append('input')
     .attr('type', 'range')
     .attr('id', 'dag-channel-count-filter-slider')

@@ -45,6 +45,10 @@ header {
     letter-spacing: .8px;
 }
 
+.header-value {
+    height: 19px !important;
+}
+
 /* material buttons */
 
 button {
@@ -390,7 +394,8 @@ button:active {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 10px;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 #dag {
@@ -449,7 +454,6 @@ button:active {
     stroke-dasharray: 30 8;
     animation: dash 10s linear;
 }
-
 
 /* slider */
 
