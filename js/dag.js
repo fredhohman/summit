@@ -9,33 +9,6 @@ let rightInnerOptions = d3.select('#right-inner-options')
 
 let rightInnerDagWrapper = d3.select('#right-inner-dag-wrapper')
 
-// let test = rightInnerDagWrapper
-//     .append('div')
-//     // .classed('dataset-examples', true)
-// test
-//     .append('style')
-//     .text('.sprite {background-image: url(../data/feature-vis/mixed4b-00310--mixed4b-00319.jpg)}')
-
-// test
-//     .append('div')
-//         .attr('id', 'test-div')
-//         .classed('sprite', true)
-//         // .classed('channel-diversity-0', true)
-//         .classed('index-0', true)
-//         // .on('mouseover', () => {
-//         //     // d3.select('#test-div')
-//         //     // .transition()
-//         //     // .duration(1000)
-//         //     // .style('background-position-x', '-441px')
-//         //     // .transition()
-//         //     // .duration(1000)
-//         //     // .style('background-position-x', '-588px')
-//         // })
-//         // .on('mouseout', () => {
-//         // })
-//     // .append('span')
-//         // .attr('id', 'test-span')
-
 // let layers = ['mixed5a', 'mixed4e', 'mixed4d', 'mixed4c', 'mixed4b', 'mixed4a', 'mixed3b', 'mixed3a']
 // let layers = ['mixed5b', 'mixed5a', 'mixed4e']
 // let layers = ['mixed5a', 'mixed4e']
@@ -218,18 +191,6 @@ rightInnerOptions
     .append('input')
     .attr('type', 'range')
     .attr('id', 'dag-channel-count-filter-slider')
-    .attr('min', 0)
-    .attr('max', 1300)
-    .attr('value', 0)
-    .classed('slider', true)
-
-// edge slider
-rightInnerOptions
-    .append('div')
-    .classed('right-inner-option-wrapper', true)
-    .append('input')
-    .attr('type', 'range')
-    .attr('id', 'dag-edge-filter-slider')
     .attr('min', 0)
     .attr('max', 1300)
     .attr('value', 0)
@@ -429,15 +390,6 @@ export function dagVIS(selectedClass) {
                         //         return "translate(" + (curr_channel.x + (i-5) * deWidth + (i - 5 + 1) * 2) + ", " + (curr_channel.y - 2*(deHeight + 1)) + ")"
                         //     }
                         // })
-
-                    // let t = setInterval(() => {
-
-                    // d3.select('#mixed4d-101-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-0.png')
-                    // // d3.select('#mixed4d-376-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-1.png')
-                    // // d3.select('#mixed4d-376-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-2.png')
-                    // // d3.select('#mixed4d-376-channel').attr('xlink:href', '../data/feature-vis/mixed4d-376-diversity-3.png')
-
-                    // }, 1000);
                     
                     d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-in')
                         .classed('dag-edge-animate-in', true)
@@ -458,6 +410,9 @@ export function dagVIS(selectedClass) {
                         d3.selectAll('#' + indexLayer[layerIndex[layer] + 1] + '-' + pc['prev_channel'] + '-channel')
                             .attr('filter', null) 
                     });
+
+                    console.log(d3.mouse(this))
+
 
                 })
                 .on('mouseout', function() {
@@ -799,24 +754,9 @@ export function dagVIS(selectedClass) {
                 })
                 .property('value', 0)
 
-            d3.select('#dag-edge-filter-slider')
-                .on('input', function () {
-                    d3.selectAll('.dag-edge')
-                        .attr('display', d => {
-                            if (d.inf < this.value) {
-                                return 'none'
-                            } else {
-                                return 'block'
-                            }
-                        })
-                })
-                .property('value', 0)
-
-
         }
 
         drawDAG()
-
 
     })
 
