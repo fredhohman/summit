@@ -179,6 +179,7 @@ button:active {
     /* padding: 15px; */
     display: flex;
     border-bottom: 1px solid var(--border-color);
+    justify-content: space-between;
 }
 
 #left-inner-class-bar-wrapper {

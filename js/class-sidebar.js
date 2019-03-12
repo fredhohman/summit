@@ -75,30 +75,47 @@ d3.json('./data/imagenet.json').then(function (data) {
     leftInnerClassBarOptions
         .append('div')
         .classed('left-inner-option-wrapper', true)
+        .append('div')
+        .text('add search bar here')
+
+    let leftInnerClassBarOptionsButtonWrapper = leftInnerClassBarOptions
+        .append("div")
+        .style('display', 'flex')
+        .style('padding-right', '10px')
+
+    leftInnerClassBarOptionsButtonWrapper
+        .append('div')
+        .classed('left-inner-option-wrapper', true)
         .append('button')
         .attr('type', 'button')
-        .text('Accuracy ascending')
+        .classed('square-button', true)
+        // .text('Accuracy ascending')
         .on('click', () => {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
             makeClassBars(data, layer, selectedClass, 'asc')
         })
-        // .append('i')
-        // .classed('material-icons', true)
-        // .classed('md-24', true)
-        // .text('arrow_downward')
+        .append('i')
+        .classed('material-icons', true)
+        .classed('md-24', true)
+        .text('arrow_downward')
 
-    leftInnerClassBarOptions
+    leftInnerClassBarOptionsButtonWrapper
         .append('div')
         .classed('left-inner-option-wrapper', true)
         .append('button')
         .attr('type', 'button')
-        .text('Accuracy descending')
+        // .text('Accuracy descending')
+        .classed('square-button', true)
         .on('click', () => {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
             makeClassBars(data, layer, selectedClass, 'dsc')
         })
+        .append('i')
+        .classed('material-icons', true)
+        .classed('md-24', true)
+        .text('arrow_upward')
 
     function computeEmbeddingDistancesFromPointEuclidean(data, layer, point) {
         for (let i = 0; i < data.length; i++) {
