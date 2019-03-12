@@ -245,7 +245,7 @@ button:active {
 
 .class-bar-text-image {
     flex: 0 0 100px;
-    background-image: url(../data/kit_fox.jpg);
+    /* background-image: url(../data/kit_fox.jpg); */
 }
 
 .class-bar-text-accuracy {
