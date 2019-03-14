@@ -806,7 +806,7 @@ function dehighlightEmbeddingPoint(synset) {
 
 function dehighlightEmbeddingLabel(synset) {
     d3.select('#embedding-point-label-' + synset)
-        .style('fill', getCssVar('--main-light'))
+        .style('fill', getCssVar('--dark'))
 
     d3.select('#embedding-point-label-' + synset)
         .text('')
