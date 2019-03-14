@@ -37,6 +37,9 @@ let leftInnerClassBarOptions = leftInner.append('div')
     
 let leftInnerClassBarWrapper = leftInner.append('div')
     .attr('id', 'left-inner-class-bar-wrapper')
+    .on('scroll', () => {
+        colorEmbeddingPointsInViewbox()
+    })
 
 // middle
 // let middleInner = d3.select('#middle')
@@ -235,7 +238,8 @@ d3.json('./data/imagenet.json').then(function (data) {
                 makeClassBars(data, layer, d, 'dis')
                 removeDagVIS()
                 dagVIS(d)
-                highlightEmbeddingPointLabel(d)
+                colorEmbeddingPointsInViewbox()
+                highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
             })
         
         classBarTexts.append('div')
@@ -619,7 +623,6 @@ d3.json('./data/imagenet.json').then(function (data) {
                 //     })
             })
             .on('mouseout', (d) => {
-                console.log('mouseout2')
                 d3.selectAll('.embedding-point-label')
                     .classed('embedding-point-label-selected', false)
 
@@ -627,6 +630,11 @@ d3.json('./data/imagenet.json').then(function (data) {
                     d3.selectAll('.embedding-point-label')
                         .text('')
                 }
+
+                d3.select('#embedding-point-label-' + selectedSynset)
+                    .text(d => d.name.replace(/_/g, ' ').toLowerCase())
+                    .classed('embedding-point-label-selected', true)
+
             //     tip.hide()
                 // d3.selectAll('.embedding-point').style('fill', ' #666666')
                 // d3.selectAll('.embedding-point-label').text('')
@@ -638,8 +646,8 @@ d3.json('./data/imagenet.json').then(function (data) {
                 makeClassBars(data, layer, d, 'dis')
                 removeDagVIS()
                 dagVIS(d)
-                console.log('sdfsdfsdfds')
-                highlightEmbeddingPointLabel(d)
+                colorEmbeddingPointsInViewbox()
+                highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
             })
 
         let embeddingLabels = embeddingG.selectAll('.embedding-point-label')
@@ -664,13 +672,20 @@ d3.json('./data/imagenet.json').then(function (data) {
                     d3.selectAll('.embedding-point-label')
                         .text('')
                 }
+                
+                d3.select('#embedding-point-label-' + selectedSynset)
+                    .text(d => d.name.replace(/_/g, ' ').toLowerCase())
+                    .classed('embedding-point-label-selected', true)
             })
             .on('click', (d) => {
+                console.log('click3')
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis')
                 removeDagVIS()
                 dagVIS(d)
+                colorEmbeddingPointsInViewbox()
+                highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
             })
 
         // function computeDRPointDistances(data, point) {
@@ -750,32 +765,79 @@ function removeClassBars() {
     d3.selectAll('.class-bar').remove()
 }
 
-function highlightEmbeddingPointLabel(d) {
-    let targetSynset = d.synset
-
-    d3.select('#point-' + targetSynset)
-        .style('fill', 'red')
-        .attr('r', '7')
-        .moveToFront()
-
-    d3.select('#embedding-point-label-' + targetSynset)
-        .style('fill', 'red')
-        .moveToFront()
-
-    if (targetSynset !== selectedSynset) {
-        d3.select('#point-' + selectedSynset)
-            .style('fill', getComputedStyle(document.body).getPropertyValue('--dark'))
-            .attr('r', '3')
-        
-        d3.select('#embedding-point-label-' + selectedSynset)
-            .style('fill', getComputedStyle(document.body).getPropertyValue('--main-light'))
-    }
-
-    selectedSynset = targetSynset
-}
-
 d3.selection.prototype.moveToFront = function() {
     return this.each(function(){
       this.parentNode.appendChild(this);
     });
 };
+
+
+function highlightEmbeddingPointLabel(targetSynset, color) {
+
+    highlightEmbeddingPoint(targetSynset, color)
+    highlightEmbeddingLabel(targetSynset, color)
+
+    if (targetSynset !== selectedSynset) {
+        dehighlightEmbeddingPoint(selectedSynset)
+        dehighlightEmbeddingLabel(selectedSynset)
+        selectedSynset = targetSynset
+    }
+    
+}
+
+function highlightEmbeddingPoint(synset, color) {
+    d3.select('#point-' + synset)
+        .style('fill', color)
+        .attr('r', '7')
+        .moveToFront()
+}
+
+function highlightEmbeddingLabel(synset, color) {
+    d3.select('#embedding-point-label-' + synset)
+        .style('fill', color)
+        .moveToFront()
+}
+
+function dehighlightEmbeddingPoint(synset) {
+    d3.select('#point-' + synset)
+        .style('fill', getCssVar('--dark'))
+        .attr('r', '3')
+}
+
+function dehighlightEmbeddingLabel(synset) {
+    d3.select('#embedding-point-label-' + synset)
+        .style('fill', getCssVar('--main-light'))
+
+    d3.select('#embedding-point-label-' + synset)
+        .text('')
+}
+
+function colorEmbeddingPointsInViewbox() {
+    let scrollView = document.getElementById('left-inner-class-bar-wrapper')
+    let allClassesInSlide = scrollView.childNodes
+    let scrollViewHeight = parseFloat(getComputedStyle(scrollView).getPropertyValue('height'))
+    let classBlockTopPadding = parseFloat(getComputedStyle(allClassesInSlide[0]).getPropertyValue('padding-top'))
+    let classBlockBottomPadding = parseFloat(getComputedStyle(allClassesInSlide[0]).getPropertyValue('padding-bottom'))
+    let classBlockHeight = parseFloat(getComputedStyle(allClassesInSlide[0]).getPropertyValue('height'))
+    let classBlockLength = classBlockTopPadding + classBlockHeight + classBlockBottomPadding
+    let scrollTopPos = document.getElementById('left-inner-class-bar-wrapper').scrollTop
+
+    let startingClassIdx = Math.max(0, parseInt(scrollTopPos / classBlockLength - 1))
+    let endingClassIdx = parseInt((scrollTopPos + scrollViewHeight) / classBlockLength)
+
+    let totalNumClassInSlide = allClassesInSlide.length
+    
+    for (var i = 0; i < totalNumClassInSlide; i++) {
+        let shownClassSynset = allClassesInSlide[i].id.split('-')[2]
+
+        if (i >= startingClassIdx && i < endingClassIdx || i == 0)
+            highlightEmbeddingPoint(shownClassSynset, getCssVar('--highlight-scroll'))
+        else
+            dehighlightEmbeddingPoint(shownClassSynset, getCssVar('--highlight-scroll'))
+    }
+
+}   
+
+function getCssVar(name) {
+    return getComputedStyle(document.body).getPropertyValue(name)
+}
