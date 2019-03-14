@@ -62,6 +62,9 @@ let rightInnerDagWrapper = rightInner.append('div')
 
 const formatNumberThousands = d3.format(',')
 
+// global variable
+let selectedSynset;
+
 d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
     window.data = data
@@ -204,6 +207,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 d3.select('#embedding-point-label-' + d.synset)
                     .text(d => d.name.replace(/_/g, ' ').toLowerCase())
                     .classed('embedding-point-label-selected', true)
+                    .moveToFront()
 
             })
             .on('mouseout', (d) => {
@@ -217,6 +221,10 @@ d3.json('./data/imagenet.json').then(function (data) {
                     d3.selectAll('.embedding-point-label')
                         .text('')
                 }
+
+                d3.select('#embedding-point-label-' + selectedSynset)
+                    .text(d => d.name.replace(/_/g, ' ').toLowerCase())
+                    .classed('embedding-point-label-selected', true)
             })
 
         let classBarTexts = classBars.append('div')
@@ -227,6 +235,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 makeClassBars(data, layer, d, 'dis')
                 removeDagVIS()
                 dagVIS(d)
+                highlightEmbeddingPointLabel(d)
             })
         
         classBarTexts.append('div')
@@ -610,6 +619,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 //     })
             })
             .on('mouseout', (d) => {
+                console.log('mouseout2')
                 d3.selectAll('.embedding-point-label')
                     .classed('embedding-point-label-selected', false)
 
@@ -628,6 +638,8 @@ d3.json('./data/imagenet.json').then(function (data) {
                 makeClassBars(data, layer, d, 'dis')
                 removeDagVIS()
                 dagVIS(d)
+                console.log('sdfsdfsdfds')
+                highlightEmbeddingPointLabel(d)
             })
 
         let embeddingLabels = embeddingG.selectAll('.embedding-point-label')
@@ -644,6 +656,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .classed('embedding-point-label-selected', true)
             })
             .on('mouseout', (d) => {
+                console.log('mouseout3')
                 d3.selectAll('.embedding-point-label')
                     .classed('embedding-point-label-selected', false)
 
@@ -659,7 +672,6 @@ d3.json('./data/imagenet.json').then(function (data) {
                 removeDagVIS()
                 dagVIS(d)
             })
-            
 
         // function computeDRPointDistances(data, point) {
         //     for (let i = 0; i < data.length; i++) {
@@ -737,3 +749,33 @@ d3.json('./data/imagenet.json').then(function (data) {
 function removeClassBars() {
     d3.selectAll('.class-bar').remove()
 }
+
+function highlightEmbeddingPointLabel(d) {
+    let targetSynset = d.synset
+
+    d3.select('#point-' + targetSynset)
+        .style('fill', 'red')
+        .attr('r', '7')
+        .moveToFront()
+
+    d3.select('#embedding-point-label-' + targetSynset)
+        .style('fill', 'red')
+        .moveToFront()
+
+    if (targetSynset !== selectedSynset) {
+        d3.select('#point-' + selectedSynset)
+            .style('fill', getComputedStyle(document.body).getPropertyValue('--dark'))
+            .attr('r', '3')
+        
+        d3.select('#embedding-point-label-' + selectedSynset)
+            .style('fill', getComputedStyle(document.body).getPropertyValue('--main-light'))
+    }
+
+    selectedSynset = targetSynset
+}
+
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+      this.parentNode.appendChild(this);
+    });
+};
