@@ -1,6 +1,7 @@
 import * as d3 from "d3"
 import similarity from "compute-cosine-similarity"
 import { dagVIS, removeDagVIS } from "./dag";
+import { evokeSearchBar } from './searchbar'
 // let dropdown = require('semantic-ui-dropdown')
 
 export const layerChannelCounts = {
@@ -84,7 +85,13 @@ d3.json('./data/imagenet.json').then(function (data) {
         .append('div')
         .classed('left-inner-option-wrapper', true)
         .append('div')
-        .text('add search bar here')
+        .text('add search bar here')   
+    
+    // XXXXX
+    let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
+    let leftSearchBar = document.getElementById('left-inner-class-bar-options')
+    leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
+    evokeSearchBar()
 
     let leftInnerClassBarOptionsButtonWrapper = leftInnerClassBarOptions
         .append("div")
@@ -857,4 +864,12 @@ function colorEmbeddingPointsInViewbox() {
 
 function getCssVar(name) {
     return getComputedStyle(document.body).getPropertyValue(name)
+}
+
+function getSearchBarInnerHTML(dataList) {
+    let dataListStr = dataList.join(', ')
+    let innerHtml = '<input autofocus class="searchbar" data-list="'
+    innerHtml += dataListStr
+    innerHtml += '" />'
+    return innerHtml
 }
