@@ -67,6 +67,7 @@ const formatNumberThousands = d3.format(',')
 
 // global variable
 let selectedSynset;
+let prevClassesSynset = [];
 
 d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
@@ -827,8 +828,15 @@ function colorEmbeddingPointsInViewbox() {
 
     let totalNumClassInSlide = allClassesInSlide.length
     
+    prevClassesSynset.forEach(prevSynset => {
+        dehighlightEmbeddingPoint(prevSynset, getCssVar('--highlight-scroll'))
+    })
+
+    prevClassesSynset = []
+
     for (var i = 0; i < totalNumClassInSlide; i++) {
         let shownClassSynset = allClassesInSlide[i].id.split('-')[2]
+        prevClassesSynset.push(shownClassSynset)
 
         if (i >= startingClassIdx && i < endingClassIdx || i == 0)
             highlightEmbeddingPoint(shownClassSynset, getCssVar('--highlight-scroll'))
