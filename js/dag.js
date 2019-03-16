@@ -223,8 +223,9 @@ rightInnerOptionsFilter
 export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
     
-    // d3.json('./data/dag/dag-270-separate.json').then(function (dag) {
-    d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
+    // d3.json('./data/dag/dag-270.json').then(function (dag) {
+    d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
+    // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
         console.log(dag);
 
         let tempMins = []

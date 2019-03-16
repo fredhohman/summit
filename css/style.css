@@ -15,9 +15,8 @@ html, body {
     --gray: rgba(0, 0, 0, 0.15);
     --darker: #444444;
     --dark: #666666;
-    --highlight-clicked: #990000;
-    --highlight-scroll: #337722;
-    /* --main-color: #311B92; */
+    --highlight-clicked: #1A237E;
+    --highlight-scroll: #1A237E;
 }
 
 .wrapper {
