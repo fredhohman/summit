@@ -434,6 +434,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .classed('layer-glyph-selected', false)
                 d3.select('#layer-glyph-' + layer)
                     .classed('layer-glyph-selected', true)
+                d3      
             })
 
         networkSVG
@@ -719,6 +720,11 @@ d3.json('./data/imagenet.json').then(function (data) {
                 .attr('cx', d => embeddingY(d.embedding[newLayer].x))
                 .attr('cy', d => embeddingY(d.embedding[newLayer].y))
 
+            d3.selectAll('.embedding-point-label-selected')
+            .transition()
+            .duration(1000)
+                .attr('x', d => embeddingXZoomScale(d.embedding[layer].x) + 7)
+                .attr('y', d => embeddingYZoomScale(d.embedding[layer].y) + 4)
 
         }
 
