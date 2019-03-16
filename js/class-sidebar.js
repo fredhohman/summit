@@ -592,8 +592,6 @@ d3.json('./data/imagenet.json').then(function (data) {
         //     .domain(d3.extent(data, d => d.accuracy))
         //     .range([2,5])
 
-        const distanceRadius = 0.5
-
         // let drHoverCircle = embeddingG.append('circle')
         //     .attr('id', 'dr-hover-circle')
         //     // .attr('r', 40)
@@ -659,7 +657,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 selectedLabel = d.name
             })
 
-        let embeddingLabels = embeddingG.selectAll('.embedding-point-label')
+        embeddingG.selectAll('.embedding-point-label')
             .data(data)
             .enter()
             .append('text')
@@ -697,47 +695,6 @@ d3.json('./data/imagenet.json').then(function (data) {
                 highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
                 selectedLabel = d.name
             })
-
-        // function computeDRPointDistances(data, point) {
-        //     for (let i = 0; i < data.length; i++) {
-        //         let distance = Math.sqrt(Math.pow(point.embedding[layer].x - data[i].embedding[layer].x, 2) + Math.pow(point.embedding[layer].y - data[i].embedding[layer].y, 2));
-        //         data[i].distanceFromQueryPoint = distance
-        //     }
-        // }
-        function colorNearPoints(point) {
-
-                // computeDRPointDistances(data, point)
-
-                let colorScale = d3.scaleLinear()
-                    .domain([0, d3.max(data, d => d.distanceFromQueryPoint)])
-                    .interpolate(d3.interpolateHcl)
-                    .range([d3.rgb("#FFC107"), d3.rgb('#dddddd')])
-
-                // d3.selectAll('.embedding-point')
-                //     .style('fill', d => {
-                //         if (d.distanceFromQueryPoint < distanceRadius) {
-                //             return colorScale(d.distanceFromQueryPoint)
-                //         } else {
-                //             return '#666666'
-                //         }
-                //     })
-
-                if (k > 6) {
-
-                    // data
-                    //     .sort(function (x, y) {
-                    //         return d3.descending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
-                    //     })
-                    //     .slice(0, numClassesInClassBar) // nearest n classes
-
-                    d3.selectAll('.embedding-point-label')
-                        .text(d => {
-                            if (d.distanceFromQueryPoint < distanceRadius) {
-                                return d.name
-                            }
-                        })
-                }
-            }
 
         function updateEmbedding(newLayer) {
 
@@ -777,7 +734,7 @@ function removeClassBars() {
 
 d3.selection.prototype.moveToFront = function() {
     return this.each(function(){
-      this.parentNode.appendChild(this);
+        this.parentNode.appendChild(this);
     });
 };
 
@@ -798,7 +755,7 @@ function highlightEmbeddingPointLabel(targetSynset, color) {
 function highlightEmbeddingPoint(synset, color) {
     d3.select('#point-' + synset)
         .style('fill', color)
-        .attr('r', '7')
+        .attr('r', '5')
         .moveToFront()
 }
 
@@ -847,10 +804,11 @@ function colorEmbeddingPointsInViewbox() {
         let shownClassSynset = allClassesInSlide[i].id.split('-')[2]
         prevClassesSynset.push(shownClassSynset)
 
-        if (i >= startingClassIdx && i < endingClassIdx || i == 0)
+        if (i >= startingClassIdx && i < endingClassIdx || i == 0){
             highlightEmbeddingPoint(shownClassSynset, getCssVar('--highlight-scroll'))
-        else
+        } else {
             dehighlightEmbeddingPoint(shownClassSynset, getCssVar('--highlight-scroll'))
+        }
     }
 
 }   
