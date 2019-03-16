@@ -67,6 +67,7 @@ const formatNumberThousands = d3.format(',')
 
 // global variable
 let selectedSynset;
+let selectedLabel;
 let prevClassesSynset = [];
 
 d3.json('./data/imagenet.json').then(function (data) {
@@ -241,6 +242,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 dagVIS(d)
                 colorEmbeddingPointsInViewbox()
                 highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
+                selectedLabel = d.name
             })
         
         classBarTexts.append('div')
@@ -513,6 +515,11 @@ d3.json('./data/imagenet.json').then(function (data) {
             } else {
                 d3.selectAll('.embedding-point-label')
                     .text('')
+                
+                d3.select('#embedding-point-label-' + selectedSynset)
+                    .text(selectedLabel)
+
+                highlightEmbeddingPointLabel(selectedSynset, getCssVar('--highlight-clicked'))
             }
         }
 
@@ -649,6 +656,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 dagVIS(d)
                 colorEmbeddingPointsInViewbox()
                 highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
+                selectedLabel = d.name
             })
 
         let embeddingLabels = embeddingG.selectAll('.embedding-point-label')
@@ -687,6 +695,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 dagVIS(d)
                 colorEmbeddingPointsInViewbox()
                 highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
+                selectedLabel = d.name
             })
 
         // function computeDRPointDistances(data, point) {
