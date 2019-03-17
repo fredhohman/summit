@@ -732,6 +732,7 @@ export function dagVIS(selectedClass) {
                 .text((100 * selectedClass.topOneAcc).toFixed(1) + '%')
 
             let accHistFromClassBar = document.getElementById("accuracy-" + selectedClass.synset);
+            console.log(accHistFromClassBar)
             let accHistFromClassBarCopy = accHistFromClassBar.cloneNode(true);
             document.getElementById('accuracy-hist')
                 .appendChild(accHistFromClassBarCopy)

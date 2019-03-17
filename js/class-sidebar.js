@@ -68,7 +68,8 @@ const formatNumberThousands = d3.format(',')
 
 // global variable
 let selectedSynset;
-let selectedLabel;
+export var selectedClass;
+export var selectedLabel;
 let prevClassesSynset = [];
 
 d3.json('./data/imagenet.json').then(function (data) {
@@ -78,7 +79,7 @@ d3.json('./data/imagenet.json').then(function (data) {
     d3.select('#classes-value').text(formatNumberThousands(data.length))
     d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
 
-    let selectedClass = data[selectedClassIdx];
+    selectedClass = data[selectedClassIdx];
     console.log('selectedClass', selectedClass)
 
     leftInnerClassBarOptions
@@ -87,7 +88,6 @@ d3.json('./data/imagenet.json').then(function (data) {
         .append('div')
         .text('add search bar here')   
     
-    // XXXXX
     let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
     let leftSearchBar = document.getElementById('left-inner-class-bar-options')
     leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
@@ -140,217 +140,8 @@ d3.json('./data/imagenet.json').then(function (data) {
     }
     // computeEmbeddingDistancesFromPointEuclidean(data, layer, selectedClass)
 
-    function computeEmbeddingDistancesFromPointCosine(data, layer, point) {
-
-        function topChannelsToVector(point, layer) {
-            let pointVector = new Array(layerChannelCounts[layer]).fill(0);
-            point.topChannels[layer].forEach(channel => {
-                pointVector[channel.channel] = channel.count;
-            });
-            return pointVector
-        }
-
-        let selectedPointVector = topChannelsToVector(point, layer)
-
-        for (let i = 0; i < data.length; i++) {
-            let iterPointVector = topChannelsToVector(data[i], layer)
-            let distance = similarity(selectedPointVector, iterPointVector)
-            data[i].distanceFromQueryPoint = distance
-        }
-    }
     computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
 
-
-    function makeClassBars(data, layer, selectedClass, sortType) {
-        // sortTypes:
-        // 'dis': sort by class distance
-        // 'asc': sort by class accuracy ascending
-        // 'dsc': sort by class accuracy descending
-        console.log(sortType)
-
-
-        computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
-
-        let classBars;
-
-        if (sortType === 'asc') {
-            classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
-            .data(data
-                .sort(function (x, y) {
-                    return d3.ascending(x.topOneAcc, y.topOneAcc);
-                })
-                .slice(0, numClassesInClassBar)
-            )
-            .enter()
-            .append('div')
-            .classed('class-bar', true)
-
-        } else if (sortType === 'dsc') {
-            classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
-            .data(data
-                .sort(function (x, y) {
-                    return d3.descending(x.topOneAcc, y.topOneAcc);
-                })
-                .slice(0, numClassesInClassBar)
-            )
-            .enter()
-            .append('div')
-            .classed('class-bar', true)
-
-        } else if (sortType === 'dis') {
-            classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
-            .data(data
-                .sort(function (x, y) {
-                    return d3.descending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
-                })
-                .slice(0, numClassesInClassBar) // nearest n classes
-            )
-            .enter()
-            .append('div')
-            .classed('class-bar', true)
-        }
-
-        classBars
-            .attr('id', d => 'class-bar-' + d.synset)
-            .on('mouseover', d => {
-                d3.select('#point-' + d.synset)
-                    .classed('embedding-point-hover', true)
-
-                d3.select('#embedding-point-label-' + d.synset)
-                    .text(d => d.name.replace(/_/g, ' ').toLowerCase())
-                    .classed('embedding-point-label-selected', true)
-                    .moveToFront()
-
-            })
-            .on('mouseout', (d) => {
-                d3.selectAll('.embedding-point')
-                    .classed('embedding-point-hover', false)
-
-                d3.selectAll('.embedding-point-label')
-                    .classed('embedding-point-label-selected', false)            
-
-                if (k < kZoomLabelThreshold) {
-                    d3.selectAll('.embedding-point-label')
-                        .text('')
-                }
-
-                d3.select('#embedding-point-label-' + selectedSynset)
-                    .text(d => d.name.replace(/_/g, ' ').toLowerCase())
-                    .classed('embedding-point-label-selected', true)
-            })
-
-        let classBarTexts = classBars.append('div')
-            .classed('class-bar-text-wrapper', true)
-            .on('click', d => {
-                removeClassBars()
-                document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-                makeClassBars(data, layer, d, 'dis')
-                removeDagVIS()
-                dagVIS(d)
-                colorEmbeddingPointsInViewbox()
-                highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
-                selectedLabel = d.name
-            })
-        
-        classBarTexts.append('div')
-            .classed('class-bar-text-name', true)
-            .append('a')
-            .text(d => d.name.replace(/_/g, ' ').toLowerCase())
-            .attr('target', '_blank')
-            .attr('href', d => 'http://www.google.com/search?q=' + d.name.replace('_', '+').toLowerCase())
-
-        // classBarTexts.append('div')
-        //     .classed('class-bar-text-instances', true)
-        //     .text(d => d.numOfInstances)
-
-        // classBarTexts.append('div')
-        //     .classed('class-bar-text-image', true)
-
-        classBarTexts.append('div')
-            .classed('class-bar-text-accuracy', true)
-            .text(d => (100 * d.topOneAcc).toFixed(1) + '%')
-
-        let classBarHistograms = classBarTexts.append('div')
-            .classed('class-bar-text-histogram', true)
-            // .text('h')
-
-        const accuracyMargin = { top: 7, right: 0, bottom: 2, left: 0 }
-        const accuracyWidth = 100 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
-        const accuracyHeight = 25 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
-
-        classBarHistograms
-            .append('svg')
-            .attr("width", accuracyWidth + accuracyMargin.left + accuracyMargin.right)
-            .attr("height", accuracyHeight + accuracyMargin.top + accuracyMargin.bottom)
-            // .style('border', '1px solid #eeeeee') // for debugging
-            .append("g")
-            .attr("transform", "translate(" + accuracyMargin.left + "," + accuracyMargin.top + ")")
-            .attr('id', d => 'accuracy-' + d.synset)
-
-        function makeAccuracyHistogram(c) {
-            let accuracySVG = d3.select('#accuracy-' + c.synset)
-
-            let accuracyX = d3.scaleLinear()
-                .domain(d3.extent(c.accuracies)).nice()
-                .range([0, accuracyWidth])
-
-            let bins = d3.histogram()
-                .domain(accuracyX.domain())
-                .thresholds(accuracyX.ticks(20))
-                (c.accuracies)
-
-            let accuracyY = d3.scaleLinear()
-                .domain([0, d3.max(bins, d => d.length)]).nice()
-                .range([accuracyHeight, 0])
-
-            let accuracyXAxis = accuracySVG
-                .append('g')
-                .attr("transform", "translate(0," + accuracyHeight + ")")
-                .classed('accuracy-x-axis', true)
-                .call(d3.axisBottom(accuracyX).tickSizeOuter(0).ticks(0))
-
-            accuracySVG
-                .append("g")
-                .selectAll("rect")
-                .data(bins)
-                .enter().append("rect")
-                .classed('accuracy-bar', true)
-                .attr("x", d => accuracyX(d.x0)) // + 1?
-                .attr("width", d => Math.max(0, accuracyX(d.x1) - accuracyX(d.x0) - 1))
-                .attr("y", d => accuracyY(d.length))
-                .attr("height", d => accuracyY(0) - accuracyY(d.length));
-
-            // accuracySVG
-            //     .append('text')
-            //     .attr('x', accuracyWidth / 2)
-            //     .attr('y', accuracyHeight / 2)
-            //     // .attr('x', accuracyMargin.left)
-            //     // .attr('y', accuracyHeight - accuracyMargin.bottom)
-            //     .attr('text-anchor', 'middle')
-            //     .text(d => (100 * d.topOneAcc).toFixed(1) + '%')
-            //     .classed('class-bar-text-accuracy-svg', true)
-        }
-
-        for (let i = 0; i < data.length; i++) {
-            makeAccuracyHistogram(data[i])
-        }
-
-        let classBarBars = classBars.append('div')
-            .classed('class-bar-bar-wrapper', true)
-        
-        let classBarBarsScale = d3.scaleLinear()
-            .domain([0, 1]) // cosine similarity
-            .range([0, 100]) // div width percentage
-        
-        classBarBars.append('div')
-            .classed('class-bar-bar-data', true)
-            .style('width', d => classBarBarsScale(d.distanceFromQueryPoint) + '%')
-
-        classBarBars.append('div')
-            .classed('class-bar-bar-background', true)
-            .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')        
-
-    }
     makeClassBars(data, layer, selectedClass, 'dis')
 
     // embedding
@@ -745,12 +536,220 @@ function removeClassBars() {
     d3.selectAll('.class-bar').remove()
 }
 
+function makeClassBars(data, layer, selectedClass, sortType) {
+    // sortTypes:
+    // 'dis': sort by class distance
+    // 'asc': sort by class accuracy ascending
+    // 'dsc': sort by class accuracy descending
+    console.log(sortType)
+
+    computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
+
+    let classBars;
+
+    if (sortType === 'asc') {
+        classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
+        .data(data
+            .sort(function (x, y) {
+                return d3.ascending(x.topOneAcc, y.topOneAcc);
+            })
+            .slice(0, numClassesInClassBar)
+        )
+        .enter()
+        .append('div')
+        .classed('class-bar', true)
+
+    } else if (sortType === 'dsc') {
+        classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
+        .data(data
+            .sort(function (x, y) {
+                return d3.descending(x.topOneAcc, y.topOneAcc);
+            })
+            .slice(0, numClassesInClassBar)
+        )
+        .enter()
+        .append('div')
+        .classed('class-bar', true)
+
+    } else if (sortType === 'dis') {
+        classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
+        .data(data
+            .sort(function (x, y) {
+                return d3.descending(x.distanceFromQueryPoint, y.distanceFromQueryPoint);
+            })
+            .slice(0, numClassesInClassBar) // nearest n classes
+        )
+        .enter()
+        .append('div')
+        .classed('class-bar', true)
+    }
+
+    classBars
+        .attr('id', d => 'class-bar-' + d.synset)
+        .on('mouseover', d => {
+            d3.select('#point-' + d.synset)
+                .classed('embedding-point-hover', true)
+
+            d3.select('#embedding-point-label-' + d.synset)
+                .text(d => d.name.replace(/_/g, ' ').toLowerCase())
+                .classed('embedding-point-label-selected', true)
+                .moveToFront()
+
+        })
+        .on('mouseout', (d) => {
+            d3.selectAll('.embedding-point')
+                .classed('embedding-point-hover', false)
+
+            d3.selectAll('.embedding-point-label')
+                .classed('embedding-point-label-selected', false)            
+
+            if (k < kZoomLabelThreshold) {
+                d3.selectAll('.embedding-point-label')
+                    .text('')
+            }
+
+            d3.select('#embedding-point-label-' + selectedSynset)
+                .text(d => d.name.replace(/_/g, ' ').toLowerCase())
+                .classed('embedding-point-label-selected', true)
+        })
+
+    let classBarTexts = classBars.append('div')
+        .classed('class-bar-text-wrapper', true)
+        .on('click', d => {
+            removeClassBars()
+            document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+            makeClassBars(data, layer, d, 'dis')
+            removeDagVIS()
+            dagVIS(d)
+            colorEmbeddingPointsInViewbox()
+            highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
+            selectedLabel = d.name
+        })
+    
+    classBarTexts.append('div')
+        .classed('class-bar-text-name', true)
+        .append('a')
+        .text(d => d.name.replace(/_/g, ' ').toLowerCase())
+        .attr('target', '_blank')
+        .attr('href', d => 'http://www.google.com/search?q=' + d.name.replace('_', '+').toLowerCase())
+
+    // classBarTexts.append('div')
+    //     .classed('class-bar-text-instances', true)
+    //     .text(d => d.numOfInstances)
+
+    // classBarTexts.append('div')
+    //     .classed('class-bar-text-image', true)
+
+    classBarTexts.append('div')
+        .classed('class-bar-text-accuracy', true)
+        .text(d => (100 * d.topOneAcc).toFixed(1) + '%')
+
+    let classBarHistograms = classBarTexts.append('div')
+        .classed('class-bar-text-histogram', true)
+        // .text('h')
+
+    const accuracyMargin = { top: 7, right: 0, bottom: 2, left: 0 }
+    const accuracyWidth = 100 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
+    const accuracyHeight = 25 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
+
+    classBarHistograms
+        .append('svg')
+        .attr("width", accuracyWidth + accuracyMargin.left + accuracyMargin.right)
+        .attr("height", accuracyHeight + accuracyMargin.top + accuracyMargin.bottom)
+        // .style('border', '1px solid #eeeeee') // for debugging
+        .append("g")
+        .attr("transform", "translate(" + accuracyMargin.left + "," + accuracyMargin.top + ")")
+        .attr('id', d => 'accuracy-' + d.synset)
+
+    function makeAccuracyHistogram(c) {
+        let accuracySVG = d3.select('#accuracy-' + c.synset)
+
+        let accuracyX = d3.scaleLinear()
+            .domain(d3.extent(c.accuracies)).nice()
+            .range([0, accuracyWidth])
+
+        let bins = d3.histogram()
+            .domain(accuracyX.domain())
+            .thresholds(accuracyX.ticks(20))
+            (c.accuracies)
+
+        let accuracyY = d3.scaleLinear()
+            .domain([0, d3.max(bins, d => d.length)]).nice()
+            .range([accuracyHeight, 0])
+
+        let accuracyXAxis = accuracySVG
+            .append('g')
+            .attr("transform", "translate(0," + accuracyHeight + ")")
+            .classed('accuracy-x-axis', true)
+            .call(d3.axisBottom(accuracyX).tickSizeOuter(0).ticks(0))
+
+        accuracySVG
+            .append("g")
+            .selectAll("rect")
+            .data(bins)
+            .enter().append("rect")
+            .classed('accuracy-bar', true)
+            .attr("x", d => accuracyX(d.x0)) // + 1?
+            .attr("width", d => Math.max(0, accuracyX(d.x1) - accuracyX(d.x0) - 1))
+            .attr("y", d => accuracyY(d.length))
+            .attr("height", d => accuracyY(0) - accuracyY(d.length));
+
+        // accuracySVG
+        //     .append('text')
+        //     .attr('x', accuracyWidth / 2)
+        //     .attr('y', accuracyHeight / 2)
+        //     // .attr('x', accuracyMargin.left)
+        //     // .attr('y', accuracyHeight - accuracyMargin.bottom)
+        //     .attr('text-anchor', 'middle')
+        //     .text(d => (100 * d.topOneAcc).toFixed(1) + '%')
+        //     .classed('class-bar-text-accuracy-svg', true)
+    }
+
+    for (let i = 0; i < data.length; i++) {
+        makeAccuracyHistogram(data[i])
+    }
+
+    let classBarBars = classBars.append('div')
+        .classed('class-bar-bar-wrapper', true)
+    
+    let classBarBarsScale = d3.scaleLinear()
+        .domain([0, 1]) // cosine similarity
+        .range([0, 100]) // div width percentage
+    
+    classBarBars.append('div')
+        .classed('class-bar-bar-data', true)
+        .style('width', d => classBarBarsScale(d.distanceFromQueryPoint) + '%')
+
+    classBarBars.append('div')
+        .classed('class-bar-bar-background', true)
+        .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')        
+
+}
+
+function computeEmbeddingDistancesFromPointCosine(data, layer, point) {
+
+    function topChannelsToVector(point, layer) {
+        let pointVector = new Array(layerChannelCounts[layer]).fill(0);
+        point.topChannels[layer].forEach(channel => {
+            pointVector[channel.channel] = channel.count;
+        });
+        return pointVector
+    }
+
+    let selectedPointVector = topChannelsToVector(point, layer)
+
+    for (let i = 0; i < data.length; i++) {
+        let iterPointVector = topChannelsToVector(data[i], layer)
+        let distance = similarity(selectedPointVector, iterPointVector)
+        data[i].distanceFromQueryPoint = distance
+    }
+}
+
 d3.selection.prototype.moveToFront = function() {
     return this.each(function(){
         this.parentNode.appendChild(this);
     });
 };
-
 
 function highlightEmbeddingPointLabel(targetSynset, color) {
 
@@ -775,6 +774,7 @@ function highlightEmbeddingPoint(synset, color) {
 function highlightEmbeddingLabel(synset, color) {
     d3.select('#embedding-point-label-' + synset)
         .style('fill', color)
+        .text(d => d.name.replace(/_/g, ' ').toLowerCase())
         .moveToFront()
 }
 
@@ -787,9 +787,8 @@ function dehighlightEmbeddingPoint(synset) {
 function dehighlightEmbeddingLabel(synset) {
     d3.select('#embedding-point-label-' + synset)
         .style('fill', getCssVar('--dark'))
-
-    d3.select('#embedding-point-label-' + synset)
         .text('')
+        
 }
 
 function colorEmbeddingPointsInViewbox() {
@@ -836,4 +835,20 @@ function getSearchBarInnerHTML(dataList) {
     innerHtml += dataListStr
     innerHtml += '" />'
     return innerHtml
+}
+
+export function updateSelectedSearch(selectedSearchLabel) {
+    let d = window.data.filter(x => selectedSearchLabel === x.name.replace(/_/g, ' ').toLowerCase())[0]
+    selectedClass = d
+    console.log(d)
+    
+    removeClassBars()
+    document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+    makeClassBars(window.data, layer, d, 'dis')
+    removeDagVIS()
+    dagVIS(d)
+    colorEmbeddingPointsInViewbox()
+    highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
+
+    selectedLabel = d.name
 }
