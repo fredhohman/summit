@@ -224,8 +224,8 @@ export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
     
     // d3.json('./data/dag/dag-270.json').then(function (dag) {
-    d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
-    // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
+    // d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
+    d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
         console.log(dag);
 
         let tempMins = []
@@ -731,6 +731,7 @@ export function dagVIS(selectedClass) {
                 .text((100 * selectedClass.topOneAcc).toFixed(1) + '%')
 
             let accHistFromClassBar = document.getElementById("accuracy-" + selectedClass.synset);
+            console.log(accHistFromClassBar)
             let accHistFromClassBarCopy = accHistFromClassBar.cloneNode(true);
             document.getElementById('accuracy-hist')
                 .appendChild(accHistFromClassBarCopy)
