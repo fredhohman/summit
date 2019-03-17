@@ -1,8 +1,10 @@
 import * as d3 from "d3"
 import similarity from "compute-cosine-similarity"
 import { dagVIS, removeDagVIS } from "./dag";
-import { evokeSearchBar } from './searchbar'
+// import { FUNCTION } from './awesomeplete'
+// import { evokeSearchBar } from './searchbar'
 // let dropdown = require('semantic-ui-dropdown')
+let awesomplete = require('awesomplete')
 
 export const layerChannelCounts = {
     'mixed3a': 256,
@@ -89,9 +91,40 @@ d3.json('./data/imagenet.json').then(function (data) {
         .text('add search bar here')   
     
     let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
+    
     let leftSearchBar = document.getElementById('left-inner-class-bar-options')
     leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
-    evokeSearchBar()
+
+    var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});
+    Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
+        comboplete.ul.childNodes.forEach(li => {
+            if (li.getAttribute('aria-selected') === 'true') {
+                let selectedSearchLabel = li.innerHTML
+                if (! li.innerHTML.includes('<mark>')) {
+                    let selectedSearchlabelParent = li.parentNode
+                    selectedSearchLabel = selectedSearchlabelParent.innerHTML.replace('<mark>', '').replace('</mark>', '')
+                } else {
+                    selectedSearchLabel = selectedSearchLabel.replace('<mark>', '').replace('</mark>', '')
+                }
+                console.log('selectedSearchLabel:', selectedSearchLabel)
+                updateSelectedSearch(selectedSearchLabel)
+            }
+            
+        })
+        // if (comboplete.ul.childNodes.length === 0) {
+        //     console.log('hey')
+        //     comboplete.minChars = 0;
+        //     comboplete.evaluate();
+        // }
+        // else if (comboplete.ul.hasAttribute('hidden')) {
+        //     console.log('hey2')
+        //     comboplete.open();
+        // }
+        // else {
+        //     console.log('hey3')
+        //     comboplete.close();
+        // }
+    });
 
     let leftInnerClassBarOptionsButtonWrapper = leftInnerClassBarOptions
         .append("div")
@@ -831,13 +864,13 @@ function getCssVar(name) {
 
 function getSearchBarInnerHTML(dataList) {
     let dataListStr = dataList.join(', ')
-    let innerHtml = '<input autofocus class="searchbar" data-list="'
+    let innerHtml = '<input autofocus class="awesomplete" data-list="'
     innerHtml += dataListStr
     innerHtml += '" />'
     return innerHtml
 }
 
-export function updateSelectedSearch(selectedSearchLabel) {
+function updateSelectedSearch(selectedSearchLabel) {
     let d = window.data.filter(x => selectedSearchLabel === x.name.replace(/_/g, ' ').toLowerCase())[0]
     selectedClass = d
     console.log(d)
