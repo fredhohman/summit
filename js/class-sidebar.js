@@ -90,20 +90,22 @@ d3.json('./data/imagenet.json').then(function (data) {
         .append('div')
         .attr('id', 'search')
     
-    let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
+    genSearchBar(data)
+
+    // let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
     
-    let leftSearchBar = document.getElementById('search')
-    leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
+    // let leftSearchBar = document.getElementById('search')
+    // leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
 
-    // Create search list
-    var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});        
+    // // Create search list
+    // var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});        
 
-    // Select item
-    Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
-        let searchbox = document.getElementById('searchbox')
-        let selectedSearchLabel = searchbox.value
-        updateSelectedSearch(selectedSearchLabel)
-    });
+    // // Select item
+    // Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
+    //     let searchbox = document.getElementById('searchbox')
+    //     let selectedSearchLabel = searchbox.value
+    //     updateSelectedSearch(selectedSearchLabel)
+    // });
 
     let leftInnerClassBarOptionsButtonWrapper = leftInnerClassBarOptions
         .append("div")
@@ -839,6 +841,23 @@ function colorEmbeddingPointsInViewbox() {
 
 function getCssVar(name) {
     return getComputedStyle(document.body).getPropertyValue(name)
+}
+
+function genSearchBar(data) {
+    let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
+    
+    let leftSearchBar = document.getElementById('search')
+    leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
+
+    // Create search list
+    var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});        
+
+    // Select item
+    Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
+        let searchbox = document.getElementById('searchbox')
+        let selectedSearchLabel = searchbox.value
+        updateSelectedSearch(selectedSearchLabel)
+    });
 }
 
 function getSearchBarInnerHTML(dataList) {
