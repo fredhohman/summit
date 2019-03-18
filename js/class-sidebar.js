@@ -92,21 +92,6 @@ d3.json('./data/imagenet.json').then(function (data) {
     
     genSearchBar(data)
 
-    // let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
-    
-    // let leftSearchBar = document.getElementById('search')
-    // leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
-
-    // // Create search list
-    // var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});        
-
-    // // Select item
-    // Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
-    //     let searchbox = document.getElementById('searchbox')
-    //     let selectedSearchLabel = searchbox.value
-    //     updateSelectedSearch(selectedSearchLabel)
-    // });
-
     let leftInnerClassBarOptionsButtonWrapper = leftInnerClassBarOptions
         .append("div")
         .style('display', 'flex')
@@ -328,9 +313,6 @@ d3.json('./data/imagenet.json').then(function (data) {
             } else {
                 d3.selectAll('.embedding-point-label')
                     .text('')
-                
-                d3.select('#embedding-point-label-' + selectedSynset)
-                    .text(selectedLabel)
 
                 highlightEmbeddingPointLabel(selectedSynset, getCssVar('--highlight-clicked'))
             }
@@ -468,6 +450,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 colorEmbeddingPointsInViewbox()
                 highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
                 selectedLabel = d.name
+                updateSearchBarText()
             })
 
         embeddingG.selectAll('.embedding-point-label')
@@ -498,7 +481,6 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .classed('embedding-point-label-selected', true)
             })
             .on('click', (d) => {
-                console.log('click3')
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis')
@@ -507,6 +489,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 colorEmbeddingPointsInViewbox()
                 highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
                 selectedLabel = d.name
+                updateSearchBarText()
             })
 
         function updateEmbedding(newLayer) {
@@ -638,6 +621,7 @@ function makeClassBars(data, layer, selectedClass, sortType) {
             colorEmbeddingPointsInViewbox()
             highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
             selectedLabel = d.name
+            updateSearchBarText()
         })
     
     classBarTexts.append('div')
@@ -844,8 +828,10 @@ function getCssVar(name) {
 }
 
 function genSearchBar(data) {
+    // Get all class names
     let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
     
+    // Generate search bar
     let leftSearchBar = document.getElementById('search')
     leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
 
@@ -856,7 +842,7 @@ function genSearchBar(data) {
     Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
         let searchbox = document.getElementById('searchbox')
         let selectedSearchLabel = searchbox.value
-        updateSelectedSearch(selectedSearchLabel)
+        updateSelectedSearch(data, selectedSearchLabel)
     });
 }
 
@@ -866,24 +852,27 @@ function getSearchBarInnerHTML(dataList) {
     innerHtml += 'autofocus class="awesomplete" '
     innerHtml += 'placeholder="Search for interesting classes here" '
     innerHtml += 'id="searchbox" '
-    innerHtml += 'data-list="'
-    innerHtml += dataListStr
-    innerHtml += '" />'
+    innerHtml += 'data-list="' + dataListStr + '" '
+    innerHtml += '/>'
     return innerHtml
 }
 
-function updateSelectedSearch(selectedSearchLabel) {
-    let d = window.data.filter(x => selectedSearchLabel === x.name.replace(/_/g, ' ').toLowerCase())[0]
+function updateSelectedSearch(data, selectedSearchLabel) {
+    let d = data.filter(x => selectedSearchLabel === x.name.replace(/_/g, ' ').toLowerCase())[0]
     selectedClass = d
-    console.log(d)
     
     removeClassBars()
     document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-    makeClassBars(window.data, layer, d, 'dis')
+    makeClassBars(data, layer, d, 'dis')
     removeDagVIS()
     dagVIS(d)
     colorEmbeddingPointsInViewbox()
     highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
 
     selectedLabel = d.name
+}
+
+function updateSearchBarText() {
+    let searchbox = document.getElementById('searchbox')
+    searchbox.value = selectedLabel.replace(/_/g, ' ').toLowerCase()
 }
