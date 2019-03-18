@@ -95,22 +95,22 @@ d3.json('./data/imagenet.json').then(function (data) {
     let leftSearchBar = document.getElementById('left-inner-class-bar-options')
     leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
 
-    var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});
-    Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
-        comboplete.ul.childNodes.forEach(li => {
-            if (li.getAttribute('aria-selected') === 'true') {
-                let selectedSearchLabel = li.innerHTML
-                if (! li.innerHTML.includes('<mark>')) {
-                    let selectedSearchlabelParent = li.parentNode
-                    selectedSearchLabel = selectedSearchlabelParent.innerHTML.replace('<mark>', '').replace('</mark>', '')
-                } else {
-                    selectedSearchLabel = selectedSearchLabel.replace('<mark>', '').replace('</mark>', '')
+        var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});
+        Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
+            comboplete.ul.childNodes.forEach(li => {
+                if (li.getAttribute('aria-selected') === 'true') {
+                    let selectedSearchLabel = li.innerHTML
+                    if (! li.innerHTML.includes('<mark>')) {
+                        let selectedSearchlabelParent = li.parentNode
+                        selectedSearchLabel = selectedSearchlabelParent.innerHTML.replace('<mark>', '').replace('</mark>', '')
+                    } else {
+                        selectedSearchLabel = selectedSearchLabel.replace('<mark>', '').replace('</mark>', '')
+                    }
+                    console.log('selectedSearchLabel:', selectedSearchLabel)
+                    updateSelectedSearch(selectedSearchLabel)
                 }
-                console.log('selectedSearchLabel:', selectedSearchLabel)
-                updateSelectedSearch(selectedSearchLabel)
-            }
-            
-        })
+                
+            })
         // if (comboplete.ul.childNodes.length === 0) {
         //     console.log('hey')
         //     comboplete.minChars = 0;
