@@ -95,35 +95,14 @@ d3.json('./data/imagenet.json').then(function (data) {
     let leftSearchBar = document.getElementById('search')
     leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
 
-        var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});
-        Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
-            comboplete.ul.childNodes.forEach(li => {
-                if (li.getAttribute('aria-selected') === 'true') {
-                    let selectedSearchLabel = li.innerHTML
-                    if (! li.innerHTML.includes('<mark>')) {
-                        let selectedSearchlabelParent = li.parentNode
-                        selectedSearchLabel = selectedSearchlabelParent.innerHTML.replace('<mark>', '').replace('</mark>', '')
-                    } else {
-                        selectedSearchLabel = selectedSearchLabel.replace('<mark>', '').replace('</mark>', '')
-                    }
-                    console.log('selectedSearchLabel:', selectedSearchLabel)
-                    updateSelectedSearch(selectedSearchLabel)
-                }
-                
-            })
-        // if (comboplete.ul.childNodes.length === 0) {
-        //     console.log('hey')
-        //     comboplete.minChars = 0;
-        //     comboplete.evaluate();
-        // }
-        // else if (comboplete.ul.hasAttribute('hidden')) {
-        //     console.log('hey2')
-        //     comboplete.open();
-        // }
-        // else {
-        //     console.log('hey3')
-        //     comboplete.close();
-        // }
+    // Create search list
+    var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});        
+
+    // Select item
+    Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
+        let searchbox = document.getElementById('searchbox')
+        let selectedSearchLabel = searchbox.value
+        updateSelectedSearch(selectedSearchLabel)
     });
 
     let leftInnerClassBarOptionsButtonWrapper = leftInnerClassBarOptions
@@ -864,7 +843,11 @@ function getCssVar(name) {
 
 function getSearchBarInnerHTML(dataList) {
     let dataListStr = dataList.join(', ')
-    let innerHtml = '<input autofocus class="awesomplete" data-list="'
+    let innerHtml = '<input '
+    innerHtml += 'autofocus class="awesomplete" '
+    innerHtml += 'placeholder="Type interesting class here" '
+    innerHtml += 'id="searchbox" '
+    innerHtml += 'data-list="'
     innerHtml += dataListStr
     innerHtml += '" />'
     return innerHtml
