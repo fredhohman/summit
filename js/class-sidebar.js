@@ -88,11 +88,11 @@ d3.json('./data/imagenet.json').then(function (data) {
         .append('div')
         .classed('left-inner-option-wrapper', true)
         .append('div')
-        .text('add search bar here')   
+        .attr('id', 'search')
     
     let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
     
-    let leftSearchBar = document.getElementById('left-inner-class-bar-options')
+    let leftSearchBar = document.getElementById('search')
     leftSearchBar.innerHTML = getSearchBarInnerHTML(classNames)
 
         var comboplete = new Awesomplete('input.awesomplete', {minChars: 0,});

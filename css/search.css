@@ -1,0 +1,9 @@
+@import '~awesomplete/awesomplete.css';
+
+input.awesomplete {
+    height: 30px;
+    width: 250px;
+    padding: 12px 12px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
