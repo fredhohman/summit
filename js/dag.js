@@ -244,18 +244,21 @@ export function dagVIS(selectedClass) {
 
         const fvScaleMax = d3.max(tempMaxs)
         const fvScaleMin = d3.min(tempMins)
-        const cvScaleCountMAx = d3.max(tempCountMaxs)
+        const cvScaleCountMax = d3.max(tempCountMaxs)
 
         let countMax = d3.max(dag)
 
         let fvScale = d3.scaleLinear()
-            .domain([0, cvScaleCountMAx]) // max = 1300 for all class comparison
+            .domain([0, cvScaleCountMax]) // max = 1300 for all class comparison
             .range([fvWidth/3, fvWidth])
 
         let dagG = dagSVG
             .append("g")
             .attr("transform", "translate(" + dagMargin.left + "," + dagMargin.top + ")")
             .attr('id', 'dagG')
+
+        d3.select('#dag-channel-count-filter-slider')
+            .attr('max', cvScaleCountMax)
 
         function drawOrigin(){
             dagG.append('circle')
