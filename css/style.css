@@ -9,6 +9,8 @@ html, body {
 :root {
     --main-color: #1A237E;
     --main-light: #7986CB;
+    --search-highlight: #C5CAE9;
+    --search-highlight-hover: #9E9E9E;
     --border-color: rgba(0, 0, 0, 0.1);
     --background-color: #fafafa;
     --background-color-hover: #e3e3e3;
