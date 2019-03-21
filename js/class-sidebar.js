@@ -18,7 +18,7 @@ export const layerChannelCounts = {
     'mixed5b': 1024
 }
 
-export let layer = 'mixed4d';
+let layer = 'mixed4d';
 let selectedClassIdx = 0;
 const numClassesInClassBar = 250;
 let k = 1; // embedding zoom scale
@@ -137,8 +137,6 @@ d3.json('./data/imagenet.json').then(function (data) {
             data[i].distanceFromQueryPoint = distance
         }
     }
-    // computeEmbeddingDistancesFromPointEuclidean(data, layer, selectedClass)
-
     computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
 
     makeClassBars(data, layer, selectedClass, 'dis')
@@ -231,7 +229,16 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .classed('layer-glyph-selected', false)
                 d3.select('#layer-glyph-' + layer)
                     .classed('layer-glyph-selected', true)
-                d3      
+
+                selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
+                computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
+                removeClassBars()
+                document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+                makeClassBars(data, layer, selectedClass, 'dis')
+                colorEmbeddingPointsInViewbox()
+                highlightEmbeddingPointLabel(selectedClass.synset, getCssVar('--highlight-clicked'))
+                selectedLabel = selectedClass.name
+                updateSearchBarText()
             })
 
         networkSVG
@@ -850,7 +857,7 @@ function getSearchBarInnerHTML(dataList) {
     let dataListStr = dataList.join(', ')
     let innerHtml = '<input '
     innerHtml += 'autofocus class="awesomplete" '
-    innerHtml += 'placeholder="Search for interesting classes here" '
+    innerHtml += 'placeholder="Class " '
     innerHtml += 'id="searchbox" '
     innerHtml += 'data-list="' + dataListStr + '" '
     innerHtml += '/>'
