@@ -43,7 +43,7 @@ dagSVG.append('filter')
     .attr('id', 'grayscale')
     .append('feColorMatrix')
     .attr('type', 'matrix')
-    .attr('values','0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0')  
+    .attr('values','0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0')
 
 let zoomRect = dagSVG.append("rect")
     .attr("width", dagWidth + dagMargin.left + dagMargin.right)
