@@ -5,6 +5,11 @@ input.awesomplete {
     padding: 12px 12px;
     margin: 8px 0;
     box-sizing: border-box;
+    border: 1px solid var(--border-color);
+}
+
+input.awesomplete:focus, input.awesomplete:focus {
+    outline: none;
 }
 
 .awesomplete>ul>li[aria-selected="true"] {
