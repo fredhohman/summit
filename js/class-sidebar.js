@@ -71,7 +71,7 @@ const formatNumberThousands = d3.format(',')
 // global variable
 let selectedSynset;
 export var selectedClass;
-export var selectedLabel;
+var selectedLabel;
 let prevClassesSynset = [];
 
 d3.json('./data/imagenet.json').then(function (data) {

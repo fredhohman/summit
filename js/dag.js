@@ -18,6 +18,7 @@ const dagMargin = ({ top: 40, right: 40, bottom: 40, left: 40 })
 const dagWidth = 1000 - dagMargin.left - dagMargin.right
 const dagHeight = 800 - dagMargin.top - dagMargin.bottom // 790 based on laptop screen height
 let k = 1; // dag zoom scale
+let numTopAttr = 3;
 const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
 
@@ -363,7 +364,7 @@ export function dagVIS(selectedClass) {
         }
 
         function drawChannels(layer) {
-            
+
             dagG.selectAll('.fv-ch-' + layer)
                 .data(dag[layer])
                 .enter()
@@ -482,6 +483,60 @@ export function dagVIS(selectedClass) {
 
                     channelSelection.attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
 
+                })
+                .on('click', function (d) {
+                    console.log('click image', d.channel)
+                    
+                    let prev_layer = indexLayer[layerIndex[layer] + 1]
+                    
+                    // XXXXX not from M!!! We need to read I!!!
+                    let prevTopChannels = selectedClass['topChannels'][prev_layer].slice(0, numTopAttr)
+                    // let clickIdx = dag[layer].findIndex(x => x.channel === d.channel)
+                    
+                    // console.log('before')
+                    // console.log(dag[layer])
+                    // prevTopChannels.forEach(prevChannelInfo => {
+                    //     console.log('add', prevChannelInfo)
+                    //     dag[layer][clickIdx]['prev_channels'].push(prevChannelInfo)
+                    //     // let prevChannel = prevChannelInfo.channel
+                    //     // let prevCount = prevChannelInfo.count
+                    //     // dag_layer.push({
+                    //     //     'channel': d.channel,
+                    //     //     'count': d.count,
+                    //     //     'layer': d.layer,
+                    //     //     'pagerank'
+                    //     // })
+                    // })
+                    // console.log('after')
+                    // console.log(dag[layer])
+                    // console.log(d)
+                    // console.log(selectedClass)
+                    // console.log(prevTopChannels)
+                    // console.log(dag[layer])
+                    // // console.log(document.getElementById('dagG'))
+                    // // Rejoin data (overwrite? or add?)
+
+                    // dagG.selectAll('.fv-ch-' + layer)
+                    //     .append('image')
+                    //     .attr('x', 0)
+                    //     .attr('y', 0)
+                    //     .attr('width', d => fvScale(d.count))
+                    //     .attr('height', d => fvScale(d.count))
+                    //     .attr('width', d => fvWidth)
+                    //     // .attr('height', d => fvHeight)
+                    //     .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
+                    //     // .attr('clip-path', 'url(#fv-clip-path)')
+                    //     .attr('clip-path', d => 'url(#fv-clip-path-' + layer + '-' + d.channel + ')')
+                    //     // .attr("transform", (d, i) => "translate(" + 
+                    //     //     // x: feature vis width and feature vis spacing * i, then subtract total feature vis and horizontal space to center
+                    //     //     (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length-1) * fvHorizontalSpace) / 2)) + "," +
+                    //     //     layerIndex[layer] * layerVerticalSpace  + " )"
+                    //     // )
+                    //     .attr("transform", (d, i) => "translate(" +
+                    //         d.x + ',' +
+                    //         d.y + " )"
+                    //     )
+                    //     .attr('id', d => layer + '-' + d.channel + '-channel')
                 })
 
             dagG.selectAll('.fv-ch-label-' + layer)
