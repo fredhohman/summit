@@ -332,7 +332,7 @@ export function dagVIS(selectedClass) {
                 .attr('height', deHeight)
                 .attr('xlink:href', '../data/feature-vis/dataset-p/' + layer + '-' + channel.channel + '-' + 'dataset-p-' + index + fv_type)
                 .classed('fv-de', true)
-                .attr('clip-path', 'url(#de-clip-path)')
+                // .attr('clip-path', 'url(#de-clip-path)')
                 // .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, left
                 // .attr("transform", "translate(" + (channel.x + fvWidth / 4) + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, center
                 // .attr("transform", () => { // above channel
