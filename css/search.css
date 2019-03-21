@@ -18,3 +18,12 @@ input.awesomplete {
 .awesomplete li[aria-selected="true"] mark {
     background: var(--search-highlight-hover);
 }
+
+.awesomplete>ul>li:hover {
+    background: var(--main-color);
+    color: white;
+}
+
+.awesomplete li[aria-selected="false"]:hover mark {
+    background: var(--search-highlight-hover);
+}
