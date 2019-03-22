@@ -1,6 +1,7 @@
 import * as d3 from "d3"
 import { layerChannelCounts, layer } from './class-sidebar'
 import { createGunzip } from "zlib";
+import { createPrivateKey } from "crypto";
 
 console.log(layerChannelCounts)
 let rightInner = d3.select('#right-inner')
@@ -277,7 +278,7 @@ export function dagVIS(selectedClass) {
         })
 
         function computeChannelCoordinates(layer) {
-
+            
             let i = 0
             dag[layer].forEach(ch => {
                 ch.width = fvScale(ch.count)
@@ -504,25 +505,39 @@ export function dagVIS(selectedClass) {
                     
                     let prevLayer = indexLayer[layerIndex[layer] + 1]
                     attrChannels.forEach(attrChannel => {
-                        dag[layer][clickedChannelIdx]['prev_channels'].push(parseInt(attrChannel))
-                        dag[prevLayer].push({
-                            'attr_channels': [],
-                            'channel': parseInt(attrChannel.prev_channel),
-                            'count': 50, // XXXXX min()
-                            'layer': prevLayer,
-                            'pagerank': 0.0005, // XXXXX min()
-                            'prev_channels': [],
-                            'width': 38, // XXXX
-                            'x': -200, // XXXX
-                            'y': 2100 // XXXX
+                        let isNew = true
+                        dag[prevLayer].forEach(prevChannel => {
+                            if (prevChannel.channel === parseInt(attrChannel.prev_channel)) {
+                                isNew = false
+                                return false;
+                            }
                         })
+                        if (isNew) {
+                            console.log(attrChannel.prev_channel, 'is added')
+                            dag[prevLayer].push({
+                                'attr_channels': [],
+                                'channel': parseInt(attrChannel.prev_channel),
+                                'count': 50, // XXXXX min()
+                                'layer': prevLayer,
+                                'pagerank': 0.0005, // XXXXX min()
+                                'prev_channels': [],
+                                'width': 38, // XXXX
+                                'x': -200, // XXXX
+                                'y': 2100 // XXXX
+                            })   
+                        }
                     })
 
-                    // console.log('before')
-                    // console.log(dag[prevLayer])
-                    computeChannelCoordinates(prevLayer)
-                    // console.log('after')
-                    // console.log(dag[prevLayer])
+                    // computeChannelCoordinates(prevLayer)
+
+                    let i = 0
+                    dag[prevLayer].forEach(ch => {
+                        console.log('ch:', ch.channel, ', dag[prevlayer].len:', dag[prevLayer].length)
+                        ch.width = fvScale(ch.count)
+                        ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((dag[prevLayer].length * fvWidth + (dag[prevLayer].length - 1) * fvHorizontalSpace) / 2)) + (fvWidth - ch.width) / 2
+                        ch.y = layerIndex[prevLayer] * layerVerticalSpace + (fvWidth - ch.width) / 2
+                        i = i + 1
+                    });
                     
                     dagG.selectAll('.fv-ch-' + prevLayer)
                         .data(dag[prevLayer])
@@ -530,35 +545,22 @@ export function dagVIS(selectedClass) {
                         .append('image')
                         .attr('x', 0)
                         .attr('y', 0)
-                        .attr('width', d => {
-                            console.log('selectAll prevlayer', d)
-                            fvScale(d.count)
-                        })
+                        .attr('width', d => fvScale(d.count))
                         .attr('height', d => fvScale(d.count))
                         .attr('width', d => fvWidth)
                         .attr('xlink:href', d => '../data/feature-vis/channel/' + prevLayer + '-' + d.channel + '-channel' + fv_type)
-                        // .attr('clip-path', 'url(#fv-clip-path)')
                         .attr('clip-path', d => 'url(#fv-clip-path-' + prevLayer + '-' + d.channel + ')')
-                        // .attr("transform", (d, i) => "translate(" + 
-                        //     // x: feature vis width and feature vis spacing * i, then subtract total feature vis and horizontal space to center
-                        //     (((fvWidth + fvHorizontalSpace) * i) - ((dag[prevLayer].length * fvWidth + (dag[prevLayer].length-1) * fvHorizontalSpace) / 2)) + "," +
-                        //     layerIndex[prevLayer] * layerVerticalSpace  + " )"
-                        // )
-                        .attr("transform", (d, i) => "translate(" +
-                            d.x + ',' +
-                            d.y + " )"
-                        )
-                        .transition()
-                        .duration(filterTransitionSpeed)
+                        .attr("transform", (d, i) => "translate(" + d.x + ',' + d.y + " )")
                         .attr('id', d => prevLayer + '-' + d.channel + '-channel')
 
-                    dag[prevLayer].forEach(ch => {
-                        let prevChannelDiv = document.getElementById(prevLayer + '-' + ch.channel + '-channel')
-                        prevChannelDiv.setAttribute('transform', 'translate(' + 
-                            ch.x + ',' +
-                            ch.y + ' )'
-                        )
-                    })
+                    updateChannels()
+                    updateChannelLabels()
+                    updateEdges()
+                    updateDatasetExamples()
+                    d3.select('#dag-layer-label-' + prevLayer)
+                        .transition()
+                        .duration(filterTransitionSpeed)
+                        .attr('transform', d => 'translate(' + (0 - (fvWidth / 4 + ((dag[prevLayer].length * fvWidth + (dag[prevLayer].length - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight / 2) + ')')
                 })
 
             dagG.selectAll('.fv-ch-label-' + layer)
