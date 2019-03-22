@@ -225,9 +225,9 @@ export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
     
     // d3.json('./data/dag/dag-270.json').then(function (dag) {
-    // d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
+    d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
     // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-    d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-unified.json').then(function (dag) {
+    // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-unified.json').then(function (dag) {
         console.log(dag);
 
         let tempMins = []
@@ -488,58 +488,77 @@ export function dagVIS(selectedClass) {
 
                 })
                 .on('click', function (d) {
+                    // XXXXX
                     console.log('click image', d.channel)
                     
-                    let prev_layer = indexLayer[layerIndex[layer] + 1]
+                    let attrChannels;
+                    let clickedChannelIdx = 0;
+                    dag[layer].forEach(channelInfo => {
+                        if (channelInfo.channel === d.channel) {
+                            attrChannels = channelInfo['attr_channels']
+                            return false
+                        }
+                        clickedChannelIdx = clickedChannelIdx + 1
+                    })
+                    console.log(attrChannels)
                     
-                    // XXXXX not from M!!! We need to read I!!!
-                    let prevTopChannels = selectedClass['topChannels'][prev_layer].slice(0, numTopAttr)
-                    // let clickIdx = dag[layer].findIndex(x => x.channel === d.channel)
-                    
-                    // console.log('before')
-                    // console.log(dag[layer])
-                    // prevTopChannels.forEach(prevChannelInfo => {
-                    //     console.log('add', prevChannelInfo)
-                    //     dag[layer][clickIdx]['prev_channels'].push(prevChannelInfo)
-                    //     // let prevChannel = prevChannelInfo.channel
-                    //     // let prevCount = prevChannelInfo.count
-                    //     // dag_layer.push({
-                    //     //     'channel': d.channel,
-                    //     //     'count': d.count,
-                    //     //     'layer': d.layer,
-                    //     //     'pagerank'
-                    //     // })
-                    // })
-                    // console.log('after')
-                    // console.log(dag[layer])
-                    // console.log(d)
-                    // console.log(selectedClass)
-                    // console.log(prevTopChannels)
-                    // console.log(dag[layer])
-                    // // console.log(document.getElementById('dagG'))
-                    // // Rejoin data (overwrite? or add?)
+                    let prevLayer = indexLayer[layerIndex[layer] + 1]
+                    attrChannels.forEach(attrChannel => {
+                        dag[layer][clickedChannelIdx]['prev_channels'].push(parseInt(attrChannel))
+                        dag[prevLayer].push({
+                            'attr_channels': [],
+                            'channel': parseInt(attrChannel.prev_channel),
+                            'count': 50, // XXXXX min()
+                            'layer': prevLayer,
+                            'pagerank': 0.0005, // XXXXX min()
+                            'prev_channels': [],
+                            'width': 38, // XXXX
+                            'x': -200, // XXXX
+                            'y': 2100 // XXXX
+                        })
+                    })
 
-                    // dagG.selectAll('.fv-ch-' + layer)
-                    //     .append('image')
-                    //     .attr('x', 0)
-                    //     .attr('y', 0)
-                    //     .attr('width', d => fvScale(d.count))
-                    //     .attr('height', d => fvScale(d.count))
-                    //     .attr('width', d => fvWidth)
-                    //     // .attr('height', d => fvHeight)
-                    //     .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
-                    //     // .attr('clip-path', 'url(#fv-clip-path)')
-                    //     .attr('clip-path', d => 'url(#fv-clip-path-' + layer + '-' + d.channel + ')')
-                    //     // .attr("transform", (d, i) => "translate(" + 
-                    //     //     // x: feature vis width and feature vis spacing * i, then subtract total feature vis and horizontal space to center
-                    //     //     (((fvWidth + fvHorizontalSpace) * i) - ((dag[layer].length * fvWidth + (dag[layer].length-1) * fvHorizontalSpace) / 2)) + "," +
-                    //     //     layerIndex[layer] * layerVerticalSpace  + " )"
-                    //     // )
-                    //     .attr("transform", (d, i) => "translate(" +
-                    //         d.x + ',' +
-                    //         d.y + " )"
-                    //     )
-                    //     .attr('id', d => layer + '-' + d.channel + '-channel')
+                    // console.log('before')
+                    // console.log(dag[prevLayer])
+                    computeChannelCoordinates(prevLayer)
+                    // console.log('after')
+                    // console.log(dag[prevLayer])
+                    
+                    dagG.selectAll('.fv-ch-' + prevLayer)
+                        .data(dag[prevLayer])
+                        .enter()
+                        .append('image')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', d => {
+                            console.log('selectAll prevlayer', d)
+                            fvScale(d.count)
+                        })
+                        .attr('height', d => fvScale(d.count))
+                        .attr('width', d => fvWidth)
+                        .attr('xlink:href', d => '../data/feature-vis/channel/' + prevLayer + '-' + d.channel + '-channel' + fv_type)
+                        // .attr('clip-path', 'url(#fv-clip-path)')
+                        .attr('clip-path', d => 'url(#fv-clip-path-' + prevLayer + '-' + d.channel + ')')
+                        // .attr("transform", (d, i) => "translate(" + 
+                        //     // x: feature vis width and feature vis spacing * i, then subtract total feature vis and horizontal space to center
+                        //     (((fvWidth + fvHorizontalSpace) * i) - ((dag[prevLayer].length * fvWidth + (dag[prevLayer].length-1) * fvHorizontalSpace) / 2)) + "," +
+                        //     layerIndex[prevLayer] * layerVerticalSpace  + " )"
+                        // )
+                        .attr("transform", (d, i) => "translate(" +
+                            d.x + ',' +
+                            d.y + " )"
+                        )
+                        .transition()
+                        .duration(filterTransitionSpeed)
+                        .attr('id', d => prevLayer + '-' + d.channel + '-channel')
+
+                    dag[prevLayer].forEach(ch => {
+                        let prevChannelDiv = document.getElementById(prevLayer + '-' + ch.channel + '-channel')
+                        prevChannelDiv.setAttribute('transform', 'translate(' + 
+                            ch.x + ',' +
+                            ch.y + ' )'
+                        )
+                    })
                 })
 
             dagG.selectAll('.fv-ch-label-' + layer)
