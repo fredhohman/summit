@@ -4,7 +4,7 @@
 
 Summit is a an interactive system that summarizes and visualizes what features a deep learning model has learned and how those features interact to make predictions.
 
-For the Summit Notebooks code, go to (https://github.com/fredhohman/summit-notebooks)[summit-notebooks].
+For the Summit Notebooks code, go to [https://github.com/fredhohman/summit-notebooks][summit-notebooks].
 
 ***
 
