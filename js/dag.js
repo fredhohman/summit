@@ -532,6 +532,7 @@ export function dagVIS(selectedClass) {
                         let classString = 'dag-edge' +
                             ' ' + 'dag-edge-' + layer +
                             ' ' + 'dag-edge-' + layer + '-' + channel.channel +
+                            ' ' + 'dag-edge-attr-' + layer + '-' + channel.channel +
                             ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
             
                             if (channel.layer != 'mixed5b') {
@@ -695,7 +696,7 @@ export function dagVIS(selectedClass) {
                     d3.selectAll('.' + hoveredChannel + '-attr')
                         .style('visibility', isAlreadyClicked[hoveredChannel]? 'visible': 'hidden')
 
-                    d3.selectAll('.' + 'dag-edge-' + hoveredChannel)
+                    d3.selectAll('.' + 'dag-edge-attr-' + hoveredChannel)
                         .style('visibility', isAlreadyClicked[hoveredChannel]? 'visible': 'hidden')
 
                 })
@@ -1006,10 +1007,10 @@ export function dagVIS(selectedClass) {
                 })
                 maxNumEdgesIn.push(temp)
 
+                drawAttrEdgesLayer(l)
                 drawChannels(l)
                 drawAttrRectsLayer(l)
                 drawExamplesForLayer(l)
-                drawAttrEdgesLayer(l)
                 drawAttrChannelsLayer(l)
             });
             
