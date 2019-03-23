@@ -538,7 +538,6 @@ export function dagVIS(selectedClass) {
                         console.log('attrChannel:', attrChannel.prev_channel)
                         let attrImgId = layer + '-' + d.channel + '-attr-' + attrChannel.prev_channel
                         let attrImg = document.getElementById(attrImgId)
-                        let attrRect = document.getElementById(attrRectId)
                         if (attrImg) {
                             let attrImgVisbility = attrImg.style.getPropertyValue('visibility')
                             let oppositeVisibility = attrImgVisbility == 'hidden'? 'visible': 'hidden'
@@ -562,15 +561,45 @@ export function dagVIS(selectedClass) {
                     })
 
                     // Draw edges
-                    channel = d
-                    dagG.append('path')
-                        .attr('d', () => {
-                            return "M" + (channel.x + channel.width / 2) + "," + (channel.y + fvHeight - (fvHeight - channel.width))
-                                + "C" + (channel.x + channel.width / 2) + " " + (channel.y + fvHeight - (fvHeight - channel.width)
-                                    + layerVerticalSpace / 2) + "," + (channelToConnectTo.x + channelToConnectTo.width / 2) + " "
-                                + (channelToConnectTo.y - layerVerticalSpace / 2 - (fvHeight - channelToConnectTo.width)) + ","
-                                + (channelToConnectTo.x + channelToConnectTo.width / 2) + " " + channelToConnectTo.y
-                        })
+                    attrChannels.forEach((attrChannel, attrIdx) => {
+                        let channel = d
+                        let attrX = d.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
+                        let attrY = attrGlobalY + attrTopOffset
+                        let attrWidth = unitAttrImgSize
+                        console.log(channel)
+                        // console.log(channelToConnectTo)
+                        dagG.append('path')
+                            .attr('d', () => {
+                                let startingX = channel.x + channel.width / 2
+                                let startingY = channel.y + fvHeight - (fvHeight - channel.width)
+                                let fstVertexX = channel.x + channel.width / 2
+                                let fstVertexY = (channel.y + fvHeight - (fvHeight - channel.width) + layerVerticalSpace / 2)
+                                let sndVertexX = (attrX + attrWidth / 2)
+                                let sndVertexY = (attrY - layerVerticalSpace / 2 - (fvHeight - attrWidth))
+                                let endingX = (attrX + attrWidth / 2)
+                                let endingY = attrY
+                                return "M" + startingX + "," + startingY
+                                    + "C" + fstVertexX + " " + fstVertexY + "," 
+                                    + sndVertexX + " " + sndVertexY + ","
+                                    + endingX + " " + endingY
+                            })
+                            .style('stroke-width', edgeScale(attrChannel.inf))
+                            .attr('class', d => {
+
+                                let classString = 'dag-edge' +
+                                    ' ' + 'dag-edge-' + layer +
+                                    ' ' + 'dag-edge-' + layer + '-' + channel.channel +
+                                    ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] +
+                                    ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
+                    
+                                    if (d.layer != 'mixed5b') {
+                                        classString += ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] + '-in'
+                                    }
+                    
+                                return classString
+                                    
+                            })
+                    })
                     // console.log(dagG)
 
                     
