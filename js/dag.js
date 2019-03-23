@@ -534,46 +534,52 @@ export function dagVIS(selectedClass) {
 
                     // Draw edges
                     attrChannels.forEach((attrChannel, attrIdx) => {
-                        let channel = d
-                        let attrX = d.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
-                        let attrY = attrGlobalY + attrTopOffset
-                        let attrWidth = unitAttrImgSize
-
-                        dagG.append('path')
-                            .attr('d', () => {
-                                let startingX = channel.x + 5
-                                let startingY = channel.y + channel.width / 2 - 5
-                                let endingX = attrX + attrWidth / 2
-                                let endingY = attrY + 5
-                                let turningX = (startingX + endingX) / 2 - 10
-                                let turningY = (startingY + endingY) / 2 - 30
-
-                                return "M" + startingX + "," + startingY
-                                    + "S" + turningX + " " + turningY + ","
-                                        + endingX + " " + endingY
-                            })
-                            .style('stroke-width', edgeScale(attrChannel.inf))
-                            .attr('class', () => {
-
-                                let classString = 'dag-edge' +
-                                    ' ' + 'dag-edge-' + layer +
-                                    ' ' + 'dag-edge-' + layer + '-' + channel.channel +
-                                    ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] +
-                                    ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
-                    
-                                    if (d.layer != 'mixed5b') {
-                                        classString += ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] + '-in'
-                                    }
-                    
-                                return classString
-                                    
-                            })
+                        let attrEdgeID = layer + '-' + d.channel + '-attr-edge-' + attrChannel.prev_channel
+                        let attrEdge = document.getElementById(attrEdgeID)
+                        if (attrEdge) {
+                            let attrEdgeVisbility = attrEdge.style.getPropertyValue('visibility')
+                            let oppositeEdgeVisibility = attrEdgeVisbility == 'hidden'? 'visible': 'hidden'
+                            attrEdge.style.setProperty('visibility', oppositeEdgeVisibility)
+                        } else {
+                            let attrX = d.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
+                            let attrY = attrGlobalY + attrTopOffset
+                            let attrWidth = unitAttrImgSize
+    
+                            dagG.append('path')
+                                .attr('d', () => {
+                                    let startingX = d.x + 5
+                                    let startingY = d.y + d.width / 2 - 5
+                                    let endingX = attrX + attrWidth / 2
+                                    let endingY = attrY + 5
+                                    let turningX = (startingX + endingX) / 2 - 10
+                                    let turningY = (startingY + endingY) / 2 - 30
+    
+                                    return "M" + startingX + "," + startingY
+                                        + "S" + turningX + " " + turningY + ","
+                                            + endingX + " " + endingY
+                                })
+                                .style('stroke-width', edgeScale(attrChannel.inf))
+                                .attr('class', () => {
+                                    let classString = 'dag-edge' +
+                                        ' ' + 'dag-edge-' + layer +
+                                        ' ' + 'dag-edge-' + layer + '-' + d.channel +
+                                        ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] +
+                                        ' ' + 'dag-edge-' + layer + '-' + d.channel + '-out'
+                        
+                                        if (d.layer != 'mixed5b') {
+                                            classString += ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] + '-in'
+                                        }
+                        
+                                    return classString
+                                        
+                                })
+                                .attr('id', attrEdgeID)
+                        }
+                        
                     })
                     
                     // Draw attributed channels
                     attrChannels.forEach((attrChannel, attrIdx) => {
-                        console.log('attrChannel:', attrChannel)
-                        console.log('attrChannel:', attrChannel.prev_channel)
                         let attrImgId = layer + '-' + d.channel + '-attr-' + attrChannel.prev_channel
                         let attrImg = document.getElementById(attrImgId)
                         if (attrImg) {
