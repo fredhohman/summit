@@ -503,14 +503,14 @@ export function dagVIS(selectedClass) {
                     // Get minimum count of the previous layer
                     let prevCounts = dag[prevLayer].map(ch => ch.count)
                     let minCounts = d3.min(prevCounts)
-                    console.log(minCounts)
 
+                    // Set padding and offset
                     let attrLeftOffset = 5
                     let attrLeftPadding = 5
-                    let attrTopOffset = 15
+                    let attrTopOffset = 35
                     let attrGlobalY = d.y + fvScale(d.count) / 2
-                    let rectTopOffset = 10
-                    let rectPaddingBottom = 2
+                    let rectTopOffset = 5
+                    let rectPaddingBottom = 5
                     let unitAttrImgSize = fvScale(minCounts)
 
                     // Draw background white rectangle
@@ -524,13 +524,51 @@ export function dagVIS(selectedClass) {
                     } else {
                         dagG.append('rect')
                             .attr('x', d.x - (unitAttrImgSize + attrLeftPadding) * 3 - attrLeftOffset * 2)
-                            .attr('y', attrGlobalY + rectTopOffset)
+                            .attr('y', attrGlobalY + attrTopOffset - rectTopOffset)
                             .attr('width', (unitAttrImgSize + attrLeftPadding) * 3 + attrLeftPadding)
                             .attr('height', unitAttrImgSize + rectTopOffset + rectPaddingBottom)
                             .attr('fill', 'white')
                             .attr('stroke', 'black')
                             .attr('id', attrRectId)
                     }
+
+                    // Draw edges
+                    attrChannels.forEach((attrChannel, attrIdx) => {
+                        let channel = d
+                        let attrX = d.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
+                        let attrY = attrGlobalY + attrTopOffset
+                        let attrWidth = unitAttrImgSize
+
+                        dagG.append('path')
+                            .attr('d', () => {
+                                let startingX = channel.x + 5
+                                let startingY = channel.y + channel.width / 2 - 5
+                                let endingX = attrX + attrWidth / 2
+                                let endingY = attrY + 5
+                                let turningX = (startingX + endingX) / 2 - 10
+                                let turningY = (startingY + endingY) / 2 - 30
+
+                                return "M" + startingX + "," + startingY
+                                    + "S" + turningX + " " + turningY + ","
+                                        + endingX + " " + endingY
+                            })
+                            .style('stroke-width', edgeScale(attrChannel.inf))
+                            .attr('class', () => {
+
+                                let classString = 'dag-edge' +
+                                    ' ' + 'dag-edge-' + layer +
+                                    ' ' + 'dag-edge-' + layer + '-' + channel.channel +
+                                    ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] +
+                                    ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
+                    
+                                    if (d.layer != 'mixed5b') {
+                                        classString += ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] + '-in'
+                                    }
+                    
+                                return classString
+                                    
+                            })
+                    })
                     
                     // Draw attributed channels
                     attrChannels.forEach((attrChannel, attrIdx) => {
@@ -559,46 +597,7 @@ export function dagVIS(selectedClass) {
                         }  
                     })
 
-                    // Draw edges
-                    attrChannels.forEach((attrChannel, attrIdx) => {
-                        let channel = d
-                        let attrX = d.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
-                        let attrY = attrGlobalY + attrTopOffset
-                        let attrWidth = unitAttrImgSize
-
-                        dagG.append('path')
-                            .attr('d', () => {
-                                let startingX = channel.x
-                                let startingY = channel.y + channel.width / 2
-                                let endingX = attrX + attrWidth / 2
-                                let endingY = attrY
-
-                                let fstVertexX = (startingX + endingX) / 2
-                                let fstVertexY = (startingY + endingY) / 2 - 5
-                                let sndVertexX = ((channel.x + channel.width / 2) + (attrX + attrWidth/ 2)) / 2 - 5
-                                let sndVertexY = ((channel.y + channel.width / 2) + (attrY + attrWidth / 2)) / 2 + 5
-
-                                return "M" + startingX + "," + startingY
-                                    + "Q" + fstVertexX + " " + fstVertexY + ","
-                                        + endingX + " " + endingY
-                            })
-                            .style('stroke-width', edgeScale(attrChannel.inf))
-                            .attr('class', d => {
-
-                                let classString = 'dag-edge' +
-                                    ' ' + 'dag-edge-' + layer +
-                                    ' ' + 'dag-edge-' + layer + '-' + channel.channel +
-                                    ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] +
-                                    ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
                     
-                                    if (d.layer != 'mixed5b') {
-                                        classString += ' ' + 'dag-edge-' + prevLayer + '-' + d['prev_channel'] + '-in'
-                                    }
-                    
-                                return classString
-                                    
-                            })
-                    })
                     // console.log(dagG)
 
                     
