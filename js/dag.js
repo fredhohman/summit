@@ -506,8 +506,31 @@ export function dagVIS(selectedClass) {
                     console.log(minCounts)
 
                     let attrLeftOffset = 5
-                    let attrPadding = 5
+                    let attrLeftPadding = 5
                     let attrTopOffset = 15
+                    let attrGlobalY = d.y + fvScale(d.count) / 2
+                    let rectTopOffset = 10
+                    let rectPaddingBottom = 2
+                    let unitAttrImgSize = fvScale(minCounts)
+
+                    // Draw background white rectangle
+                    let attrRectId = layer + '-' + d.channel + '-attr-rect'
+                    let attrRect = document.getElementById(attrRectId)
+
+                    if (attrRect) {
+                        let attrRectVisbility = attrRect.style.getPropertyValue('visibility')
+                        let oppositeRectVisibility = attrRectVisbility == 'hidden'? 'visible': 'hidden'
+                        attrRect.style.setProperty('visibility', oppositeRectVisibility)
+                    } else {
+                        dagG.append('rect')
+                            .attr('x', d.x - (unitAttrImgSize + attrLeftPadding) * 3 - attrLeftOffset * 2)
+                            .attr('y', attrGlobalY + rectTopOffset)
+                            .attr('width', (unitAttrImgSize + attrLeftPadding) * 3 + attrLeftPadding)
+                            .attr('height', unitAttrImgSize + rectTopOffset + rectPaddingBottom)
+                            .attr('fill', 'white')
+                            .attr('stroke', 'black')
+                            .attr('id', attrRectId)
+                    }
                     
                     // Draw attributed channels
                     attrChannels.forEach((attrChannel, attrIdx) => {
@@ -515,16 +538,16 @@ export function dagVIS(selectedClass) {
                         console.log('attrChannel:', attrChannel.prev_channel)
                         let attrImgId = layer + '-' + d.channel + '-attr-' + attrChannel.prev_channel
                         let attrImg = document.getElementById(attrImgId)
+                        let attrRect = document.getElementById(attrRectId)
                         if (attrImg) {
                             let attrImgVisbility = attrImg.style.getPropertyValue('visibility')
                             let oppositeVisibility = attrImgVisbility == 'hidden'? 'visible': 'hidden'
                             attrImg.style.setProperty('visibility', oppositeVisibility)
+                            
                         } else {
-                            let unitAttrImgSize = fvScale(minCounts)
-                            let attrX = d.x - (attrIdx + 1) * (unitAttrImgSize + attrPadding) - attrLeftOffset
-                            let attrY = d.y + fvScale(d.count) / 2 + attrTopOffset
-                            dagG
-                                .append('image')
+                            let attrX = d.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
+                            let attrY = attrGlobalY + attrTopOffset
+                            dagG.append('image')
                                 .attr('x', 0)
                                 .attr('y', 0)
                                 .attr('width', unitAttrImgSize)
@@ -533,162 +556,34 @@ export function dagVIS(selectedClass) {
                                 .attr('clip-path', 'url(#fv-clip-path-' + layer + '-' + attrChannel.prev_channel + ')')
                                 .attr("transform", "translate(" + attrX + ',' + attrY + " )")
                                 .attr('visibility', 'visible')
-                                .attr('id', layer + '-' + d.channel + '-attr-' + attrChannel.prev_channel)
+                                .attr('id', attrImgId)
                         }
                         
                     })
 
-                    console.log(dagG)
+                    // Draw edges
+                    channel = d
+                    dagG.append('path')
+                        .attr('d', () => {
+                            return "M" + (channel.x + channel.width / 2) + "," + (channel.y + fvHeight - (fvHeight - channel.width))
+                                + "C" + (channel.x + channel.width / 2) + " " + (channel.y + fvHeight - (fvHeight - channel.width)
+                                    + layerVerticalSpace / 2) + "," + (channelToConnectTo.x + channelToConnectTo.width / 2) + " "
+                                + (channelToConnectTo.y - layerVerticalSpace / 2 - (fvHeight - channelToConnectTo.width)) + ","
+                                + (channelToConnectTo.x + channelToConnectTo.width / 2) + " " + channelToConnectTo.y
+                        })
+                    // console.log(dagG)
 
-                    // computeChannelCoordinates(prevLayer)
-                    
-                    // dagG.selectAll('.fv-ch-' + prevLayer)
-                    //     .data(dag[prevLayer])
-                    //     .enter()
-                    //     .append('image')
-                    //     .attr('x', 0)
-                    //     .attr('y', 0)
-                    //     .attr('width', d => fvScale(d.count))
-                    //     .attr('height', d => fvScale(d.count))
-                    //     .attr('width', d => fvWidth)
-                    //     .attr('xlink:href', d => '../data/feature-vis/channel/' + prevLayer + '-' + d.channel + '-channel' + fv_type)
-                    //     .attr('clip-path', d => 'url(#fv-clip-path-' + prevLayer + '-' + d.channel + ')')
-                    //     .attr("transform", (d, i) => "translate(" + d.x + ',' + d.y + " )")
-                    //     .attr('id', d => prevLayer + '-' + d.channel + '-channel')
-
-                    // console.log('-------------')
-                    // console.log(addedAttrChannels[prevLayer])
-                    // for (var prevAttrChannelName in addedAttrChannels[prevLayer]) {
-                    //     addedAttrChannels[prevLayer][prevAttrChannelName]['upper_channels'].forEach(upperChannel => {
-                    //         let prevAttrChannel = dag[prevLayer].filter(x => x.channel === parseInt(prevAttrChannelName))[0]
-                    //         console.log('prevAttrChannel:', prevAttrChannel)
-                    //         dagG
-                    //             .append('path')
-                    //             .attr('d', () => {
-                    //                 return "M" + (d.x + d.width / 2) + "," + (d.y + fvHeight - (fvHeight - d.width))
-                    //                 + "C" + (d.x + d.width / 2) + " " + (d.y + fvHeight - (fvHeight - d.width)
-                    //                     + layerVerticalSpace / 2) + "," + (prevAttrChannel.x + prevAttrChannel.width / 2) + " "
-                    //                 + (prevAttrChannel.y - layerVerticalSpace / 2 - (fvHeight - prevAttrChannel.width)) + ","
-                    //                 + (prevAttrChannel.x + prevAttrChannel.width / 2) + " " + prevAttrChannel.y
-                    //             })
-                    //             .attr('class', () => {
-                    //                 let classString = 'dag-edge' +
-                    //                     ' ' + 'dag-edge-' + layer +
-                    //                     ' ' + 'dag-edge-' + layer + '-' + d.channel +
-                    //                     ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] +
-                    //                     ' ' + 'dag-edge-' + layer + '-' + d.channel + '-out'
-
-                    //                 if (d.layer != 'mixed5b') {
-                    //                     classString += ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] + '-in'
-                                        
-                    //                 }
-                    //                 return classString
-                    //             })
-                    //     })
-                    // }
-
-                    // console.log(dagG.selectAll('.dag-edge-' + layer))
-
-                    // dag[layer].forEach(ch => {
-                    //     console.log('ch:', ch.layer, ch.channel)
-                        
-                        // // drawEdgesPerLayer(layer, ch)
-                        // // update dag data with edge count
-                        // let layerToUpdate = indexLayer[layerIndex[layer] + 1]
-                        // ch['prev_channels'].forEach(prevChannel => {
-                        //     let channelToUpdate = dag[layerToUpdate].find(function (element) {
-                        //         return element.channel === prevChannel['prev_channel'];
-                        //     });
-
-                        //     channelToUpdate.numOfEdgesIn += 1
-                        // })           
-                        
-                        // console.log('prev channels:', ch['prev_channels'])
-                        // console.log('append edge >> ')
-                        // dagG
-                        //     .data(ch['prev_channels'])
-                        //     .enter()
-                        //     .append('path')
-                        //     .attr('d', d => {
-                        //         console.log('prev channel:', d)
-                        //         let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
-                        //         let channelToConnectTo = dag[layerToConnectTo].find(function (element) {
-                        //             return element.channel === d['prev_channel'];
-                        //         });
-                        //         return "M" + (ch.x + ch.width / 2) + "," + (ch.y + fvHeight - (fvHeight - ch.width))
-                        //             + "C" + (ch.x + ch.width / 2) + " " + (ch.y + fvHeight - (fvHeight - ch.width)
-                        //                 + layerVerticalSpace / 2) + "," + (channelToConnectTo.x + channelToConnectTo.width / 2) + " "
-                        //             + (channelToConnectTo.y - layerVerticalSpace / 2 - (fvHeight - channelToConnectTo.width)) + ","
-                        //             + (channelToConnectTo.x + channelToConnectTo.width / 2) + " " + channelToConnectTo.y
-                        //     })
-                        //     .style('stroke-width', d => edgeScale(d.inf))
-                        //     // .classed('dag-edge', true)
-                        //     // .classed('dag-edge-' + layer, true)
-                        //     // .classed('dag-edge-' + layer + '-' + channel.channel + '-out', true)
-                        //     // .classed(d => {
-                        //     //     return 'dag-edge-' + layer + '-' + d['prev_channel'] + '-in'
-                        //     // })
-                        //     .attr('class', d => {
-
-                        //         let classString = 'dag-edge' +
-                        //             ' ' + 'dag-edge-' + layer +
-                        //             ' ' + 'dag-edge-' + layer + '-' + ch.channel +
-                        //             ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] +
-                        //             ' ' + 'dag-edge-' + layer + '-' + ch.channel + '-out'
-
-                        //             if (d.layer != 'mixed5b') {
-                        //                 classString += ' ' + 'dag-edge-' + indexLayer[layerIndex[layer] + 1] + '-' + d['prev_channel'] + '-in'
-                                        
-                        //             }
-
-                        //         return classString
-                        //     })
-                        //     .attr('id', d => {
-                        //         let layerToConnectTo = indexLayer[layerIndex[layer] + 1]
-                        //         let channelToConnectTo = dag[layerToConnectTo].find(function (element) {
-                        //             return element.channel === d['prev_channel'];
-                        //         });
-                        //         return 'dag-edge-' + layer + '-' + ch.channel + '-' + layerToConnectTo + '-' + channelToConnectTo.channel
-                        //     })
-                        //     .on('mouseover', function() {
-                        //         let edgeID = d3.select(this).attr('id').split('-')
-                        //         let topLayer = edgeID[2]
-                        //         let topChannel = edgeID[3]
-                        //         let bottomLayer = edgeID[4]
-                        //         let bottomChannel = edgeID[5]
-
-                        //         d3.selectAll('.fv-ch').attr('filter', 'url(#grayscale)')
-                        //         d3.select('#' + topLayer + '-' + topChannel + '-channel').attr('filter', null)
-                        //         d3.select('#' + bottomLayer + '-' + bottomChannel + '-channel').attr('filter', null)
-
-                        //         d3.selectAll('.' + topLayer + '-' + topChannel + '-dataset-p')
-                        //             .style('display', 'block')
-                        //             .style('opacity', 1)
-
-                        //         d3.selectAll('.' + bottomLayer + '-' + bottomChannel + '-dataset-p')
-                        //             .style('display', 'block')
-                        //             .style('opacity', 1)
-
-                        //     })
-                        //     .on('mouseout', function () {
-                        //         d3.selectAll('.fv-ch').attr('filter', null)
-
-                        //         d3.selectAll('.fv-de')
-                        //             .style('display', 'none')
-                        //             .style('opacity', 0)
-                        //     })
-                    // })
                     
 
-                    updateChannels()
-                    updateChannelLabels()
-                    updateEdges()
-                    updateDatasetExamples()
+                    // updateChannels()
+                    // updateChannelLabels()
+                    // updateEdges()
+                    // updateDatasetExamples()
 
-                    d3.select('#dag-layer-label-' + prevLayer)
-                        .transition()
-                        .duration(filterTransitionSpeed)
-                        .attr('transform', d => 'translate(' + (0 - (fvWidth / 4 + ((dag[prevLayer].length * fvWidth + (dag[prevLayer].length - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight / 2) + ')')
+                    // d3.select('#dag-layer-label-' + prevLayer)
+                    //     .transition()
+                    //     .duration(filterTransitionSpeed)
+                    //     .attr('transform', d => 'translate(' + (0 - (fvWidth / 4 + ((dag[prevLayer].length * fvWidth + (dag[prevLayer].length - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight / 2) + ')')
                 })
 
             dagG.selectAll('.fv-ch-label-' + layer)
