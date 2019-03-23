@@ -556,8 +556,7 @@ export function dagVIS(selectedClass) {
                                 .attr("transform", "translate(" + attrX + ',' + attrY + " )")
                                 .attr('visibility', 'visible')
                                 .attr('id', attrImgId)
-                        }
-                        
+                        }  
                     })
 
                     // Draw edges
@@ -566,22 +565,22 @@ export function dagVIS(selectedClass) {
                         let attrX = d.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
                         let attrY = attrGlobalY + attrTopOffset
                         let attrWidth = unitAttrImgSize
-                        console.log(channel)
-                        // console.log(channelToConnectTo)
+
                         dagG.append('path')
                             .attr('d', () => {
-                                let startingX = channel.x + channel.width / 2
-                                let startingY = channel.y + fvHeight - (fvHeight - channel.width)
-                                let fstVertexX = channel.x + channel.width / 2
-                                let fstVertexY = (channel.y + fvHeight - (fvHeight - channel.width) + layerVerticalSpace / 2)
-                                let sndVertexX = (attrX + attrWidth / 2)
-                                let sndVertexY = (attrY - layerVerticalSpace / 2 - (fvHeight - attrWidth))
-                                let endingX = (attrX + attrWidth / 2)
+                                let startingX = channel.x
+                                let startingY = channel.y + channel.width / 2
+                                let endingX = attrX + attrWidth / 2
                                 let endingY = attrY
+
+                                let fstVertexX = (startingX + endingX) / 2
+                                let fstVertexY = (startingY + endingY) / 2 - 5
+                                let sndVertexX = ((channel.x + channel.width / 2) + (attrX + attrWidth/ 2)) / 2 - 5
+                                let sndVertexY = ((channel.y + channel.width / 2) + (attrY + attrWidth / 2)) / 2 + 5
+
                                 return "M" + startingX + "," + startingY
-                                    + "C" + fstVertexX + " " + fstVertexY + "," 
-                                    + sndVertexX + " " + sndVertexY + ","
-                                    + endingX + " " + endingY
+                                    + "Q" + fstVertexX + " " + fstVertexY + ","
+                                        + endingX + " " + endingY
                             })
                             .style('stroke-width', edgeScale(attrChannel.inf))
                             .attr('class', d => {
