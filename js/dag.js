@@ -418,17 +418,14 @@ export function dagVIS(selectedClass) {
             let minCounts = d3.min(prevCounts)
 
             // Offset and padding
-            let attrLeftOffset = attrLayout.leftOffset
             let attrLeftPadding = attrLayout.left
-            let attrTopOffset = attrLayout.topOffset
-            let attrGlobalY = channel.y + fvScale(channel.count) / 2
             let rectTopOffset = attrLayout.rectTopOffset
             let rectPaddingBottom = attrLayout.rectBottom
             let unitAttrImgSize = fvScale(minCounts)
 
             // Arguments for drawing background rect
-            let x = channel.x - (unitAttrImgSize + attrLeftPadding) * 3 - attrLeftOffset * 2
-            let y = attrGlobalY + attrTopOffset - rectTopOffset
+            let x = getAttrRectX(layer, channel)
+            let y = getAttrRectY(channel)
             let width = (unitAttrImgSize + attrLeftPadding) * 3 + attrLeftPadding
             let height = unitAttrImgSize + rectTopOffset + rectPaddingBottom
 
@@ -441,6 +438,31 @@ export function dagVIS(selectedClass) {
             dag[layer].forEach(channel => {
                 drawAttrRects(layer, channel)
             })
+        }
+
+        function getAttrRectX(layer, channel) {
+            // Get previous layer
+            let prevLayer = indexLayer[layerIndex[layer] + 1]
+                    
+            // Get minimum count of the previous layer
+            let prevCounts = dag[prevLayer].map(ch => ch.count)
+            let minCounts = d3.min(prevCounts)
+
+            // Offset and padding
+            let attrLeftOffset = attrLayout.leftOffset
+            let attrLeftPadding = attrLayout.left
+            let unitAttrImgSize = fvScale(minCounts)
+
+            return channel.x - (unitAttrImgSize + attrLeftPadding) * 3 - attrLeftOffset * 2
+        }
+
+        function getAttrRectY(channel) {
+            // Offset and padding
+            let attrTopOffset = attrLayout.topOffset
+            let attrGlobalY = channel.y + fvScale(channel.count) / 2
+            let rectTopOffset = attrLayout.rectTopOffset
+
+            return attrGlobalY + attrTopOffset - rectTopOffset
         }
 
         function drawAttrChannels(layer, channel, initVisible=ture) {
@@ -456,17 +478,13 @@ export function dagVIS(selectedClass) {
             let minCounts = d3.min(prevCounts)
 
             // Offset and padding
-            let attrLeftOffset = attrLayout.leftOffset
-            let attrLeftPadding = attrLayout.left
-            let attrTopOffset = attrLayout.topOffset
-            let attrGlobalY = channel.y + fvScale(channel.count) / 2
             let unitAttrImgSize = fvScale(minCounts)
 
             let attrChannels = channel['attr_channels']
             attrChannels.forEach((attrChannel, attrIdx) => {
                 let attrImgId = layer + '-' + channel.channel + '-attr-' + attrChannel.prev_channel
-                let attrX = channel.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
-                let attrY = attrGlobalY + attrTopOffset
+                let attrX = getAttrX(layer, channel, attrIdx)
+                let attrY = getAttrY(channel)
                 dagG.append('image')
                     .attr('x', 0)
                     .attr('y', 0)
@@ -486,6 +504,90 @@ export function dagVIS(selectedClass) {
                 drawAttrChannels(layer, channel, false)
             })
         }
+
+        function updateAttrChannelRectLoc(layer) {
+            
+            // XXX
+            dag[layer].forEach(channel => {
+
+                // Update location of rectangle
+                let attrRectId = layer + '-' + channel.channel + '-attr-rect'
+                let rectX = getAttrRectX(layer, channel)
+                d3.selectAll('#' + attrRectId)
+                    .transition()
+                    .duration(filterTransitionSpeed)
+                    .attr('x', rectX)
+                    .style('visibility', isAlreadyClicked[layer + '-' + channel.channel]? 'visible': 'hidden')
+
+                // Update location of attributed channels
+                let attrChannels = channel['attr_channels']
+                attrChannels.forEach((attrChannel, attrIdx) => {
+                    let attrImgId = layer + '-' + channel.channel + '-attr-' + attrChannel.prev_channel
+                    let attrX = getAttrX(layer, channel, attrIdx)
+                    let attrY = getAttrY(channel)
+                    d3.selectAll('#' + attrImgId)
+                        .transition()
+                        .duration(filterTransitionSpeed)
+                        .attr("transform", "translate(" + attrX + ',' + attrY + " )")
+                        .style('visibility', isAlreadyClicked[layer + '-' + channel.channel]? 'visible': 'hidden')
+                })
+  
+            })
+        }
+
+        function updateAttrChannels() {
+            layers.forEach(l => {
+                // Ignore mixed3a
+                if (l === 'mixed3a')
+                    return
+                
+                updateAttrChannelRectLoc(l)
+            })
+            
+            channelsHidden.forEach(ch => {
+                console.log('hide', ch)
+                let [hiddenLayer, hiddenChannel] = ch.split('-')
+
+                let attrRectId = hiddenLayer + '-' + hiddenChannel + '-attr-rect'
+                d3.selectAll('#' + attrRectId)
+                    .style('visibility', 'hidden')
+
+                dag[hiddenLayer].forEach(channel => {
+                    if (channel.channel === hiddenChannel) {
+                        let attrChannels = channel['attr_channels']
+                        attrChannels.forEach((attrChannel, attrIdx) => {
+                            let attrImgId = hiddenLayer + '-' + hiddenChannel + '-attr-' + attrChannel.prev_channel
+                            console.log(d3.selectAll('#' + attrImgId))
+                            d3.selectAll('#' + attrImgId)
+                                .style('visibility', 'hidden')
+                        })
+                    }
+                })
+            })
+        }
+        
+        function getAttrX(layer, parentChannel, attrIdx) {
+            // Get previous layer
+            let prevLayer = indexLayer[layerIndex[layer] + 1]
+
+            // Get minimum count of the previous layer
+            let prevCounts = dag[prevLayer].map(ch => ch.count)
+            let minCounts = d3.min(prevCounts)
+
+            // Offset and padding
+            let attrLeftOffset = attrLayout.leftOffset
+            let attrLeftPadding = attrLayout.left
+            let unitAttrImgSize = fvScale(minCounts)
+
+            return parentChannel.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
+        }
+
+        function getAttrY(parentChannel) {
+            let attrTopOffset = attrLayout.topOffset
+            let attrGlobalY = parentChannel.y + fvScale(parentChannel.count) / 2
+
+            return attrGlobalY + attrTopOffset
+        }        
 
         function drawAttrEdges(layer, channel, initVisible=ture) {
             // Ignore mixed3a
@@ -532,8 +634,8 @@ export function dagVIS(selectedClass) {
                         let classString = 'dag-edge' +
                             ' ' + 'dag-edge-' + layer +
                             ' ' + 'dag-edge-' + layer + '-' + channel.channel +
-                            ' ' + 'dag-edge-attr-' + layer + '-' + channel.channel +
-                            ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
+                            ' ' + 'dag-edge-attr-' + layer + '-' + channel.channel
+                            // ' ' + 'dag-edge-' + layer + '-' + channel.channel + '-out'
             
                             if (channel.layer != 'mixed5b') {
                                 classString += ' ' + 'dag-edge-' + prevLayer + '-' + channel['prev_channel'] + '-in'
@@ -711,10 +813,6 @@ export function dagVIS(selectedClass) {
 
                     // Get previous layer
                     let prevLayer = indexLayer[layerIndex[layer] + 1]
-                    
-                    // // Get minimum count of the previous layer
-                    let prevCounts = dag[prevLayer].map(ch => ch.count)
-                    let minCounts = d3.min(prevCounts)
 
                     // Toggle background white rect
                     let attrRectId = layer + '-' + d.channel + '-attr-rect'
@@ -1020,6 +1118,7 @@ export function dagVIS(selectedClass) {
                 .on('input', function () {
 
                     let filterValue = this.value
+                    console.log('filterValue:', filterValue)
 
                     d3.selectAll('.fv-ch')
                         .attr('display', d => {
@@ -1046,7 +1145,8 @@ export function dagVIS(selectedClass) {
                     layers.forEach(l => {
                         computeChannelCoordinatesFilter(l, filterValue)
                     });
-                        
+                      
+                    // Update visibility of edges
                     d3.selectAll('.dag-edge').attr('display', 'block')
                     channelsHidden.forEach(ch => {
                         d3.selectAll('.dag-edge-' + ch)
@@ -1058,6 +1158,7 @@ export function dagVIS(selectedClass) {
                     updateLayerLabels(filterValue)
                     updateEdges()
                     updateDatasetExamples()
+                    updateAttrChannels()
 
                 })
                 .property('value', 0)
