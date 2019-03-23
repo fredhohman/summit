@@ -347,11 +347,17 @@ export function dagVIS(selectedClass) {
                 //         return "translate(" + (channel.x + (index - 5) * deWidth + (index - 5 + 1) * 2) + ", " + (channel.y - 2 * (deHeight + 1)) + ")"
                 //     }
                 // })
-                .attr("transform", () => { // centered up top
+                .attr("transform", () => { // right centered
+                    let rightOffset = 10
+                    let rightPadding = 2
                     if (index < 5) {
-                        return "translate(" + ((channel.x + index * deWidth) + (index + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (channel.y - deHeight - 1 - 15) + ")" // -15 to raise above label
+                        let dataExX = (channel.x + channel.width + rightOffset) + index * (deWidth + rightPadding)
+                        let dataExY = channel.y + (channel.width / 2) - deHeight - 2
+                        return "translate(" + dataExX + ", " + dataExY + ")" 
                     } else if (index >= 5) {
-                        return "translate(" + ((channel.x + (index-5) * deWidth) + (index -5 + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (channel.y - 2 * (deHeight + 1) - 15) + ")"
+                        let dataExX = (channel.x + channel.width + rightOffset) + (index - 5) * (deWidth + rightPadding)
+                        let dataExY = channel.y + (channel.width / 2)
+                        return "translate(" + dataExX + ", " + dataExY + ")"
                     }
                 })
                 .style('opacity', 0)
@@ -366,6 +372,30 @@ export function dagVIS(selectedClass) {
                     newChannelClipPath(layer, channel)
                 })
             })
+        }
+
+        function drawBackgroundRect(layer, channel, attrRectId, x, y, width, height) {
+
+            // Get the rectangle
+            let attrRect = document.getElementById(attrRectId)
+
+            // Toggle the rectangle
+            if (attrRect) {
+                let attrRectVisbility = attrRect.style.getPropertyValue('visibility')
+                let oppositeRectVisibility = attrRectVisbility == 'hidden'? 'visible': 'hidden'
+                attrRect.style.setProperty('visibility', oppositeRectVisibility)
+
+            // Draw the new rectangle
+            } else {
+                dagG.append('rect')
+                    .attr('x', x)
+                    .attr('y', y)
+                    .attr('width', width)
+                    .attr('height', height)
+                    .attr('fill', 'white')
+                    .attr('stroke', 'black')
+                    .attr('id', attrRectId)
+            }
         }
 
         function drawChannels(layer) {
@@ -513,24 +543,13 @@ export function dagVIS(selectedClass) {
                     let rectPaddingBottom = 5
                     let unitAttrImgSize = fvScale(minCounts)
 
-                    // Draw background white rectangle
+                    // Draw background white rect
                     let attrRectId = layer + '-' + d.channel + '-attr-rect'
-                    let attrRect = document.getElementById(attrRectId)
-
-                    if (attrRect) {
-                        let attrRectVisbility = attrRect.style.getPropertyValue('visibility')
-                        let oppositeRectVisibility = attrRectVisbility == 'hidden'? 'visible': 'hidden'
-                        attrRect.style.setProperty('visibility', oppositeRectVisibility)
-                    } else {
-                        dagG.append('rect')
-                            .attr('x', d.x - (unitAttrImgSize + attrLeftPadding) * 3 - attrLeftOffset * 2)
-                            .attr('y', attrGlobalY + attrTopOffset - rectTopOffset)
-                            .attr('width', (unitAttrImgSize + attrLeftPadding) * 3 + attrLeftPadding)
-                            .attr('height', unitAttrImgSize + rectTopOffset + rectPaddingBottom)
-                            .attr('fill', 'white')
-                            .attr('stroke', 'black')
-                            .attr('id', attrRectId)
-                    }
+                    let x = d.x - (unitAttrImgSize + attrLeftPadding) * 3 - attrLeftOffset * 2
+                    let y = attrGlobalY + attrTopOffset - rectTopOffset
+                    let width = (unitAttrImgSize + attrLeftPadding) * 3 + attrLeftPadding
+                    let height = unitAttrImgSize + rectTopOffset + rectPaddingBottom
+                    drawBackgroundRect(layer, d, attrRectId, x, y, width, height)
 
                     // Draw edges
                     attrChannels.forEach((attrChannel, attrIdx) => {
