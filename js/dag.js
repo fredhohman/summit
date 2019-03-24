@@ -327,7 +327,6 @@ export function dagVIS(selectedClass) {
         function drawExamplesForLayer(layer) {
             // Padding and offset
             let rightPadding = exLayout.right
-            let rightOffset = exRectLayout.offset - rightPadding
             let topPadding = exLayout.top
             let bottomPadding = exLayout.bottom
             
@@ -335,8 +334,8 @@ export function dagVIS(selectedClass) {
                 // Draw background rectangle
                 let channel = dag[layer][ch]
                 let rectId = layer + '-' + channel.channel + '-ex-rect'
-                let x = channel.x + channel.width + rightOffset
-                let y = channel.y + (channel.width / 2) - (fvHeight / 2) - topPadding
+                let x = getExRectX(channel)
+                let y = getExRectY(channel)
                 let width = (deWidth + rightPadding) * 5 + rightPadding
                 let height = deHeight * 2 + topPadding + bottomPadding
                 drawBackgroundRect(rectId, x, y, width, height, false)
@@ -346,6 +345,17 @@ export function dagVIS(selectedClass) {
                     drawDatasetExamples(layer, channel, i)
                 }   
             }
+        }
+
+        function getExRectX(channel) {
+            let rightPadding = exLayout.right
+            let rightOffset = exRectLayout.offset - rightPadding
+            return channel.x + channel.width + rightOffset
+        }
+
+        function getExRectY(channel) {
+            let topPadding = exLayout.top
+            return channel.y + (channel.width / 2) - (fvHeight / 2) - topPadding
         }
 
         function drawDatasetExamples(layer, channel, index) {
@@ -1073,9 +1083,12 @@ export function dagVIS(selectedClass) {
         function updateDatasetExamples() {
             layers.forEach(layer =>{
                 for (let channel = 0; channel < dag[layer].length; channel++) {
-                    for (let index = 0; index < 10; index++) {
 
-                        d3.select('#' + layer + '-' + dag[layer][channel].channel + '-' + 'dataset-p-' + index)
+                    let currChannel = dag[layer][channel]
+
+                    for (let index = 0; index < 10; index++) {
+                        // Update dataset examples
+                        d3.select('#' + layer + '-' + currChannel.channel + '-' + 'dataset-p-' + index)
                             .attr('transform', rightTranslation(dag[layer][channel], index))
                             // .attr("transform", () => { // centered up top
                             //     if (index < 5) {
@@ -1091,6 +1104,14 @@ export function dagVIS(selectedClass) {
                             //         return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth + (index - 5 + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1)) + ")"
                             //     }
                             // })
+
+                        // Update background rectangle
+                        let rectId = layer + '-' + currChannel.channel + '-ex-rect'
+                        let x = getExRectX(currChannel)
+                        let y = getExRectY(currChannel)
+                        d3.select('#' + rectId)
+                            .attr('x', x)
+                            .attr('y', y)
                     }
                 }
             })
