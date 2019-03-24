@@ -505,31 +505,43 @@ export function dagVIS(selectedClass) {
             })
         }
 
-        function updateAttrChannelRectLoc(layer) {
+        function updateAttrChannelRectLocVis(layer) {
             
             // XXX
             dag[layer].forEach(channel => {
 
+                // Get attributed background rectangle
+                let attrParentName = layer + '-' + channel.channel
+                let attrRectId = attrParentName + '-attr-rect'
+                let attrRect = document.getElementById(attrRectId)
+
                 // Update location of rectangle
-                let attrRectId = layer + '-' + channel.channel + '-attr-rect'
                 let rectX = getAttrRectX(layer, channel)
                 d3.selectAll('#' + attrRectId)
                     .transition()
                     .duration(filterTransitionSpeed)
                     .attr('x', rectX)
-                    .style('visibility', isAlreadyClicked[layer + '-' + channel.channel]? 'visible': 'hidden')
 
-                // Update location of attributed channels
+                // Update visibility of rectangle
+                attrRect.style.setProperty('visibility', isAlreadyClicked[attrParentName]? 'visible': 'hidden')
+
+                // Get attributed channels
                 let attrChannels = channel['attr_channels']
                 attrChannels.forEach((attrChannel, attrIdx) => {
-                    let attrImgId = layer + '-' + channel.channel + '-attr-' + attrChannel.prev_channel
+                    // Get attributed channel
+                    let attrImgId = attrParentName + '-attr-' + attrChannel.prev_channel
+                    let attrImg = document.getElementById(attrImgId)
+
+                    // Update location of attributed channel
                     let attrX = getAttrX(layer, channel, attrIdx)
                     let attrY = getAttrY(channel)
                     d3.selectAll('#' + attrImgId)
                         .transition()
                         .duration(filterTransitionSpeed)
                         .attr("transform", "translate(" + attrX + ',' + attrY + " )")
-                        .style('visibility', isAlreadyClicked[layer + '-' + channel.channel]? 'visible': 'hidden')
+
+                    // Update visibility of attributed channel
+                    attrImg.style.setProperty('visibility', isAlreadyClicked[attrParentName]? 'visible': 'hidden')
                 })
   
             })
@@ -541,31 +553,39 @@ export function dagVIS(selectedClass) {
                 if (l === 'mixed3a')
                     return
                 
-                updateAttrChannelRectLoc(l)
+                updateAttrChannelRectLocVis(l)
             })
             
-            channelsHidden.forEach(ch => {
-                console.log('hide', ch)
-                let [hiddenLayer, hiddenChannel] = ch.split('-')
-
-                let attrRectId = hiddenLayer + '-' + hiddenChannel + '-attr-rect'
-                d3.selectAll('#' + attrRectId)
-                    .style('visibility', 'hidden')
-
-                dag[hiddenLayer].forEach(channel => {
-                    if (channel.channel === hiddenChannel) {
-                        let attrChannels = channel['attr_channels']
-                        attrChannels.forEach((attrChannel, attrIdx) => {
-                            let attrImgId = hiddenLayer + '-' + hiddenChannel + '-attr-' + attrChannel.prev_channel
-                            console.log(d3.selectAll('#' + attrImgId))
-                            d3.selectAll('#' + attrImgId)
-                                .style('visibility', 'hidden')
-                        })
-                    }
-                })
-            })
+            updateHiddenAttrVisibility()
         }
         
+        function updateHiddenAttrVisibility() {
+            channelsHidden.forEach(ch => {
+                let [hiddenLayer, hiddenChannel] = ch.split('-')
+                if (hiddenLayer !== 'mixed3a') {
+
+                    // Hide attributed background rectangle
+                    let attrRectId = hiddenLayer + '-' + hiddenChannel + '-attr-rect'
+                    let attrRect = document.getElementById(attrRectId)
+                    attrRect.style.setProperty('visibility', 'hidden')
+
+                    // Hide attributed channels
+                    dag[hiddenLayer].forEach(channel => {
+                        
+                        if (channel.channel === parseInt(hiddenChannel)) {
+                            let attrChannels = channel['attr_channels']
+                            attrChannels.forEach((attrChannel, attrIdx) => {
+                                let attrImgId = hiddenLayer + '-' + hiddenChannel + '-attr-' + attrChannel.prev_channel
+                                let attrImg = document.getElementById(attrImgId)
+                                attrImg.style.setProperty('visibility', 'hidden')
+                            })
+                        }
+                    })
+                } 
+                
+            })
+        }
+
         function getAttrX(layer, parentChannel, attrIdx) {
             // Get previous layer
             let prevLayer = indexLayer[layerIndex[layer] + 1]
