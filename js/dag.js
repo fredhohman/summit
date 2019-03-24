@@ -359,30 +359,51 @@ export function dagVIS(selectedClass) {
                 // .attr('clip-path', 'url(#de-clip-path)')
                 // .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, left
                 // .attr("transform", "translate(" + (channel.x + fvWidth / 4) + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, center
-                // .attr("transform", () => { // above channel
-                //     if (index < 5) {
-                //         return "translate(" + (channel.x + index * deWidth + (index + 1) * 2) + ", " + (channel.y - deHeight - 1) + ")"
-                //     } else if (index >= 5) {
-                //         return "translate(" + (channel.x + (index - 5) * deWidth + (index - 5 + 1) * 2) + ", " + (channel.y - 2 * (deHeight + 1)) + ")"
-                //     }
-                // })
-                .attr("transform", () => { // right centered
-                    let rightOffset = exRectLayout.offset
-                    let rightPadding = exRectLayout.right
-                    if (index < 5) {
-                        let dataExX = (channel.x + channel.width + rightOffset) + index * (deWidth + rightPadding)
-                        let dataExY = channel.y + (channel.width / 2) - deHeight - 2
-                        return "translate(" + dataExX + ", " + dataExY + ")" 
-                    } else if (index >= 5) {
-                        let dataExX = (channel.x + channel.width + rightOffset) + (index - 5) * (deWidth + rightPadding)
-                        let dataExY = channel.y + (channel.width / 2)
-                        return "translate(" + dataExX + ", " + dataExY + ")"
-                    }
-                })
+                .attr('transform', rightTranslation(channel, index))
+                // .attr("transform", aboveTranslation(channel, index))
+                // .attr('transform', topCenteredTranslation(channel, index))
                 .style('opacity', 0)
                 .style('display', 'none')
                 .attr('id', layer + '-' + channel.channel + '-' + 'dataset-p-' + index)
                 .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
+        }
+
+        function rightTranslation(channel, index) {
+            let rightOffset = exRectLayout.offset
+            let rightPadding = exRectLayout.right
+            if (index < 5) {
+                let dataExX = (channel.x + channel.width + rightOffset) + index * (deWidth + rightPadding)
+                let dataExY = channel.y + (channel.width / 2) - deHeight - 2
+                return "translate(" + dataExX + ", " + dataExY + ")" 
+            } else if (index >= 5) {
+                let dataExX = (channel.x + channel.width + rightOffset) + (index - 5) * (deWidth + rightPadding)
+                let dataExY = channel.y + (channel.width / 2)
+                return "translate(" + dataExX + ", " + dataExY + ")"
+            }
+        }
+
+        function aboveTranslation(channel, index) {
+            if (index < 5) {
+                let dataExX = channel.x + index * deWidth + (index + 1) * 2
+                let DataExY = channel.y - deHeight - 1
+                return "translate(" + dataExX + ", " + DataExY + ")"
+            } else if (index >= 5) {
+                let dataExX = channel.x + (index - 5) * deWidth + (index - 5 + 1) * 2
+                let dataExY = channel.y - 2 * (deHeight + 1)
+                return "translate(" + dataExX + ", " + dataExY + ")"
+            }
+        }
+
+        function topCenteredTranslation(channel, index) {
+            if (index < 5) {
+                let dataExX = (channel.x + index * deWidth) + (index + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2
+                let dataExY = channel.y - deHeight - 1 - 15
+                return "translate(" + dataExX + ", " + dataExY + ")"
+            } else if (index >= 5) {
+                let dataExX = (channel.x + (index - 5) * deWidth) + (index - 5 + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2
+                let dataExY = channel.y - 2 * (deHeight + 1) - 15
+                return "translate(" + dataExX + ", " + dataExY + ")"
+            }
         }
 
         function makeChannelClipPaths() {
@@ -1055,13 +1076,14 @@ export function dagVIS(selectedClass) {
                     for (let index = 0; index < 10; index++) {
 
                         d3.select('#' + layer + '-' + dag[layer][channel].channel + '-' + 'dataset-p-' + index)
-                            .attr("transform", () => { // centered up top
-                                if (index < 5) {
-                                    return "translate(" + ((dag[layer][channel].x + index * deWidth) + (index + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1 - 15) + ")"
-                                } else if (index >= 5) {
-                                    return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth) + (index - 5 + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1) - 15) + ")"
-                                }
-                            })
+                            .attr('transform', rightTranslation(dag[layer][channel], index))
+                            // .attr("transform", () => { // centered up top
+                            //     if (index < 5) {
+                            //         return "translate(" + ((dag[layer][channel].x + index * deWidth) + (index + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1 - 15) + ")"
+                            //     } else if (index >= 5) {
+                            //         return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth) + (index - 5 + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1) - 15) + ")"
+                            //     }
+                            // })
                             // .attr("transform", () => { // centered up top
                             //     if (index < 5) {
                             //         return "translate(" + ((dag[layer][channel].x + index * deWidth + (index + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1) + ")"
@@ -1069,7 +1091,6 @@ export function dagVIS(selectedClass) {
                             //         return "translate(" + ((dag[layer][channel].x + (index - 5) * deWidth + (index - 5 + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - 2 * (deHeight + 1)) + ")"
                             //     }
                             // })
-
                     }
                 }
             })
