@@ -430,6 +430,11 @@ button:active {
     fill: var(--dark);
 }
 
+.attr-ch-label {
+    font-size: 12px;
+    fill: var(--dark);
+}
+
 .dag-edge {
     stroke: var(--gray);
     fill: none;

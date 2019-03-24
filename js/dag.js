@@ -25,7 +25,7 @@ const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
 const exLayout = ({offset: 10, top: 3, bottom: 3, right: 2})
 const exRectLayout = ({offset: 13, right: 2})
-const attrLayout = ({leftOffset: 5, topOffset: 35, rectTopOffset: 5, left: 5, rectBottom: 5})
+const attrLayout = ({topOffset: 35, top: 3, left: 3, right: 3, bottom: 3})
 
 let zoom = d3.zoom()
     .scaleExtent([.05, 5])
@@ -449,9 +449,9 @@ export function dagVIS(selectedClass) {
             let minCounts = d3.min(prevCounts)
 
             // Offset and padding
-            let attrLeftPadding = attrLayout.left
-            let rectTopOffset = attrLayout.rectTopOffset
-            let rectPaddingBottom = attrLayout.rectBottom
+            let attrLeftPadding = attrLayout.right
+            let rectTopOffset = attrLayout.top
+            let rectPaddingBottom = attrLayout.bottom
             let unitAttrImgSize = fvScale(minCounts)
 
             // Arguments for drawing background rect
@@ -480,8 +480,8 @@ export function dagVIS(selectedClass) {
             let minCounts = d3.min(prevCounts)
 
             // Offset and padding
-            let attrLeftOffset = attrLayout.leftOffset
-            let attrLeftPadding = attrLayout.left
+            let attrLeftOffset = attrLayout.left
+            let attrLeftPadding = attrLayout.right
             let unitAttrImgSize = fvScale(minCounts)
 
             return channel.x - (unitAttrImgSize + attrLeftPadding) * 3 - attrLeftOffset * 2
@@ -491,7 +491,7 @@ export function dagVIS(selectedClass) {
             // Offset and padding
             let attrTopOffset = attrLayout.topOffset
             let attrGlobalY = channel.y + fvScale(channel.count) / 2
-            let rectTopOffset = attrLayout.rectTopOffset
+            let rectTopOffset = attrLayout.top
 
             return attrGlobalY + attrTopOffset - rectTopOffset
         }
@@ -511,11 +511,14 @@ export function dagVIS(selectedClass) {
             // Offset and padding
             let unitAttrImgSize = fvScale(minCounts)
 
+            // Get attributed channels
             let attrChannels = channel['attr_channels']
             attrChannels.forEach((attrChannel, attrIdx) => {
                 let attrImgId = layer + '-' + channel.channel + '-attr-' + attrChannel.prev_channel
                 let attrX = getAttrX(layer, channel, attrIdx)
                 let attrY = getAttrY(channel)
+
+                // Draw attributed channels 
                 dagG.append('image')
                     .attr('x', 0)
                     .attr('y', 0)
@@ -536,7 +539,31 @@ export function dagVIS(selectedClass) {
             })
         }
 
+        function drawAttrChannelLabels(layer, channel) {
+            let attrChannels = channel['attr_channels']
+
+            attrChannels.forEach((attrChannel, attrIdx) => {
+                let attrX = getAttrX(layer, channel, attrIdx)
+                let attrY = getAttrY(channel)
+
+                dagG.append('text')
+                .attr('x', attrX)
+                .attr('y', attrY - 3)
+                .text(attrChannel.prev_channel)
+                .classed('attr-ch-label', true)
+                .classed('attr-ch-label-' + layer, true)
+                .attr('id', 'attr-ch-label-' + layer + '-' + attrChannel.prev_channel)
+            })
+        }
+
+        function drawAttrChannelLabelsLayer(layer) {
+            dag[layer].forEach(channel => {
+                drawAttrChannelLabels(layer, channel)
+            })
+        }
+
         function updateAttrChannelRectLocVis(layer) {
+            // XXX
             dag[layer].forEach(channel => {
 
                 // Get attributed background rectangle
@@ -644,8 +671,8 @@ export function dagVIS(selectedClass) {
             let minCounts = d3.min(prevCounts)
 
             // Offset and padding
-            let attrLeftOffset = attrLayout.leftOffset
-            let attrLeftPadding = attrLayout.left
+            let attrLeftOffset = attrLayout.left
+            let attrLeftPadding = attrLayout.right
             let unitAttrImgSize = fvScale(minCounts)
 
             return parentChannel.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
@@ -880,9 +907,6 @@ export function dagVIS(selectedClass) {
 
                     // Get attributed channels
                     let attrChannels = d['attr_channels']
-
-                    // Get previous layer
-                    let prevLayer = indexLayer[layerIndex[layer] + 1]
 
                     // Toggle background white rect
                     let attrRectId = layer + '-' + d.channel + '-attr-rect'
@@ -1190,6 +1214,7 @@ export function dagVIS(selectedClass) {
                 drawChannels(l)
                 drawAttrRectsLayer(l)
                 drawExamplesForLayer(l)
+                drawAttrChannelLabelsLayer(l)
                 drawAttrChannelsLayer(l)
             });
             
