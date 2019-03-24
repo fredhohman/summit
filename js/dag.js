@@ -539,31 +539,56 @@ export function dagVIS(selectedClass) {
             })
         }
 
-        function drawAttrChannelLabels(layer, channel) {
+        function getAttrX(layer, parentChannel, attrIdx) {
+            // Get previous layer
+            let prevLayer = indexLayer[layerIndex[layer] + 1]
+
+            // Get minimum count of the previous layer
+            let prevCounts = dag[prevLayer].map(ch => ch.count)
+            let minCounts = d3.min(prevCounts)
+
+            // Offset and padding
+            let attrLeftOffset = attrLayout.left
+            let attrLeftPadding = attrLayout.right
+            let unitAttrImgSize = fvScale(minCounts)
+
+            return parentChannel.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
+        }
+
+        function getAttrY(parentChannel) {
+            let attrTopOffset = attrLayout.topOffset
+            let attrGlobalY = parentChannel.y + fvScale(parentChannel.count) / 2
+
+            return attrGlobalY + attrTopOffset
+        }   
+
+        function drawAttrChannelLabels(layer, channel, initVisible=ture) {
             let attrChannels = channel['attr_channels']
+            let parentChannelName = layer + '-' + channel.channel
 
             attrChannels.forEach((attrChannel, attrIdx) => {
                 let attrX = getAttrX(layer, channel, attrIdx)
                 let attrY = getAttrY(channel)
 
                 dagG.append('text')
-                .attr('x', attrX)
-                .attr('y', attrY - 3)
-                .text(attrChannel.prev_channel)
-                .classed('attr-ch-label', true)
-                .classed('attr-ch-label-' + layer, true)
-                .attr('id', 'attr-ch-label-' + layer + '-' + attrChannel.prev_channel)
+                    .attr('x', attrX)
+                    .attr('y', attrY - 3)
+                    .text(attrChannel.prev_channel)
+                    .classed('attr-ch-label', true)
+                    .classed('attr-ch-label-' + layer, true)
+                    .classed('attr-ch-label-' + layer + '-' + channel.channel, true)
+                    .attr('id', 'attr-ch-label-' + parentChannelName + '-' + attrChannel.prev_channel)
+                    .attr('visibility', initVisible? 'visible': 'hidden')
             })
         }
 
         function drawAttrChannelLabelsLayer(layer) {
             dag[layer].forEach(channel => {
-                drawAttrChannelLabels(layer, channel)
+                drawAttrChannelLabels(layer, channel, false)
             })
         }
 
         function updateAttrChannelRectLocVis(layer) {
-            // XXX
             dag[layer].forEach(channel => {
 
                 // Get attributed background rectangle
@@ -615,18 +640,6 @@ export function dagVIS(selectedClass) {
   
             })
         }
-
-        function updateAttrChannels() {
-            layers.forEach(l => {
-                // Ignore mixed3a
-                if (l === 'mixed3a')
-                    return
-                
-                updateAttrChannelRectLocVis(l)
-            })
-            
-            updateHiddenAttrVisibility()
-        }
         
         function updateHiddenAttrVisibility() {
             channelsHidden.forEach(ch => {
@@ -662,28 +675,84 @@ export function dagVIS(selectedClass) {
             })
         }
 
-        function getAttrX(layer, parentChannel, attrIdx) {
-            // Get previous layer
-            let prevLayer = indexLayer[layerIndex[layer] + 1]
-
-            // Get minimum count of the previous layer
-            let prevCounts = dag[prevLayer].map(ch => ch.count)
-            let minCounts = d3.min(prevCounts)
-
-            // Offset and padding
-            let attrLeftOffset = attrLayout.left
-            let attrLeftPadding = attrLayout.right
-            let unitAttrImgSize = fvScale(minCounts)
-
-            return parentChannel.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
+        function updateAttrChannels() {
+            layers.forEach(l => {
+                // Ignore mixed3a
+                if (l === 'mixed3a')
+                    return
+                  
+                updateAttrChannelRectLocVis(l)
+            })
+            updateHiddenAttrVisibility()
         }
 
-        function getAttrY(parentChannel) {
-            let attrTopOffset = attrLayout.topOffset
-            let attrGlobalY = parentChannel.y + fvScale(parentChannel.count) / 2
+        function updateAttrLabelLoc(layer) {
 
-            return attrGlobalY + attrTopOffset
-        }        
+            dag[layer].forEach(channel => {
+
+                // Get attributed background rectangle
+                let attrParentName = layer + '-' + channel.channel
+
+                // Get attributed channels
+                let attrChannels = channel['attr_channels']
+                attrChannels.forEach((attrChannel, attrIdx) => {
+                    // Get attributed channel label
+                    let attrLabelId = 'attr-ch-label-' + attrParentName + '-' + attrChannel.prev_channel
+                    let attrLabel = document.getElementById(attrLabelId)
+
+                    // Update location of attributed channel label
+                    let attrX = getAttrX(layer, channel, attrIdx)
+                    let attrY = getAttrY(channel)
+                    d3.selectAll('#' + attrLabelId)
+                        .transition()
+                        .duration(filterTransitionSpeed)
+                        .attr('x', attrX)
+                        .attr('y', attrY - 3)
+
+                    // Update visibility of attributed channel
+                    attrLabel.style.setProperty('visibility', isAlreadyClicked[attrParentName]? 'visible': 'hidden')
+
+                })
+  
+            })
+        }
+
+        function updateHiddenAttrLabelVisibility() {
+            channelsHidden.forEach(ch => {
+                let [hiddenLayer, hiddenChannel] = ch.split('-')
+                if (hiddenLayer !== 'mixed3a') {
+
+                    // Hide attributed channel labels
+                    dag[hiddenLayer].forEach(channel => {
+                        
+                        if (channel.channel === parseInt(hiddenChannel)) {
+                            let attrChannels = channel['attr_channels']
+                            attrChannels.forEach((attrChannel, attrIdx) => {
+                                // Hide attributed channels
+                                let attrLabelId = 'attr-ch-label-' + hiddenLayer + '-' + hiddenChannel + '-' + attrChannel.prev_channel
+                                let attrLabel = document.getElementById(attrLabelId)
+                                attrLabel.style.setProperty('visibility', 'hidden')
+                            })
+                        }
+                    })
+                } 
+                
+            })
+        }
+
+        function updateAttrLabels() {
+            layers.forEach(l => {
+                // Ignore mixed3a
+                if (l === 'mixed3a')
+                    return
+                  
+                updateAttrLabelLoc(l)
+            })
+
+            updateHiddenAttrLabelVisibility()
+        }
+
+
 
         function drawAttrEdges(layer, channel, initVisible=ture) {
             // Ignore mixed3a
@@ -784,9 +853,10 @@ export function dagVIS(selectedClass) {
                     d3.select(this).attr('filter', null)
 
                     // let curr_channel = d3.select(this).data()[0]
+                    let hoveredChannel = layer + '-' + curr_channel.channel
 
                     // hard coded below! expand to the right
-                    d3.selectAll('.' + layer + '-' + curr_channel.channel + '-dataset-p')
+                    d3.selectAll('.' + hoveredChannel + '-dataset-p')
                         // .transition()
                         // .duration(750)
                         .style('display', 'block')
@@ -806,10 +876,10 @@ export function dagVIS(selectedClass) {
                         //     }
                         // })
                     
-                    d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-in')
+                    d3.selectAll('.dag-edge-' + hoveredChannel + '-in')
                         .classed('dag-edge-animate-in', true)
 
-                    d3.selectAll('.dag-edge-' + layer + '-' + curr_channel.channel + '-out')
+                    d3.selectAll('.dag-edge-' + hoveredChannel + '-out')
                         .classed('dag-edge-animate-out', true)
 
                     d3.selectAll('.fv-ch-' + indexLayer[layerIndex[layer] - 1])
@@ -826,16 +896,19 @@ export function dagVIS(selectedClass) {
                             .attr('filter', null) 
                     });
 
-                    d3.selectAll('#' + layer + '-' + curr_channel.channel + '-ex-rect')
+                    d3.selectAll('#' + hoveredChannel + '-ex-rect')
                         .style('visibility', 'visible')
                     
-                    d3.selectAll('#' + layer + '-' + curr_channel.channel + '-attr-rect')
+                    d3.selectAll('#' + hoveredChannel + '-attr-rect')
                         .style('visibility', 'visible')
 
-                    d3.selectAll('.' + layer + '-' + curr_channel.channel + '-attr')
+                    d3.selectAll('.' + hoveredChannel + '-attr')
                         .style('visibility', 'visible')
 
-                    d3.selectAll('.' + 'dag-edge-' + layer + '-' + curr_channel.channel)
+                    d3.selectAll('.' + 'dag-edge-' + hoveredChannel)
+                        .style('visibility', 'visible')
+
+                    d3.selectAll('.' + 'attr-ch-label-' + hoveredChannel)
                         .style('visibility', 'visible')
 
                 })
@@ -898,6 +971,9 @@ export function dagVIS(selectedClass) {
                     d3.selectAll('.' + 'dag-edge-attr-' + hoveredChannel)
                         .style('visibility', isAlreadyClicked[hoveredChannel]? 'visible': 'hidden')
 
+                    d3.selectAll('.' + 'attr-ch-label-' + hoveredChannel)
+                        .style('visibility', isAlreadyClicked[hoveredChannel]? 'visible': 'hidden')
+
                 })
                 .on('click', function (d) {
                     let clickedChannel = layer + '-' + d.channel
@@ -925,6 +1001,13 @@ export function dagVIS(selectedClass) {
                         let attrEdgeID = layer + '-' + d.channel + '-attr-edge-' + attrChannel.prev_channel
                         let attrEdge = document.getElementById(attrEdgeID)
                         attrEdge.style.setProperty('visibility', isAlreadyClicked[clickedChannel]? 'hidden': 'visible')
+                    })
+
+                    // Toggle attributed channel labels
+                    attrChannels.forEach(attrChannel => {
+                        let attrLabelID = 'attr-ch-label-' + layer + '-' + d.channel + '-' + attrChannel.prev_channel
+                        let attrLabel = document.getElementById(attrLabelID)
+                        attrLabel.style.setProperty('visibility', isAlreadyClicked[clickedChannel]? 'hidden': 'visible')
                     })
 
                     isAlreadyClicked[clickedChannel] = !isAlreadyClicked[clickedChannel]
@@ -1265,6 +1348,7 @@ export function dagVIS(selectedClass) {
                     updateEdges()
                     updateDatasetExamples()
                     updateAttrChannels()
+                    updateAttrLabels()
 
                 })
                 .property('value', 0)
