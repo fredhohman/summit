@@ -539,6 +539,10 @@ export function dagVIS(selectedClass) {
                         let diversity = parseInt(4 * mouseX / unitAttrImgSize)
                         attrImg.setAttribute('href', '../data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
                     })
+                    .on('mouseout', () => {
+                        let diversity = 0
+                        attrImg.setAttribute('href', '../data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
+                    })
             })
         }
 
