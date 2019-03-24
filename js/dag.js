@@ -506,8 +506,6 @@ export function dagVIS(selectedClass) {
         }
 
         function updateAttrChannelRectLocVis(layer) {
-            
-            // XXX
             dag[layer].forEach(channel => {
 
                 // Get attributed background rectangle
@@ -542,6 +540,19 @@ export function dagVIS(selectedClass) {
 
                     // Update visibility of attributed channel
                     attrImg.style.setProperty('visibility', isAlreadyClicked[attrParentName]? 'visible': 'hidden')
+
+                    // Get edges of attributed channels
+                    let attrEdgeId = attrParentName + '-attr-edge-' + attrChannel.prev_channel
+                    let attrEdge = document.getElementById(attrEdgeId)
+
+                    // Update location of attributed edges
+                    d3.selectAll('#' + attrEdgeId)
+                        .transition()
+                        .duration(filterTransitionSpeed)
+                        .attr('d', genAttrPath(layer, channel, attrIdx))
+
+                    // Update visibility of edges of attributed channels
+                    attrEdge.style.setProperty('visibility', isAlreadyClicked[attrParentName]? 'visible': 'hidden')
                 })
   
             })
@@ -569,15 +580,22 @@ export function dagVIS(selectedClass) {
                     let attrRect = document.getElementById(attrRectId)
                     attrRect.style.setProperty('visibility', 'hidden')
 
-                    // Hide attributed channels
+                    // Hide attributed channels and edges
                     dag[hiddenLayer].forEach(channel => {
                         
                         if (channel.channel === parseInt(hiddenChannel)) {
                             let attrChannels = channel['attr_channels']
                             attrChannels.forEach((attrChannel, attrIdx) => {
+
+                                // Hide attributed channels
                                 let attrImgId = hiddenLayer + '-' + hiddenChannel + '-attr-' + attrChannel.prev_channel
                                 let attrImg = document.getElementById(attrImgId)
                                 attrImg.style.setProperty('visibility', 'hidden')
+
+                                // Hide edges of attributed channels
+                                let attrEdgeId = hiddenLayer + '-' + hiddenChannel + '-attr-edge-' + attrChannel.prev_channel
+                                let attrEdge = document.getElementById(attrEdgeId)
+                                attrEdge.style.setProperty('visibility', 'hidden')
                             })
                         }
                     })
@@ -617,38 +635,13 @@ export function dagVIS(selectedClass) {
             // Get previous layer
             let prevLayer = indexLayer[layerIndex[layer] + 1]
             
-            // Get minimum count of the previous layer
-            let prevCounts = dag[prevLayer].map(ch => ch.count)
-            let minCounts = d3.min(prevCounts)
-
-            // Offset and padding
-            let attrLeftOffset = attrLayout.leftOffset
-            let attrLeftPadding = attrLayout.left
-            let attrTopOffset = attrLayout.topOffset
-            let attrGlobalY = channel.y + fvScale(channel.count) / 2
-            let unitAttrImgSize = fvScale(minCounts)
-
-            // Draw attributed edges
+            // Draw attributed edges 
             let attrChannels = channel['attr_channels']
             attrChannels.forEach((attrChannel, attrIdx) => {
                 let attrEdgeID = layer + '-' + channel.channel + '-attr-edge-' + attrChannel.prev_channel
-                let attrX = channel.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
-                let attrY = attrGlobalY + attrTopOffset
-                let attrWidth = unitAttrImgSize
 
                 dagG.append('path')
-                    .attr('d', () => {
-                        let startingX = channel.x + 5
-                        let startingY = channel.y + channel.width / 2 - 5
-                        let endingX = attrX + attrWidth / 2
-                        let endingY = attrY + 5
-                        let turningX = (startingX + endingX) / 2 - 10
-                        let turningY = (startingY + endingY) / 2 - 30
-
-                        return "M" + startingX + "," + startingY
-                            + "S" + turningX + " " + turningY + ","
-                                + endingX + " " + endingY
-                    })
+                    .attr('d', genAttrPath(layer, channel, attrIdx))
                     .style('stroke-width', edgeScale(attrChannel.inf))
                     .attr('class', () => {
                         let classString = 'dag-edge' +
@@ -667,6 +660,32 @@ export function dagVIS(selectedClass) {
                     .attr('id', attrEdgeID)
                     .attr('visibility', initVisible? 'visible': 'hidden')
             })
+        }
+
+        function genAttrPath(layer, channel, attrIdx) {
+            // Get previous layer
+            let prevLayer = indexLayer[layerIndex[layer] + 1]
+            
+            // Get minimum count of the previous layer
+            let prevCounts = dag[prevLayer].map(ch => ch.count)
+            let minCounts = d3.min(prevCounts)
+
+            // Offset and padding
+            let unitAttrImgSize = fvScale(minCounts)
+            let attrX = getAttrX(layer, channel, attrIdx)
+            let attrY = getAttrY(channel)
+            let attrWidth = unitAttrImgSize
+
+            let startingX = channel.x + 5
+            let startingY = channel.y + channel.width / 2 - 5
+            let endingX = attrX + attrWidth / 2
+            let endingY = attrY + 5
+            let turningX = (startingX + endingX) / 2 - 10
+            let turningY = (startingY + endingY) / 2 - 30
+
+            return "M" + startingX + "," + startingY
+                + "S" + turningX + " " + turningY + ","
+                    + endingX + " " + endingY
         }
 
         function drawAttrEdgesLayer(layer) {
