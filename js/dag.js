@@ -24,7 +24,7 @@ let numTopAttr = 3;
 const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
 const exLayout = ({ offset: 10, top: 3, bottom: 3, right: 2 })
-const exRectLayout = ({ offset: 13, right: 2 })
+const exRectLayout = ({ offset: 13, right: 2, left: 2, TBPadding: 2})
 const attrLayout = ({ topOffset: 35, top: 15, left: 3, right: 3, bottom: 3 })
 
 let zoom = d3.zoom()
@@ -369,49 +369,68 @@ export function dagVIS(selectedClass) {
                 // .attr('clip-path', 'url(#de-clip-path)')
                 // .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, left
                 // .attr("transform", "translate(" + (channel.x + fvWidth / 4) + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, center
-                .attr('transform', rightTranslation(channel, index))
-                // .attr("transform", aboveTranslation(channel, index))
-                // .attr('transform', topCenteredTranslation(channel, index))
+                .attr('transform', rightTranslation(channel.x, channel.y, channel.width, index))
+                // .attr('transform', leftTranslation(channel.x, channel.y, channel.width, index))
+                // .attr("transform", aboveTranslation(x, y, index))
+                // .attr('transform', topCenteredTranslation(channel.x, channel.y, channel.width, index))
                 .style('opacity', 0)
                 .style('display', 'none')
                 .attr('id', layer + '-' + channel.channel + '-' + 'dataset-p-' + index)
                 .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
         }
 
-        function rightTranslation(channel, index) {
+        function rightTranslation(x, y, sz, index) {
             let rightOffset = exRectLayout.offset
             let rightPadding = exRectLayout.right
+            let topBottimPadding = exRectLayout.TBPadding
             if (index < 5) {
-                let dataExX = (channel.x + channel.width + rightOffset) + index * (deWidth + rightPadding)
-                let dataExY = channel.y + (channel.width / 2) - deHeight - 2
+                let dataExX = (x + sz + rightOffset) + index * (deWidth + rightPadding)
+                let dataExY = y + (sz / 2) - deHeight - topBottimPadding
                 return "translate(" + dataExX + ", " + dataExY + ")"
             } else if (index >= 5) {
-                let dataExX = (channel.x + channel.width + rightOffset) + (index - 5) * (deWidth + rightPadding)
-                let dataExY = channel.y + (channel.width / 2)
+                let dataExX = (x + sz + rightOffset) + (index - 5) * (deWidth + rightPadding)
+                let dataExY = y + (sz / 2)
                 return "translate(" + dataExX + ", " + dataExY + ")"
             }
         }
 
-        function aboveTranslation(channel, index) {
+        function leftTranslation(x, y, sz, index) {
+            let leftOffset = exRectLayout.offset
+            let leftPadding = exRectLayout.left
+            let topBottomPadding = exRectLayout.TBPadding
+
             if (index < 5) {
-                let dataExX = channel.x + index * deWidth + (index + 1) * 2
-                let DataExY = channel.y - deHeight - 1
+                let dataExX = (x - leftOffset - deWidth) - index * (deWidth + leftPadding)
+                let dataExY = y + (sz / 2) - deHeight - topBottomPadding
+                return "translate(" + dataExX + ", " + dataExY + ")"
+            } else if (index >= 5) {
+                let dataExX = (x - leftOffset - deWidth) - (index - 5) * (deWidth + leftPadding)
+                let dataExY = y + (sz / 2)
+                return "translate(" + dataExX + ", " + dataExY + ")"
+            }
+
+        }
+
+        function aboveTranslation(x, y, index) {
+            if (index < 5) {
+                let dataExX = x + index * deWidth + (index + 1) * 2
+                let DataExY = y - deHeight - 1
                 return "translate(" + dataExX + ", " + DataExY + ")"
             } else if (index >= 5) {
-                let dataExX = channel.x + (index - 5) * deWidth + (index - 5 + 1) * 2
-                let dataExY = channel.y - 2 * (deHeight + 1)
+                let dataExX = x + (index - 5) * deWidth + (index - 5 + 1) * 2
+                let dataExY = y - 2 * (deHeight + 1)
                 return "translate(" + dataExX + ", " + dataExY + ")"
             }
         }
 
-        function topCenteredTranslation(channel, index) {
+        function topCenteredTranslation(x, y, sz, index) {
             if (index < 5) {
-                let dataExX = (channel.x + index * deWidth) + (index + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2
-                let dataExY = channel.y - deHeight - 1 - 15
+                let dataExX = (x + index * deWidth) + (index + 1) * 2 - (fvWidth - sz) / 2 - deWidth * 1.5 - 1.5 * 2
+                let dataExY = y - deHeight - 1 - 15
                 return "translate(" + dataExX + ", " + dataExY + ")"
             } else if (index >= 5) {
-                let dataExX = (channel.x + (index - 5) * deWidth) + (index - 5 + 1) * 2 - (fvWidth - channel.width) / 2 - deWidth * 1.5 - 1.5 * 2
-                let dataExY = channel.y - 2 * (deHeight + 1) - 15
+                let dataExX = (x + (index - 5) * deWidth) + (index - 5 + 1) * 2 - (fvWidth - sz) / 2 - deWidth * 1.5 - 1.5 * 2
+                let dataExY = y - 2 * (deHeight + 1) - 15
                 return "translate(" + dataExX + ", " + dataExY + ")"
             }
         }
@@ -496,7 +515,7 @@ export function dagVIS(selectedClass) {
             return attrGlobalY + attrTopOffset - rectTopOffset
         }
 
-        function drawAttrChannels(layer, channel, initVisible = ture) {
+        function drawAttrChannels(layer, channel, initVisible=true) {
             // Ignore mixed3a
             if (layer === 'mixed3a')
                 return
@@ -530,8 +549,10 @@ export function dagVIS(selectedClass) {
                     .attr("transform", "translate(" + attrX + ',' + attrY + " )")
                     .attr('visibility', initVisible ? 'visible' : 'hidden')
                     .attr('id', attrImgId)
+                    .classed('fv-attr', true)
                     .classed(layer + '-' + channel.channel + '-attr', true)
 
+                // Connect mouse event listener to attributed channels
                 let attrImg = document.getElementById(attrImgId)
                 dagG.selectAll('#' + attrImgId)
                     .on('mousemove', () => {
@@ -543,12 +564,69 @@ export function dagVIS(selectedClass) {
                         let diversity = 0
                         attrImg.setAttribute('href', '../data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
                     })
+                    .on('mouseover', () => {
+                        let attrExClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
+                        console.log(dagG.selectAll('.' + attrExClass))
+                        dagG.selectAll('.' + attrExClass)
+                            .style('visibility', 'visible')
+                    })
+                    .on('mouseout', () => {
+                        let attrExClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
+                        dagG.selectAll('.' + attrExClass)
+                            .style('visibility', 'hidden')
+                    })
+                
             })
         }
 
         function drawAttrChannelsLayer(layer) {
             dag[layer].forEach(channel => {
                 drawAttrChannels(layer, channel, false)
+            })
+        }
+
+        function drawAttrExamples(layer, channel, initVisible=false) {
+            // Ignore mixed3a
+            if (layer === 'mixed3a')
+                return
+
+            // Get previous layer
+            let prevLayer = indexLayer[layerIndex[layer] + 1]
+            
+            // Get minimum count of the previous layer
+            let prevCounts = dag[prevLayer].map(ch => ch.count)
+            let minCounts = d3.min(prevCounts)
+
+            // Offset and padding
+            let unitAttrImgSize = fvScale(minCounts)
+            
+            let attrChannels = channel['attr_channels']
+            attrChannels.forEach((attrChannel, attrIdx) => {
+                let attrX = getAttrX(layer, channel, attrIdx)
+                let attrY = getAttrY(channel)
+
+                for (let index = 0; index < 10; index++) {
+                    
+                    dagG.append('image')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', deWidth)
+                        .attr('height', deHeight)
+                        .attr('xlink:href', '../data/feature-vis/dataset-p/' + prevLayer + '-' + attrChannel.prev_channel + '-' + 'dataset-p-' + index + fv_type)
+                        .attr('transform', leftTranslation(attrX, attrY, unitAttrImgSize, index))
+                        .style('visibility', initVisible ? 'visible' : 'hidden')
+                        .classed('fv-de', true)
+                        // .classed(layer + '-' + channel.channel + '-dataset-p', true)
+                        .classed(layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p', true)
+                        .attr('id', layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p-' + index)
+                        
+                }
+            })
+        }
+
+        function drawAttrExamplesLayer(layer) {
+            dag[layer].forEach(channel => {
+                drawAttrExamples(layer, channel, false)
             })
         }
 
@@ -575,7 +653,7 @@ export function dagVIS(selectedClass) {
             return attrGlobalY + attrTopOffset
         }
 
-        function drawAttrChannelLabels(layer, channel, initVisible = ture) {
+        function drawAttrChannelLabels(layer, channel, initVisible=true) {
             let attrChannels = channel['attr_channels']
             let parentChannelName = layer + '-' + channel.channel
 
@@ -767,7 +845,7 @@ export function dagVIS(selectedClass) {
 
 
 
-        function drawAttrEdges(layer, channel, initVisible = ture) {
+        function drawAttrEdges(layer, channel, initVisible=true) {
             // Ignore mixed3a
             if (layer === 'mixed3a')
                 return
@@ -1299,6 +1377,7 @@ export function dagVIS(selectedClass) {
                 drawExamplesForLayer(l)
                 drawAttrChannelLabelsLayer(l)
                 drawAttrChannelsLayer(l)
+                drawAttrExamplesLayer(l)
             });
 
             drawLayerLabels()

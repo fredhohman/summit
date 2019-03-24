@@ -435,6 +435,10 @@ button:active {
     fill: var(--dark);
 }
 
+.fv-attr:hover {
+    cursor: pointer;
+}
+
 .dag-edge {
     stroke: var(--gray);
     fill: none;
