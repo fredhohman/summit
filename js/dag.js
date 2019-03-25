@@ -373,10 +373,11 @@ export function dagVIS(selectedClass) {
                 // .attr('transform', leftTranslation(channel.x, channel.y, channel.width, index))
                 // .attr("transform", aboveTranslation(x, y, index))
                 // .attr('transform', topCenteredTranslation(channel.x, channel.y, channel.width, index))
-                .style('opacity', 0)
-                .style('display', 'none')
-                .attr('id', layer + '-' + channel.channel + '-' + 'dataset-p-' + index)
-                .classed(layer + '-' + channel.channel + '-' + 'dataset-p', true)
+                // .style('opacity', 0)
+                // .style('display', 'none')
+                .attr('id', layer + '-' + channel.channel + '-dataset-p-' + index)
+                .style('visibility', 'hidden')
+                .classed(layer + '-' + channel.channel + '-dataset-p', true)
         }
 
         function rightTranslation(x, y, sz, index) {
@@ -451,7 +452,7 @@ export function dagVIS(selectedClass) {
                 .attr('height', height)
                 .attr('fill', 'white')
                 .attr('stroke', 'black')
-                .attr('visibility', initVisible ? 'visible' : 'hidden')
+                .style('visibility', initVisible ? 'visible' : 'hidden')
                 .attr('id', attrRectId)
         }
 
@@ -547,7 +548,7 @@ export function dagVIS(selectedClass) {
                     .attr('xlink:href', '../data/feature-vis/channel/' + attrChannelName + '-channel' + fv_type)
                     .attr('clip-path', 'url(#fv-clip-path-' + layer + '-' + attrChannel.prev_channel + ')')
                     .attr("transform", "translate(" + attrX + ',' + attrY + " )")
-                    .attr('visibility', initVisible ? 'visible' : 'hidden')
+                    .style('visibility', initVisible ? 'visible' : 'hidden')
                     .attr('id', attrImgId)
                     .classed('fv-attr', true)
                     .classed(layer + '-' + channel.channel + '-attr', true)
@@ -710,7 +711,7 @@ export function dagVIS(selectedClass) {
                     .classed('attr-ch-label-' + layer, true)
                     .classed('attr-ch-label-' + layer + '-' + channel.channel, true)
                     .attr('id', 'attr-ch-label-' + parentChannelName + '-' + attrChannel.prev_channel)
-                    .attr('visibility', initVisible ? 'visible' : 'hidden')
+                    .style('visibility', initVisible ? 'visible' : 'hidden')
             })
         }
 
@@ -944,7 +945,6 @@ export function dagVIS(selectedClass) {
         }
 
         function updateAttrExRect() {
-            // XXXX
             layers.forEach(l => {
                 // Ignore mixed3a
                 if (l === 'mixed3a')
@@ -987,7 +987,55 @@ export function dagVIS(selectedClass) {
 
                     })
                     .attr('id', attrEdgeID)
-                    .attr('visibility', initVisible ? 'visible' : 'hidden')
+                    .style('visibility', initVisible ? 'visible' : 'hidden')
+                    .on('mouseover', () => {
+                        // XXX
+                        console.log('mouse over')
+                        // Show top rect
+                        let topRectId = layer + '-' + channel.channel + '-ex-rect'
+                        dagG.select('#' + topRectId)
+                            .style('visibility', 'visible')
+
+                        // Show top exs
+                        let topExampleClass = layer + '-' + channel.channel + '-dataset-p'
+                        dagG.selectAll('.' + topExampleClass)
+                            .style('visibility', 'visible')
+                            // .style('opacity', 1)
+                            // .style('display', 'block')
+
+                        // Show bottom rect
+                        let botRectId = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-attr-ex-rect'
+                        dagG.select('#' + botRectId)
+                            .style('visibility', 'visible')
+
+                        // Show bottom exs
+                        let botExampleClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
+                        dagG.selectAll('.' + botExampleClass)
+                            .style('visibility', 'visible')              
+                    })
+                    .on('mouseout', () => {
+                        // Hide top rect
+                        let topRectId = layer + '-' + channel.channel + '-ex-rect'
+                        dagG.select('#' + topRectId)
+                            .style('visibility', 'hidden')
+
+                        // Hide top exs
+                        let topExampleClass = layer + '-' + channel.channel + '-dataset-p'
+                        dagG.selectAll('.' + topExampleClass)
+                            .style('visibility', 'hidden')
+                            // .style('opacity', 0)
+                            // .style('display', 'none')
+
+                        // Hide bottom rect
+                        let botRectId = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-attr-ex-rect'
+                        dagG.select('#' + botRectId)
+                            .style('visibility', 'hidden')
+
+                        // Hide bottom exs
+                        let botExampleClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
+                        dagG.selectAll('.' + botExampleClass)
+                            .style('visibility', 'hidden')
+                    })
             })
         }
 
@@ -1057,26 +1105,11 @@ export function dagVIS(selectedClass) {
                     // let curr_channel = d3.select(this).data()[0]
                     let hoveredChannel = layer + '-' + curr_channel.channel
 
-                    // hard coded below! expand to the right
-                    d3.selectAll('.' + hoveredChannel + '-dataset-p')
-                        // .transition()
-                        // .duration(750)
-                        .style('display', 'block')
-                        .style('opacity', 1)
-                    // .attr("transform", (d,i) => { // centered up top
-                    //     if (i < 5) {
-                    //         return "translate(" + ((curr_channel.x + i * deWidth + (i + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (curr_channel.y - deHeight - 1) + ")"
-                    //     } else if (i >= 5) {
-                    //         return "translate(" + ((curr_channel.x + (i - 5) * deWidth + (i - 5 + 1) * 2) - deWidth * 1.5 - 1.5 * 2) + ", " + (curr_channel.y - 2 * (deHeight + 1)) + ")"
-                    //     }
-                    // })
-                    // .attr("transform", (d, i) => { // centered starting at left corner
-                    //     if (i < 5) {
-                    //         return "translate(" + (curr_channel.x + i * deWidth + (i + 1) * 2) + ", " + (curr_channel.y - deHeight - 1) + ")"
-                    //     } else if (i >= 5) {
-                    //         return "translate(" + (curr_channel.x + (i-5) * deWidth + (i - 5 + 1) * 2) + ", " + (curr_channel.y - 2*(deHeight + 1)) + ")"
-                    //     }
-                    // })
+                    // Make dataset images visible
+                    for (let index = 0; index < 10; index++) {
+                        let exImg = document.getElementById(hoveredChannel + '-dataset-p-' + index)
+                        exImg.style.setProperty('visibility', 'visible')
+                    }
 
                     d3.selectAll('.dag-edge-' + hoveredChannel + '-in')
                         .classed('dag-edge-animate-in', true)
@@ -1137,8 +1170,8 @@ export function dagVIS(selectedClass) {
                         // return "translate(" + curr_channel.x + ", " + (curr_channel.y + fvHeight / 4)  + ")" // center left
                         // return "translate(" + (curr_channel.x+fvWidth/4) + ", " + (curr_channel.y + fvHeight / 4) + ")"
                         // })
-                        .style('opacity', 0)
-                        .style('display', 'none')
+                        .style('visibility', 'hidden')
+
 
                     d3.selectAll('.dag-edge-' + layer + '-' + d.channel + '-in')
                         .classed('dag-edge-animate-in', false)
@@ -1311,12 +1344,14 @@ export function dagVIS(selectedClass) {
                     d3.select('#' + bottomLayer + '-' + bottomChannel + '-channel').attr('filter', null)
 
                     d3.selectAll('.' + topLayer + '-' + topChannel + '-dataset-p')
-                        .style('display', 'block')
-                        .style('opacity', 1)
+                        // .style('display', 'block')
+                        // .style('opacity', 1)
+                        .style('visibility', 'visible')
 
                     d3.selectAll('.' + bottomLayer + '-' + bottomChannel + '-dataset-p')
-                        .style('display', 'block')
-                        .style('opacity', 1)
+                        // .style('display', 'block')
+                        // .style('opacity', 1)
+                        .style('visibility', 'visible')
 
                     d3.select('#' + topLayer + '-' + topChannel + '-ex-rect')
                         .style('visibility', 'visible')
@@ -1335,8 +1370,7 @@ export function dagVIS(selectedClass) {
                     d3.selectAll('.fv-ch').attr('filter', null)
 
                     d3.selectAll('.fv-de')
-                        .style('display', 'none')
-                        .style('opacity', 0)
+                        .style('visibility', 'hidden')
                     
                     d3.select('#' + topLayer + '-' + topChannel + '-ex-rect')
                         .style('visibility', 'hidden')
