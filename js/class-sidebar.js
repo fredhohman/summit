@@ -19,7 +19,7 @@ export const layerChannelCounts = {
 }
 
 let layer = 'mixed4d';
-let selectedClassIdx = 0;
+// let selectedClassIdx = 962;
 const numClassesInClassBar = 250;
 let k = 1; // embedding zoom scale
 const kZoomLabelThreshold = 10;
@@ -81,9 +81,8 @@ d3.json('./data/imagenet.json').then(function (data) {
     d3.select('#classes-value').text(formatNumberThousands(data.length))
     d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
 
-    selectedClass = data[selectedClassIdx];
-    console.log('selectedClass', selectedClass)
-
+    selectedClass = data.filter(d => d['name'] === 'white_wolf')[0]
+    
     leftInnerClassBarOptions
         .append('div')
         .classed('left-inner-option-wrapper', true)
@@ -533,7 +532,8 @@ d3.json('./data/imagenet.json').then(function (data) {
     }
     makeEmbedding(data, layer)
 
-    dagVIS(data[selectedClassIdx])
+    // dagVIS(data[selectedClassIdx])
+    dagVIS(selectedClass)
 });
 
 function removeClassBars() {
