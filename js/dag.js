@@ -67,6 +67,9 @@ const fvHeight = fvWidth
 const deWidth = 49
 const deHeight = deWidth
 
+const attrFvWidth = 60
+const attrFvHeight = attrFvWidth
+
 const layerVerticalSpace = 300
 const fvHorizontalSpace = 50
 
@@ -120,6 +123,16 @@ dagDefs.append('clipPath')
 
 dagDefs.append('clipPath')
     .attr('id', 'de-clip-path')
+    .append('rect')
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('width', deWidth)
+    .attr('height', deHeight)
+    .attr('rx', 4)
+    .attr('ry', 4)
+
+dagDefs.append('clipPath')
+    .attr('id', 'fv-attr-clip-path')
     .append('rect')
     .attr('x', 0)
     .attr('y', 0)
@@ -230,9 +243,9 @@ export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
 
     // d3.json('./data/dag/dag-270.json').then(function (dag) {
-    d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
+    // d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
         // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-        // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-unified.json').then(function (dag) {
+        d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-unified.json').then(function (dag) {
         console.log(dag);
 
         let tempMins = []
@@ -476,8 +489,8 @@ export function dagVIS(selectedClass) {
             // Arguments for drawing background rect
             let x = getAttrRectX(layer, channel)
             let y = getAttrRectY(channel)
-            let width = (unitAttrImgSize + attrLeftPadding) * 3 + attrLeftPadding
-            let height = unitAttrImgSize + rectTopOffset + rectPaddingBottom
+            let width = (attrFvWidth + attrLeftPadding) * 3 + attrLeftPadding
+            let height = attrFvHeight + rectTopOffset + rectPaddingBottom
 
             // Draw background white rect
             let attrRectId = layer + '-' + channel.channel + '-attr-rect'
@@ -503,7 +516,7 @@ export function dagVIS(selectedClass) {
             let attrLeftPadding = attrLayout.right
             let unitAttrImgSize = fvScale(minCounts)
 
-            return channel.x - (unitAttrImgSize + attrLeftPadding) * 3 - attrLeftOffset * 2
+            return channel.x - (attrFvWidth + attrLeftPadding) * 3 - attrLeftOffset * 2
         }
 
         function getAttrRectY(channel) {
@@ -542,8 +555,10 @@ export function dagVIS(selectedClass) {
                 dagG.append('image')
                     .attr('x', 0)
                     .attr('y', 0)
-                    .attr('width', unitAttrImgSize)
-                    .attr('height', unitAttrImgSize)
+                    // .attr('width', unitAttrImgSize)
+                    // .attr('height', unitAttrImgSize)
+                    .attr('width', attrFvWidth)
+                    .attr('height', attrFvHeight)
                     .attr('xlink:href', '../data/feature-vis/channel/' + attrChannelName + '-channel' + fv_type)
                     .attr('clip-path', 'url(#fv-clip-path-' + layer + '-' + attrChannel.prev_channel + ')')
                     .attr("transform", "translate(" + attrX + ',' + attrY + " )")
@@ -557,12 +572,13 @@ export function dagVIS(selectedClass) {
                 dagG.selectAll('#' + attrImgId)
                     .on('mousemove', () => {
                         let [mouseX, mouseY] = d3.mouse(attrImg)
-                        let diversity = parseInt(4 * mouseX / unitAttrImgSize)
+                        let diversity = d3.min([d3.max([parseInt(4 * mouseX / unitAttrImgSize), 0]),3])
                         attrImg.setAttribute('href', '../data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
                     })
                     .on('mouseout', () => {
-                        let diversity = 0
-                        attrImg.setAttribute('href', '../data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
+                        // let diversity = 0
+                        // attrImg.setAttribute('href', '../data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
+                        attrImg.setAttribute('href', '../data/feature-vis/channel/' + layer + '-' + channel.channel + '-channel' + fv_type)
                     })
                     .on('mouseover', () => {
                         let attrExClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
@@ -684,7 +700,7 @@ export function dagVIS(selectedClass) {
             let attrLeftPadding = attrLayout.right
             let unitAttrImgSize = fvScale(minCounts)
 
-            return parentChannel.x - (attrIdx + 1) * (unitAttrImgSize + attrLeftPadding) - attrLeftOffset
+            return parentChannel.x - (attrIdx + 1) * (attrFvWidth + attrLeftPadding) - attrLeftOffset
         }
 
         function getAttrY(parentChannel) {
@@ -1118,7 +1134,7 @@ export function dagVIS(selectedClass) {
                     // diversity hovering
                     let [mouseX, mouseY] = d3.mouse(this)
                     let channelSelection = d3.select(this)
-                    let diversity = parseInt(4 * mouseX / d.width)
+                    let diversity = d3.min([d3.max([parseInt(4 * mouseX / d.width),0]),3])
 
                     channelSelection.attr('xlink:href', '../data/feature-vis/diversity-' + diversity + '/' + d.layer + '-' + d.channel + '-diversity-' + diversity + fv_type)
 
