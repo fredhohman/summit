@@ -885,7 +885,6 @@ export function dagVIS(selectedClass) {
         }
 
         function updateAttrExLayer(layer) {
-            // YYY
             // Get previous layer
             let prevLayer = indexLayer[layerIndex[layer] + 1]
                     
@@ -1319,13 +1318,31 @@ export function dagVIS(selectedClass) {
                         .style('display', 'block')
                         .style('opacity', 1)
 
+                    d3.select('#' + topLayer + '-' + topChannel + '-ex-rect')
+                        .style('visibility', 'visible')
+                    
+                    d3.select('#' + bottomLayer + '-' + bottomChannel + '-ex-rect')
+                        .style('visibility', 'visible')
+
                 })
                 .on('mouseout', function () {
+                    let edgeID = d3.select(this).attr('id').split('-')
+                    let topLayer = edgeID[2]
+                    let topChannel = edgeID[3]
+                    let bottomLayer = edgeID[4]
+                    let bottomChannel = edgeID[5]
+
                     d3.selectAll('.fv-ch').attr('filter', null)
 
                     d3.selectAll('.fv-de')
                         .style('display', 'none')
                         .style('opacity', 0)
+                    
+                    d3.select('#' + topLayer + '-' + topChannel + '-ex-rect')
+                        .style('visibility', 'hidden')
+                    
+                    d3.select('#' + bottomLayer + '-' + bottomChannel + '-ex-rect')
+                        .style('visibility', 'hidden')
                 })
         }
 
