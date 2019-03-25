@@ -435,6 +435,10 @@ button:active {
     fill: var(--dark);
 }
 
+.attr-de:hover {
+    cursor: pointer;
+}
+
 .fv-attr:hover {
     cursor: pointer;
 }

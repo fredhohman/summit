@@ -23,8 +23,8 @@ let k = 1; // dag zoom scale
 let numTopAttr = 3;
 const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
-const exLayout = ({ offset: 10, top: 3, bottom: 3, right: 2 })
-const exRectLayout = ({ offset: 13, right: 2, left: 2, TBPadding: 2})
+const exLayout = ({ offset: 10, top: 3, bottom: 3, right: 2, left: 2, TBPadding: 2})
+const exRectLayout = ({ offset: 13, right: 2, left: 2})
 const attrLayout = ({ topOffset: 35, top: 15, left: 3, right: 3, bottom: 3 })
 
 let zoom = d3.zoom()
@@ -348,8 +348,8 @@ export function dagVIS(selectedClass) {
         }
 
         function getExRectX(channel) {
-            let rightPadding = exLayout.right
-            let rightOffset = exRectLayout.offset - rightPadding
+            let StartPadding = exRectLayout.left
+            let rightOffset = exLayout.offset - StartPadding
             return channel.x + channel.width + rightOffset
         }
 
@@ -380,12 +380,12 @@ export function dagVIS(selectedClass) {
         }
 
         function rightTranslation(x, y, sz, index) {
-            let rightOffset = exRectLayout.offset
-            let rightPadding = exRectLayout.right
-            let topBottimPadding = exRectLayout.TBPadding
+            let rightOffset = exLayout.offset
+            let rightPadding = exLayout.right
+            let topBottomPadding = exLayout.TBPadding
             if (index < 5) {
                 let dataExX = (x + sz + rightOffset) + index * (deWidth + rightPadding)
-                let dataExY = y + (sz / 2) - deHeight - topBottimPadding
+                let dataExY = y + (sz / 2) - deHeight - topBottomPadding
                 return "translate(" + dataExX + ", " + dataExY + ")"
             } else if (index >= 5) {
                 let dataExX = (x + sz + rightOffset) + (index - 5) * (deWidth + rightPadding)
@@ -395,9 +395,9 @@ export function dagVIS(selectedClass) {
         }
 
         function leftTranslation(x, y, sz, index) {
-            let leftOffset = exRectLayout.offset
-            let leftPadding = exRectLayout.left
-            let topBottomPadding = exRectLayout.TBPadding
+            let leftOffset = exLayout.offset
+            let leftPadding = exLayout.left
+            let topBottomPadding = exLayout.TBPadding
 
             if (index < 5) {
                 let dataExX = (x - leftOffset - deWidth) - index * (deWidth + leftPadding)
@@ -566,13 +566,20 @@ export function dagVIS(selectedClass) {
                     })
                     .on('mouseover', () => {
                         let attrExClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
-                        console.log(dagG.selectAll('.' + attrExClass))
                         dagG.selectAll('.' + attrExClass)
+                            .style('visibility', 'visible')
+
+                        let attrExRect = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-attr-ex-rect'
+                        dagG.selectAll('#' + attrExRect)
                             .style('visibility', 'visible')
                     })
                     .on('mouseout', () => {
                         let attrExClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
                         dagG.selectAll('.' + attrExClass)
+                            .style('visibility', 'hidden')
+
+                        let attrExRect = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-attr-ex-rect'
+                        dagG.selectAll('#' + attrExRect)
                             .style('visibility', 'hidden')
                     })
                 
@@ -615,12 +622,46 @@ export function dagVIS(selectedClass) {
                         .attr('xlink:href', '../data/feature-vis/dataset-p/' + prevLayer + '-' + attrChannel.prev_channel + '-' + 'dataset-p-' + index + fv_type)
                         .attr('transform', leftTranslation(attrX, attrY, unitAttrImgSize, index))
                         .style('visibility', initVisible ? 'visible' : 'hidden')
-                        .classed('fv-de', true)
-                        // .classed(layer + '-' + channel.channel + '-dataset-p', true)
+                        .classed('attr-de', true)
                         .classed(layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p', true)
                         .attr('id', layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p-' + index)
                         
                 }
+            })
+        }
+
+        function drawAttrExampleRects(layer, channel, attrChannel, attrIdx, initVisible=false) {
+            // Ignore mixed3a
+            if (layer === 'mixed3a')
+                return
+
+            // Get previous layer
+            let prevLayer = indexLayer[layerIndex[layer] + 1]
+            
+            // Get minimum count of the previous layer
+            let prevCounts = dag[prevLayer].map(ch => ch.count)
+            let minCounts = d3.min(prevCounts)
+
+            // Offset and padding
+            let unitAttrImgSize = fvScale(minCounts)
+
+            // Draw background rect
+            let attrExRectId = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-attr-ex-rect'
+            let attrX = getAttrX(layer, channel, attrIdx)
+            let attrY = getAttrY(channel)
+            let x = (attrX - exRectLayout.offset - deWidth) - 4 * (deWidth + exRectLayout.left) + exRectLayout.right - exRectLayout.left
+            let y = attrY + (unitAttrImgSize / 2) - deHeight - exLayout.TBPadding - exLayout.top
+            let width = 5 * deWidth + 5 * exRectLayout.left + exRectLayout.right + exRectLayout.left
+            let height = 2 * deHeight + exLayout.TBPadding + exLayout.top + exLayout.bottom
+            drawBackgroundRect(attrExRectId, x, y, width, height, initVisible)
+        }
+
+        function drawAttrExampleRectsLayer(layer) {
+            dag[layer].forEach(channel => {
+                let attrChannels = channel['attr_channels']
+                attrChannels.forEach((attrChannel, attrIdx) => {
+                    drawAttrExampleRects(layer, channel, attrChannel, attrIdx, false)
+                })
             })
         }
 
@@ -843,6 +884,77 @@ export function dagVIS(selectedClass) {
             updateHiddenAttrLabelVisibility()
         }
 
+        function updateAttrExLayer(layer) {
+            // YYY
+            // Get previous layer
+            let prevLayer = indexLayer[layerIndex[layer] + 1]
+                    
+            // Get minimum count of the previous layer
+            let prevCounts = dag[prevLayer].map(ch => ch.count)
+            let minCounts = d3.min(prevCounts)
+
+            // Offset and padding
+            let unitAttrImgSize = fvScale(minCounts)
+            
+            dag[layer].forEach(channel => {
+                let attrChannels = channel['attr_channels']
+                attrChannels.forEach((attrChannel, attrIdx) => {
+                    
+                    let attrX = getAttrX(layer, channel, attrIdx)
+                    let attrY = getAttrY(channel)
+
+                    for (let index = 0; index < 10; index++) {
+                        let attrExId = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p-' + index
+                        let attrEx = document.getElementById(attrExId)
+                        attrEx.setAttribute('transform', leftTranslation(attrX, attrY, unitAttrImgSize, index))
+                    }
+                    
+                })
+            })
+        }
+
+        function updateAttrExRectLayer(layer) {
+            // Get previous layer
+            let prevLayer = indexLayer[layerIndex[layer] + 1]
+                    
+            // Get minimum count of the previous layer
+            let prevCounts = dag[prevLayer].map(ch => ch.count)
+            let minCounts = d3.min(prevCounts)
+
+            // Offset and padding
+            let unitAttrImgSize = fvScale(minCounts)
+
+            dag[layer].forEach(channel => {
+                let attrChannels = channel['attr_channels']
+                attrChannels.forEach((attrChannel, attrIdx) => {
+
+                    // Draw background rect
+                    let attrExRectId = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-attr-ex-rect'
+                    let attrX = getAttrX(layer, channel, attrIdx)
+                    let attrY = getAttrY(channel)
+                    let x = (attrX - exRectLayout.offset - deWidth) - 4 * (deWidth + exRectLayout.left) + exRectLayout.right - exRectLayout.left
+                    let y = attrY + (unitAttrImgSize / 2) - deHeight - exLayout.TBPadding - exLayout.top
+
+                    // Update the location of attributed example rectangle
+                    let attrExRect = document.getElementById(attrExRectId)
+                    attrExRect.setAttribute('x', x)
+                    attrExRect.setAttribute('y', y)
+                })
+            })
+
+        }
+
+        function updateAttrExRect() {
+            // XXXX
+            layers.forEach(l => {
+                // Ignore mixed3a
+                if (l === 'mixed3a')
+                    return
+
+                updateAttrExLayer(l)
+                updateAttrExRectLayer(l)
+            })
+        }
 
 
         function drawAttrEdges(layer, channel, initVisible=true) {
@@ -1274,7 +1386,7 @@ export function dagVIS(selectedClass) {
                     for (let index = 0; index < 10; index++) {
                         // Update dataset examples
                         d3.select('#' + layer + '-' + currChannel.channel + '-' + 'dataset-p-' + index)
-                            .attr('transform', rightTranslation(dag[layer][channel], index))
+                            .attr('transform', rightTranslation(currChannel.x, currChannel.y, currChannel.width, index))
                         // .attr("transform", () => { // centered up top
                         //     if (index < 5) {
                         //         return "translate(" + ((dag[layer][channel].x + index * deWidth) + (index + 1) * 2 - (fvWidth - dag[layer][channel].width) / 2 - deWidth * 1.5 - 1.5 * 2) + ", " + (dag[layer][channel].y - deHeight - 1 - 15) + ")"
@@ -1377,6 +1489,7 @@ export function dagVIS(selectedClass) {
                 drawExamplesForLayer(l)
                 drawAttrChannelLabelsLayer(l)
                 drawAttrChannelsLayer(l)
+                drawAttrExampleRectsLayer(l)
                 drawAttrExamplesLayer(l)
             });
 
@@ -1428,6 +1541,7 @@ export function dagVIS(selectedClass) {
                     updateDatasetExamples()
                     updateAttrChannels()
                     updateAttrLabels()
+                    updateAttrExRect()
 
                 })
                 .property('value', 0)
