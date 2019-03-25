@@ -6,6 +6,11 @@ import { dagVIS, removeDagVIS } from "./dag";
 // let dropdown = require('semantic-ui-dropdown')
 let awesomplete = require('awesomplete')
 
+function reloadPage() {
+    window.location.reload();
+}
+d3.select("#header-title").on("click", reloadPage);
+
 export const layerChannelCounts = {
     'mixed3a': 256,
     'mixed3b': 480,
