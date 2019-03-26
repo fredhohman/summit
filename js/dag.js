@@ -3,7 +3,6 @@ import { layerChannelCounts, layer } from './class-sidebar'
 import { createGunzip } from "zlib";
 import { createPrivateKey } from "crypto";
 
-console.log(layerChannelCounts)
 let rightInner = d3.select('#right-inner')
 
 let rightInnerOptions = d3.select('#right-inner-options')
@@ -26,6 +25,8 @@ const fv_type = '.jpg'
 const exLayout = ({ offset: 10, top: 3, bottom: 3, right: 2, left: 2, TBPadding: 2})
 const exRectLayout = ({ offset: 13, right: 2, left: 2})
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
+
+const fvURL = 'https://raw.githubusercontent.com/fredhohman/summit-data/master/'
 
 let zoom = d3.zoom()
     .scaleExtent([.1, 1.5])
@@ -258,7 +259,7 @@ rightInnerOptionsFilter
     .attr('title', 'Filter graph by removing less important channels')
 
 export function dagVIS(selectedClass) {
-    console.log('dagVIS', selectedClass)
+    console.log('selected class', selectedClass)
 
     // d3.json('./data/dag/dag-270.json').then(function (dag) {
     // d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
@@ -1027,7 +1028,7 @@ export function dagVIS(selectedClass) {
                     .style('visibility', initVisible ? 'visible' : 'hidden')
                     .on('mouseover', () => {
                         // XXX
-                        console.log('mouse over')
+                        // console.log('mouse over')
                         // Show top rect
                         let topRectId = layer + '-' + channel.channel + '-ex-rect'
                         dagG.select('#' + topRectId)
@@ -1121,6 +1122,8 @@ export function dagVIS(selectedClass) {
                 // .attr('width', d => fvWidth)
                 // .attr('height', d => fvHeight)
                 .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
+                // d => fvURL + '/data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
+                // 'https://raw.githubusercontent.com/fredhohman/atlas/master/ui.png'
                 // .attr('clip-path', 'url(#fv-clip-path)')
                 .attr('clip-path', d => 'url(#fv-clip-path-' + layer + '-' + d.channel + ')')
                 // .attr("transform", (d, i) => "translate(" + 
@@ -1419,9 +1422,9 @@ export function dagVIS(selectedClass) {
 
         function drawEdges() {
             layers.forEach(l => {
-                console.log(l)
+                // console.log(l)
                 if (l !== layers[layers.length - 1]) { // don't draw edges from the last layer downward
-                    console.log('draw edges for ', l)
+                    // console.log('draw edges for ', l)
                     dag[l].forEach(ch => {
                         drawEdgesPerLayer(l, ch)
                     });
@@ -1587,7 +1590,7 @@ export function dagVIS(selectedClass) {
                 .on('input', function () {
 
                     let filterValue = this.value
-                    console.log('filterValue:', filterValue)
+                    // console.log('filterValue:', filterValue)
 
                     d3.selectAll('.fv-ch')
                         .attr('display', d => {

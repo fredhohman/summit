@@ -83,6 +83,16 @@ d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
     window.data = data
 
+    let numOf412 = 0
+    data.forEach(c => {
+        if (c.topChannels.mixed3b.map(x => x.channel).slice(0, 3).includes(238)) {
+            numOf412 += 1
+        }
+    })
+    console.log('numOf412', numOf412)
+
+
+
     d3.select('#classes-value').text(formatNumberThousands(data.length))
     d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
 
@@ -149,7 +159,7 @@ d3.json('./data/imagenet.json').then(function (data) {
 
     // embedding
     function makeEmbedding(data, layer) {
-        console.log('make embedding')
+        // console.log('make embedding')
 
             {/* < div class="header-content" >
                 <span id="dataset-name" class="smalltext-header">dataset</span>
@@ -481,7 +491,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .classed('embedding-point-label-selected', true)
             })
             .on('mouseout', (d) => {
-                console.log('mouseout3')
+                // console.log('mouseout3')
                 d3.selectAll('.embedding-point-label')
                     .classed('embedding-point-label-selected', false)
 
@@ -553,7 +563,7 @@ function makeClassBars(data, layer, selectedClass, sortType) {
     // 'dis': sort by class distance
     // 'asc': sort by class accuracy ascending
     // 'dsc': sort by class accuracy descending
-    console.log(sortType)
+    // console.log(sortType)
 
     computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
 
