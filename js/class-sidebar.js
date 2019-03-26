@@ -113,6 +113,26 @@ d3.json('./data/imagenet.json').then(function (data) {
         .on('click', () => {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+            selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
+            makeClassBars(data, layer, selectedClass, 'dis')
+        })
+        .append('i')
+        .classed('material-icons', true)
+        .classed('md-24', true)
+        .text('home')
+        .attr('title', 'Sort classes selected class similarity')
+
+    leftInnerClassBarOptionsButtonWrapper
+        .append('div')
+        .classed('left-inner-option-wrapper', true)
+        .append('button')
+        .attr('type', 'button')
+        .classed('square-button', true)
+        // .text('Accuracy ascending')
+        .on('click', () => {
+            removeClassBars()
+            document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+            selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
             makeClassBars(data, layer, selectedClass, 'asc')
         })
         .append('i')
@@ -131,6 +151,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         .on('click', () => {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+            selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
             makeClassBars(data, layer, selectedClass, 'dsc')
         })
         .append('i')
@@ -632,6 +653,7 @@ function makeClassBars(data, layer, selectedClass, sortType) {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
             makeClassBars(data, layer, d, 'dis')
+            // selectedClass = d
             removeDagVIS()
             dagVIS(d)
             colorEmbeddingPointsInViewbox()
