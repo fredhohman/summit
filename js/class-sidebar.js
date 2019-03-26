@@ -864,8 +864,8 @@ function genSearchBar(data) {
 function getSearchBarInnerHTML(dataList) {
     let dataListStr = dataList.join(', ')
     let innerHtml = '<input '
-    innerHtml += 'autofocus class="awesomplete" '
-    innerHtml += 'placeholder="Class " '
+    innerHtml += 'class="awesomplete" '
+    innerHtml += 'placeholder="Class" '
     innerHtml += 'id="searchbox" '
     innerHtml += 'data-list="' + dataListStr + '" '
     innerHtml += '/>'
