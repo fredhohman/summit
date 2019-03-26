@@ -28,6 +28,7 @@ let layer = 'mixed4d';
 const numClassesInClassBar = 250;
 let k = 1; // embedding zoom scale
 const kZoomLabelThreshold = 10;
+const embeddingTransitionDuration = 1800
 
 // left
 let leftInner = d3.select('#left')
@@ -87,6 +88,7 @@ d3.json('./data/imagenet.json').then(function (data) {
     d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
 
     selectedClass = data.filter(d => d['name'] === 'white_wolf')[0]
+    selectedSynset = selectedClass.synset
     
     leftInnerClassBarOptions
         .append('div')
@@ -307,7 +309,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         let embeddingYZoomScale;
         function zoomed() {
             // create new scale objects based on event
-            embeddingXZoomScale = d3.event.transform.rescaleX(embeddingY);
+            embeddingXZoomScale = d3.event.transform.rescaleX(embeddingX);
             embeddingYZoomScale = d3.event.transform.rescaleY(embeddingY);
             // update axes
             // gX.call(xAxis.scale(embeddingXZoomScale));
@@ -368,6 +370,8 @@ d3.json('./data/imagenet.json').then(function (data) {
             let xExtent = d3.extent(data, d => d.embedding[layer].x)
             let yExtent = d3.extent(data, d => d.embedding[layer].y)
 
+            console.log(xExtent, yExtent)
+
             let domainMin = d3.min([xExtent[0], yExtent[0]])
             let domainMax = d3.max([xExtent[1], yExtent[1]])
 
@@ -376,19 +380,19 @@ d3.json('./data/imagenet.json').then(function (data) {
         let embeddingDomain = computeEmbeddingDomain(data, layer)
 
         let embeddingX = d3.scaleLinear()
-            // .domain(d3.extent(data, d => d.embedding[layer].x))
-            .domain(embeddingDomain)
+            .domain(d3.extent(data, d => d.embedding[layer].x))
+            // .domain(embeddingDomain)
             .range([0, embeddingWidth])
 
         let embeddingY = d3.scaleLinear()
-            // .domain(d3.extent(data, d => d.embedding[layer].y))
-            .domain(embeddingDomain)
+            .domain(d3.extent(data, d => d.embedding[layer].y))
+            // .domain(embeddingDomain)
             .range([0, embeddingHeight])
 
         // we are using embeddingY everywhere to make the plot 1:1, but this is hardcoded right now!
         // we just want the most negative and most positive extend on the input range domain
 
-        embeddingXZoomScale = embeddingY;
+        embeddingXZoomScale = embeddingX;
         embeddingYZoomScale = embeddingY;
 
         // let tip = d3.tip()
@@ -418,7 +422,7 @@ d3.json('./data/imagenet.json').then(function (data) {
             .append('circle')
             // .attr('r', d => drPointSizeScale(d.accuracy))
             .attr('r', 3)
-            .attr('cx', d => embeddingY(d.embedding[layer].x))
+            .attr('cx', d => embeddingX(d.embedding[layer].x))
             .attr('cy', d => embeddingY(d.embedding[layer].y))
             .classed('embedding-point', true)
             .attr('id', d => 'point-' + d.synset)
@@ -473,7 +477,7 @@ d3.json('./data/imagenet.json').then(function (data) {
             .append('text')
             .attr('id', d => 'embedding-point-label-' + d.synset)
             .classed('embedding-point-label', true)
-            .attr('x', d => embeddingY(d.embedding[layer].x))
+            .attr('x', d => embeddingX(d.embedding[layer].x))
             .attr('y', d => embeddingY(d.embedding[layer].y))
             .on('mouseover', d => {
                 d3.select('#embedding-point-label-' + d.synset)
@@ -511,27 +515,27 @@ d3.json('./data/imagenet.json').then(function (data) {
             embeddingDomain = computeEmbeddingDomain(data, newLayer)
 
             embeddingX = d3.scaleLinear()
-                // .domain(d3.extent(data, d => d.embedding[layer].x))
-                .domain(embeddingDomain)
+                .domain(d3.extent(data, d => d.embedding[layer].x))
+                // .domain(embeddingDomain)
                 .range([0, embeddingWidth])
 
             embeddingY = d3.scaleLinear()
-                // .domain(d3.extent(data, d => d.embedding[layer].y))
-                .domain(embeddingDomain)
+                .domain(d3.extent(data, d => d.embedding[layer].y))
+                // .domain(embeddingDomain)
                 .range([0, embeddingHeight])
 
-            embeddingXZoomScale = embeddingY;
+            embeddingXZoomScale = embeddingX;
             embeddingYZoomScale = embeddingY;
 
             d3.selectAll('.embedding-point')
                 .transition()
-                .duration(1000)
-                .attr('cx', d => embeddingY(d.embedding[newLayer].x))
+                .duration(embeddingTransitionDuration)
+                .attr('cx', d => embeddingX(d.embedding[newLayer].x))
                 .attr('cy', d => embeddingY(d.embedding[newLayer].y))
 
             d3.selectAll('.embedding-point-label-selected')
             .transition()
-            .duration(1000)
+            .duration(embeddingTransitionDuration)
                 .attr('x', d => embeddingXZoomScale(d.embedding[layer].x) + 7)
                 .attr('y', d => embeddingYZoomScale(d.embedding[layer].y) + 4)
 
