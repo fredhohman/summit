@@ -728,7 +728,7 @@ function makeClassBars(data, layer, selectedClass, sortType) {
     
     let classBarBarsScale = d3.scaleLinear()
         .domain([0, 1]) // cosine similarity
-        .range([0, 120]) // div width percentage
+        .range([0, 100]) // div width percentage
     
     classBarBars.append('div')
         .classed('class-bar-bar-data', true)

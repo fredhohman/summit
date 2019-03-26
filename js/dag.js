@@ -209,11 +209,11 @@ rightInnerOptionsClassAccHist
     .append('span')
     .classed("smalltext-header", true)
     .style('color', '#666666')
-    .text('softmax confidence')
+    .text('probabilities')
 
 const accuracyMargin = { top: 7, right: 0, bottom: 2, left: 0 }
-const accuracyWidth = 120 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
-const accuracyHeight = 20 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
+const accuracyWidth = 120 - accuracyMargin.left - accuracyMargin.right // 120 from flex-basis width of class-bar-text-accuracy
+const accuracyHeight = 20 - accuracyMargin.top - accuracyMargin.bottom // 120 from flex-basis width of class-bar-text-accuracy
 
 rightInnerOptionsClassAccHist
     .append('svg')
