@@ -29,7 +29,6 @@ const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
 
 let zoom = d3.zoom()
     .scaleExtent([.1, 1.5])
-    // .translateExtent([[-1000,-1000], [1000,1000]])
     .extent([[0, 0], [dagWidth, dagHeight]])
     .on("zoom", zoomed);
 
@@ -42,9 +41,8 @@ let dagSVG = rightInnerDagWrapper
     .append('svg')
     .attr('viewBox', '0 0 ' + (dagWidth + dagMargin.left + dagMargin.right) + ' ' + (dagHeight + dagMargin.top + dagMargin.bottom))
     .attr('width', '100%')
-    .style('border-bottom', '1px solid black') // for debugging
+    .style('border-bottom', '1px solid rgba(0, 0, 0, 0.1)')
     .attr('id', 'dag')
-// .call(zoom)
 
 dagSVG.append('filter')
     .attr('id', 'grayscale')
