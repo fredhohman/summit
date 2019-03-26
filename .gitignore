@@ -4,3 +4,4 @@ data/
 package-lock.json
 .vscode
 .DS_Store
+js/base64-convert.js
