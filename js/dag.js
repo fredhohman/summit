@@ -140,6 +140,20 @@ dagDefs.append('clipPath')
     .attr('rx', 4)
     .attr('ry', 4)
 
+// info button
+// rightInnerOptions
+//     .append('div')
+//     .classed('right-inner-option-wrapper', true)
+//     .append('button')
+//     .attr('type', 'button')
+//     // .classed('square-button', true)
+//     .attr('title', 'Info')
+//     .append('i')
+//     .classed('material-icons', true)
+//     .classed('md-24', true)
+//     .text('info')
+//     .attr('id', 'dag-info')
+
 // class name
 let rightInnerOptionsClassName = rightInnerOptions
     .append('div')
