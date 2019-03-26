@@ -284,7 +284,8 @@ export function dagVIS(selectedClass) {
                 .attr('cx', 0)
                 .attr('cy', 0)
         }
-        drawOrigin()
+        // for debugging, draw point at origin of svg
+        // drawOrigin()
 
         function centerDag() {
             zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(dagWidth / 2, 50).scale(0.2));
