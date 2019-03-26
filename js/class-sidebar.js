@@ -6,6 +6,9 @@ import { dagVIS, removeDagVIS } from "./dag";
 // let dropdown = require('semantic-ui-dropdown')
 let awesomplete = require('awesomplete')
 
+// webpack variables
+// console.log(dataURL)
+
 function reloadPage() {
     window.location.reload();
 }
@@ -80,7 +83,7 @@ export var selectedClass;
 var selectedLabel;
 let prevClassesSynset = [];
 
-d3.json('./data/imagenet.json').then(function (data) {
+d3.json(dataURL + '/data/imagenet.json').then(function (data) {
     console.log(data);
     window.data = data
 
