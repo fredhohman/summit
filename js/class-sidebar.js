@@ -624,9 +624,6 @@ function makeClassBars(data, layer, selectedClass, sortType) {
                 .text(d => d.name.replace(/_/g, ' ').toLowerCase())
                 .classed('embedding-point-label-selected', true)
         })
-
-    let classBarTexts = classBars.append('div')
-        .classed('class-bar-text-wrapper', true)
         .on('click', d => {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
@@ -638,6 +635,10 @@ function makeClassBars(data, layer, selectedClass, sortType) {
             selectedLabel = d.name
             updateSearchBarText()
         })
+
+    let classBarTexts = classBars
+        .append('div')
+        .classed('class-bar-text-wrapper', true)
     
     classBarTexts.append('div')
         .classed('class-bar-text-name', true)
