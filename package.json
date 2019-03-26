@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development",
-    "build": "webpack --mode production",
-    "start": "webpack-dev-server --mode development --open"
+    "build": "webpack --env.dataURL='github' --mode production",
+    "start": "webpack-dev-server --env.dataURL='local' --mode development --open",
+    "deploy": "gh-pages -d dist"
   },
   "author": "Fred Hohman",
   "repository": {
@@ -30,5 +31,8 @@
     "webpack": "^4.29.4",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14"
+  },
+  "devDependencies": {
+    "gh-pages": "^2.0.1"
   }
 }
