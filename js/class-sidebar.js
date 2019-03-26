@@ -83,16 +83,6 @@ d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
     window.data = data
 
-    let numOf412 = 0
-    data.forEach(c => {
-        if (c.topChannels.mixed3b.map(x => x.channel).slice(0, 3).includes(238)) {
-            numOf412 += 1
-        }
-    })
-    console.log('numOf412', numOf412)
-
-
-
     d3.select('#classes-value').text(formatNumberThousands(data.length))
     d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
 
