@@ -3,6 +3,9 @@ import { layerChannelCounts, layer } from './class-sidebar'
 import { createGunzip } from "zlib";
 import { createPrivateKey } from "crypto";
 
+// XXXXXXXX
+import { base64dict } from "./base64-convert"
+
 console.log(layerChannelCounts)
 let rightInner = d3.select('#right-inner')
 
@@ -1089,7 +1092,6 @@ export function dagVIS(selectedClass) {
         }
 
         function drawChannels(layer) {
-
             dagG.selectAll('.fv-ch-' + layer)
                 .data(dag[layer])
                 .enter()
@@ -1100,7 +1102,12 @@ export function dagVIS(selectedClass) {
                 .attr('height', d => fvScale(d.count))
                 // .attr('width', d => fvWidth)
                 // .attr('height', d => fvHeight)
-                .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
+                .attr('xlink:href', d => {
+                    // let filename = '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type
+                    // return filename
+                    // XXXXXXXX
+                    return base64dict[layer + '-' + d.channel]
+                })
                 // .attr('clip-path', 'url(#fv-clip-path)')
                 .attr('clip-path', d => 'url(#fv-clip-path-' + layer + '-' + d.channel + ')')
                 // .attr("transform", (d, i) => "translate(" + 
@@ -1178,7 +1185,7 @@ export function dagVIS(selectedClass) {
                     let channelSelection = d3.select(this)
                     let hoveredChannel = layer + '-' + d.channel
 
-                    d3.selectAll('.fv-ch').attr('filter', null)
+                    // d3.selectAll('.fv-ch').attr('filter', null)
 
                     d3.selectAll('.' + layer + '-' + d.channel + '-dataset-p')
                         // .transition()
