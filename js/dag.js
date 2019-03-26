@@ -22,11 +22,11 @@ let k = 1; // dag zoom scale
 let numTopAttr = 3;
 const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
-const exLayout = ({ offset: 10, top: 3, bottom: 3, right: 2, left: 2, TBPadding: 2})
-const exRectLayout = ({ offset: 13, right: 2, left: 2})
+const exLayout = ({ offset: 10, top: 3, bottom: 3, right: 2, left: 2, TBPadding: 2 })
+const exRectLayout = ({ offset: 13, right: 2, left: 2 })
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
 
-const fvURL = 'https://raw.githubusercontent.com/fredhohman/summit-data/master/'
+const summitDataURL = 'https://raw.githubusercontent.com/fredhohman/summit-data/master/'
 
 let zoom = d3.zoom()
     .scaleExtent([.1, 1.5])
@@ -1121,7 +1121,10 @@ export function dagVIS(selectedClass) {
                 .attr('height', d => fvScale(d.count))
                 // .attr('width', d => fvWidth)
                 // .attr('height', d => fvHeight)
-                .attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
+                .attr('xlink:href', d => {
+                    let filename = '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type
+                    return filename
+                })
                 // d => fvURL + '/data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
                 // 'https://raw.githubusercontent.com/fredhohman/atlas/master/ui.png'
                 // .attr('clip-path', 'url(#fv-clip-path)')
