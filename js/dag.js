@@ -29,8 +29,8 @@ let k = 1; // dag zoom scale
 let numTopAttr = 3;
 const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
-const exLayout = ({ offset: 10, top: 3, bottom: 3, right: 2, left: 2, TBPadding: 2 })
-const exRectLayout = ({ offset: 13, right: 2, left: 2 })
+const exLayout = ({ offset: 16, top: 4, bottom: 4, right: 2, left: 4, TBPadding: 2 })
+const exRectLayout = ({ offset: 13, right: 2, left: 4 })
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
 
 let zoom = d3.zoom()
@@ -366,6 +366,7 @@ export function dagVIS(selectedClass) {
         function drawExamplesForLayer(layer) {
             // Padding and offset
             let rightPadding = exLayout.right
+            let leftPadding = exLayout.left
             let topPadding = exLayout.top
             let bottomPadding = exLayout.bottom
 
@@ -375,7 +376,7 @@ export function dagVIS(selectedClass) {
                 let rectId = layer + '-' + channel.channel + '-ex-rect'
                 let x = getExRectX(channel)
                 let y = getExRectY(channel)
-                let width = (deWidth + rightPadding) * 5 + rightPadding
+                let width = deWidth * 5 + rightPadding * 4 + leftPadding + leftPadding
                 let height = deHeight * 2 + topPadding + bottomPadding
                 drawBackgroundRect(rectId, x, y, width, height, false)
 
@@ -490,7 +491,8 @@ export function dagVIS(selectedClass) {
                 .attr('width', width)
                 .attr('height', height)
                 .attr('fill', 'white')
-                .attr('stroke', 'black')
+                .attr('stroke', '#444444')
+                .attr('stroke-width', '1px')
                 .style('visibility', initVisible ? 'visible' : 'hidden')
                 .attr('id', attrRectId)
         }
@@ -1214,7 +1216,7 @@ export function dagVIS(selectedClass) {
                     let channelSelection = d3.select(this)
                     let hoveredChannel = layer + '-' + d.channel
 
-                    // d3.selectAll('.fv-ch').attr('filter', null)
+                    d3.selectAll('.fv-ch').attr('filter', null)
 
                     d3.selectAll('.' + layer + '-' + d.channel + '-dataset-p')
                         // .transition()
@@ -1588,13 +1590,13 @@ export function dagVIS(selectedClass) {
                 maxNumEdgesIn.push(temp)
 
                 drawChannels(l)
-                drawAttrEdgesLayer(l)
-                drawAttrRectsLayer(l)
+                // drawAttrEdgesLayer(l)
+                // drawAttrRectsLayer(l)
                 drawExamplesForLayer(l)
-                drawAttrChannelLabelsLayer(l)
-                drawAttrChannelsLayer(l)
-                drawAttrExampleRectsLayer(l)
-                drawAttrExamplesLayer(l)
+                // drawAttrChannelLabelsLayer(l)
+                // drawAttrChannelsLayer(l)
+                // drawAttrExampleRectsLayer(l)
+                // drawAttrExamplesLayer(l)
             });
 
             drawLayerLabels()
@@ -1643,9 +1645,9 @@ export function dagVIS(selectedClass) {
                     updateLayerLabels(filterValue)
                     updateEdges()
                     updateDatasetExamples()
-                    updateAttrChannels()
-                    updateAttrLabels()
-                    updateAttrExRect()
+                    // updateAttrChannels()
+                    // updateAttrLabels()
+                    // updateAttrExRect()
 
                 })
                 .property('value', 0)
