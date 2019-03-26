@@ -101,7 +101,7 @@ d3.json('./data/imagenet.json').then(function (data) {
     let leftInnerClassBarOptionsButtonWrapper = leftInnerClassBarOptions
         .append("div")
         .style('display', 'flex')
-        .style('padding-right', '10px')
+        .style('padding-right', '16px')
 
     leftInnerClassBarOptionsButtonWrapper
         .append('div')
@@ -390,8 +390,6 @@ d3.json('./data/imagenet.json').then(function (data) {
         function computeEmbeddingDomain(data, layer) {
             let xExtent = d3.extent(data, d => d.embedding[layer].x)
             let yExtent = d3.extent(data, d => d.embedding[layer].y)
-
-            console.log(xExtent, yExtent)
 
             let domainMin = d3.min([xExtent[0], yExtent[0]])
             let domainMax = d3.max([xExtent[1], yExtent[1]])
