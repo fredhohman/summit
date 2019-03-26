@@ -2,9 +2,13 @@ import * as d3 from "d3"
 import { layerChannelCounts, layer } from './class-sidebar'
 import { createGunzip } from "zlib";
 import { createPrivateKey } from "crypto";
+// load base64 images for SVG crowbar
+// import { base64dict } from "./base64-convert"
 
 // webpack variables
 // console.log(dataURL)
+
+// console.log(layerChannelCounts)
 
 let rightInner = d3.select('#right-inner')
 
@@ -1111,7 +1115,6 @@ export function dagVIS(selectedClass) {
         }
 
         function drawChannels(layer) {
-
             dagG.selectAll('.fv-ch-' + layer)
                 .data(dag[layer])
                 .enter()
@@ -1123,11 +1126,17 @@ export function dagVIS(selectedClass) {
                 // .attr('width', d => fvWidth)
                 // .attr('height', d => fvHeight)
                 .attr('xlink:href', d => {
+
                     let filename = dataURL + '/data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type
                     return filename
+
+                    // base64 urls for SVG crowbar
+                    // return base64dict[layer + '-' + d.channel]
+
                 })
                 // d => dataURL + '/data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
                 // 'https://raw.githubusercontent.com/fredhohman/atlas/master/ui.png'
+
                 // .attr('clip-path', 'url(#fv-clip-path)')
                 .attr('clip-path', d => 'url(#fv-clip-path-' + layer + '-' + d.channel + ')')
                 // .attr("transform", (d, i) => "translate(" + 
@@ -1205,7 +1214,7 @@ export function dagVIS(selectedClass) {
                     let channelSelection = d3.select(this)
                     let hoveredChannel = layer + '-' + d.channel
 
-                    d3.selectAll('.fv-ch').attr('filter', null)
+                    // d3.selectAll('.fv-ch').attr('filter', null)
 
                     d3.selectAll('.' + layer + '-' + d.channel + '-dataset-p')
                         // .transition()
