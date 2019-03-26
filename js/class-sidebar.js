@@ -117,6 +117,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         .classed('material-icons', true)
         .classed('md-24', true)
         .text('arrow_downward')
+        .attr('title', 'Sort classes by accuracy (descending)')
 
     leftInnerClassBarOptionsButtonWrapper
         .append('div')
@@ -134,6 +135,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         .classed('material-icons', true)
         .classed('md-24', true)
         .text('arrow_upward')
+        .attr('title', 'Sort classes by accuracy (ascending)')
 
     function computeEmbeddingDistancesFromPointEuclidean(data, layer, point) {
         for (let i = 0; i < data.length; i++) {
@@ -270,15 +272,16 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('left-inner-option-wrapper', true)
             .style('padding-right', '16px')
             .append('button')
-                .attr('type', 'button')
-                .classed('square-button', true)
-                .on('click', () => {
-                    centerEmbedding()
-                })
-                .append('i')
-                .classed('material-icons', true)
-                .classed('md-24', true)
-                .text('zoom_out_map')
+            .attr('type', 'button')
+            .classed('square-button', true)
+            .on('click', () => {
+                centerEmbedding()
+            })
+            .attr('title', 'Reset zoom')
+            .append('i')
+            .classed('material-icons', true)
+            .classed('md-24', true)
+            .text('zoom_out_map')
 
         d3.select('#layer-glyph-' + layer)
             .classed('layer-glyph-selected', true) // init selected layer

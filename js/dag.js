@@ -144,7 +144,6 @@ dagDefs.append('clipPath')
 let rightInnerOptionsClassName = rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
-// .style('padding-right', '20px')
 
 rightInnerOptionsClassName
     .append('span')
@@ -161,7 +160,6 @@ let className = rightInnerOptionsClassName
 let rightInnerOptionsClassInstances = rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
-// .style('padding-right', '20px')
 
 rightInnerOptionsClassInstances
     .append('span')
@@ -177,7 +175,6 @@ let classInstances = rightInnerOptionsClassInstances
 let rightInnerOptionsClassAcc = rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
-// .style('padding-right', '20px')
 
 rightInnerOptionsClassAcc
     .append('span')
@@ -211,6 +208,7 @@ rightInnerOptions
     .append('button')
     .attr('type', 'button')
     .classed('square-button', true)
+    .attr('title', 'Reset zoom')
     .append('i')
     .classed('material-icons', true)
     .classed('md-24', true)
@@ -237,6 +235,7 @@ rightInnerOptionsFilter
     .attr('max', 1300)
     .attr('value', 0)
     .classed('slider', true)
+    .attr('title', 'Filter graph by removing less important channels')
 
 export function dagVIS(selectedClass) {
     console.log('dagVIS', selectedClass)
