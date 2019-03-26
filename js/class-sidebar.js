@@ -278,7 +278,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                 .append('i')
                 .classed('material-icons', true)
                 .classed('md-24', true)
-                .text('home')
+                .text('zoom_out_map')
 
         d3.select('#layer-glyph-' + layer)
             .classed('layer-glyph-selected', true) // init selected layer

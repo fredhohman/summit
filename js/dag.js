@@ -28,7 +28,8 @@ const exRectLayout = ({ offset: 13, right: 2, left: 2})
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
 
 let zoom = d3.zoom()
-    .scaleExtent([.05, 5])
+    .scaleExtent([.1, 1.5])
+    // .translateExtent([[-1000,-1000], [1000,1000]])
     .extent([[0, 0], [dagWidth, dagHeight]])
     .on("zoom", zoomed);
 
@@ -215,7 +216,7 @@ rightInnerOptions
     .append('i')
     .classed('material-icons', true)
     .classed('md-24', true)
-    .text('home')
+    .text('zoom_out_map')
     .attr('id', 'dag-home')
 
 // channel count slider
@@ -244,8 +245,9 @@ export function dagVIS(selectedClass) {
 
     // d3.json('./data/dag/dag-270.json').then(function (dag) {
     // d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
-        // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-        d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-unified.json').then(function (dag) {
+    // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
+    // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-unified.json').then(function (dag) {
+    d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-separate.json').then(function (dag) {
         console.log(dag);
 
         let tempMins = []
@@ -287,7 +289,7 @@ export function dagVIS(selectedClass) {
         drawOrigin()
 
         function centerDag() {
-            zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(dagWidth / 2, 50).scale(0.26));
+            zoomRect.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(dagWidth / 2, 50).scale(0.2));
         }
         centerDag()
         d3.select('#dag-home').on('click', () => {
