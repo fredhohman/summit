@@ -1,6 +1,6 @@
 import * as d3 from "d3"
 import similarity from "compute-cosine-similarity"
-import { dagVIS, removeDagVIS } from "./dag";
+import { dagVIS, removeDagVIS } from "./attribution-graph";
 // import { FUNCTION } from './awesomeplete'
 // import { evokeSearchBar } from './searchbar'
 // let dropdown = require('semantic-ui-dropdown')
