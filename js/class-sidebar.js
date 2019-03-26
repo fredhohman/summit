@@ -83,6 +83,16 @@ d3.json('./data/imagenet.json').then(function (data) {
     console.log(data);
     window.data = data
 
+    let numOf412 = 0
+    data.forEach(c => {
+        if (c.topChannels.mixed3b.map(x => x.channel).slice(0, 3).includes(238)) {
+            numOf412 += 1
+        }
+    })
+    console.log('numOf412', numOf412)
+
+
+
     d3.select('#classes-value').text(formatNumberThousands(data.length))
     d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
 
@@ -117,6 +127,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         .classed('material-icons', true)
         .classed('md-24', true)
         .text('arrow_downward')
+        .attr('title', 'Sort classes by accuracy (descending)')
 
     leftInnerClassBarOptionsButtonWrapper
         .append('div')
@@ -134,6 +145,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         .classed('material-icons', true)
         .classed('md-24', true)
         .text('arrow_upward')
+        .attr('title', 'Sort classes by accuracy (ascending)')
 
     function computeEmbeddingDistancesFromPointEuclidean(data, layer, point) {
         for (let i = 0; i < data.length; i++) {
@@ -147,7 +159,7 @@ d3.json('./data/imagenet.json').then(function (data) {
 
     // embedding
     function makeEmbedding(data, layer) {
-        console.log('make embedding')
+        // console.log('make embedding')
 
             {/* < div class="header-content" >
                 <span id="dataset-name" class="smalltext-header">dataset</span>
@@ -270,15 +282,16 @@ d3.json('./data/imagenet.json').then(function (data) {
             .classed('left-inner-option-wrapper', true)
             .style('padding-right', '16px')
             .append('button')
-                .attr('type', 'button')
-                .classed('square-button', true)
-                .on('click', () => {
-                    centerEmbedding()
-                })
-                .append('i')
-                .classed('material-icons', true)
-                .classed('md-24', true)
-                .text('home')
+            .attr('type', 'button')
+            .classed('square-button', true)
+            .on('click', () => {
+                centerEmbedding()
+            })
+            .attr('title', 'Reset zoom')
+            .append('i')
+            .classed('material-icons', true)
+            .classed('md-24', true)
+            .text('zoom_out_map')
 
         d3.select('#layer-glyph-' + layer)
             .classed('layer-glyph-selected', true) // init selected layer
@@ -478,7 +491,7 @@ d3.json('./data/imagenet.json').then(function (data) {
                     .classed('embedding-point-label-selected', true)
             })
             .on('mouseout', (d) => {
-                console.log('mouseout3')
+                // console.log('mouseout3')
                 d3.selectAll('.embedding-point-label')
                     .classed('embedding-point-label-selected', false)
 
@@ -550,7 +563,7 @@ function makeClassBars(data, layer, selectedClass, sortType) {
     // 'dis': sort by class distance
     // 'asc': sort by class accuracy ascending
     // 'dsc': sort by class accuracy descending
-    console.log(sortType)
+    // console.log(sortType)
 
     computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
 
@@ -621,9 +634,6 @@ function makeClassBars(data, layer, selectedClass, sortType) {
                 .text(d => d.name.replace(/_/g, ' ').toLowerCase())
                 .classed('embedding-point-label-selected', true)
         })
-
-    let classBarTexts = classBars.append('div')
-        .classed('class-bar-text-wrapper', true)
         .on('click', d => {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
@@ -635,6 +645,10 @@ function makeClassBars(data, layer, selectedClass, sortType) {
             selectedLabel = d.name
             updateSearchBarText()
         })
+
+    let classBarTexts = classBars
+        .append('div')
+        .classed('class-bar-text-wrapper', true)
     
     classBarTexts.append('div')
         .classed('class-bar-text-name', true)
@@ -658,9 +672,9 @@ function makeClassBars(data, layer, selectedClass, sortType) {
         .classed('class-bar-text-histogram', true)
         // .text('h')
 
-    const accuracyMargin = { top: 7, right: 0, bottom: 2, left: 0 }
-    const accuracyWidth = 100 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
-    const accuracyHeight = 25 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
+    const accuracyMargin = { top: 0, right: 0, bottom: 1, left: 0 }
+    const accuracyWidth = 120 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
+    const accuracyHeight = 20 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
 
     classBarHistograms
         .append('svg')
@@ -861,8 +875,8 @@ function genSearchBar(data) {
 function getSearchBarInnerHTML(dataList) {
     let dataListStr = dataList.join(', ')
     let innerHtml = '<input '
-    innerHtml += 'autofocus class="awesomplete" '
-    innerHtml += 'placeholder="Class " '
+    innerHtml += 'class="awesomplete" '
+    innerHtml += 'placeholder="Class" '
     innerHtml += 'id="searchbox" '
     innerHtml += 'data-list="' + dataListStr + '" '
     innerHtml += '/>'

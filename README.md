@@ -6,6 +6,8 @@ Summit is a an interactive system that summarizes and visualizes what features a
 
 For the Summit Notebooks code, go to [https://github.com/fredhohman/summit-notebooks][summit-notebooks].
 
+For the Summit Data, go to [https://github.com/fredhohman/summit-data][summit-data].
+
 ***
 
 ## Live Demo
@@ -52,6 +54,7 @@ MIT License. See [`LICENSE.md`](LICENSE.md).
 For questions or support [open an issue][issues] or contact [Fred Hohman][fred].
 
 [summit-notebooks]: https://github.com/fredhohman/summit-notebooks
+[summit-data]: https://github.com/fredhohman/summit-data
 [npm]: https://www.npmjs.com
 [fred]: http://www.fredhohman.com
 [issues]: https://github.com/fredhohman/summit/issues

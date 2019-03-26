@@ -10,6 +10,8 @@
     /* enforces cursor changes only on title */
     cursor: pointer;
     color: #ffffff;
+    font-size: 20px;
+    font-variant: small-caps;
 }
 
 #header-icon {
