@@ -84,6 +84,7 @@ var selectedLabel;
 let prevClassesSynset = [];
 
 d3.json(dataURL + '/data/imagenet.json').then(function (data) {
+
     console.log(data);
     window.data = data
 
@@ -165,7 +166,7 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
 
     function computeEmbeddingDistancesFromPointEuclidean(data, layer, point) {
         for (let i = 0; i < data.length; i++) {
-            let distance = Math.sqrt(Math.pow(point.embedding[layer].x - data[i].embedding[layer].x, 2) + Math.pow(point.embedding[layer].y - data[i].embedding[layer].y, 2));
+            let distance = Math.sqrt(Math.pow(point.embed[layer].x - data[i].embed[layer].x, 2) + Math.pow(point.embed[layer].y - data[i].embed[layer].y, 2));
             data[i].distanceFromQueryPoint = distance
         }
     }
@@ -339,11 +340,11 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
             // gX.call(xAxis.scale(embeddingXZoomScale));
             // gY.call(yAxis.scale(embeddingYZoomScale));
             embeddingPoints
-                .attr('cx', function (d) { return embeddingXZoomScale(d.embedding[layer].x) })
-                .attr('cy', function (d) { return embeddingYZoomScale(d.embedding[layer].y) })
+                .attr('cx', function (d) { return embeddingXZoomScale(d.embed[layer].x) })
+                .attr('cy', function (d) { return embeddingYZoomScale(d.embed[layer].y) })
             embeddingG.selectAll('.embedding-point-label')
-                .attr('x', d => embeddingXZoomScale(d.embedding[layer].x) + 7)
-                .attr('y', d => embeddingYZoomScale(d.embedding[layer].y) + 4)
+                .attr('x', d => embeddingXZoomScale(d.embed[layer].x) + 7)
+                .attr('y', d => embeddingYZoomScale(d.embed[layer].y) + 4)
 
             k = d3.event.transform.k;
 
@@ -391,8 +392,8 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
             .attr("height", embeddingHeight);
 
         function computeEmbeddingDomain(data, layer) {
-            let xExtent = d3.extent(data, d => d.embedding[layer].x)
-            let yExtent = d3.extent(data, d => d.embedding[layer].y)
+            let xExtent = d3.extent(data, d => d.embed[layer].x)
+            let yExtent = d3.extent(data, d => d.embed[layer].y)
 
             let domainMin = d3.min([xExtent[0], yExtent[0]])
             let domainMax = d3.max([xExtent[1], yExtent[1]])
@@ -402,12 +403,12 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
         let embeddingDomain = computeEmbeddingDomain(data, layer)
 
         let embeddingX = d3.scaleLinear()
-            .domain(d3.extent(data, d => d.embedding[layer].x))
+            .domain(d3.extent(data, d => d.embed[layer].x))
             // .domain(embeddingDomain)
             .range([0, embeddingWidth])
 
         let embeddingY = d3.scaleLinear()
-            .domain(d3.extent(data, d => d.embedding[layer].y))
+            .domain(d3.extent(data, d => d.embed[layer].y))
             // .domain(embeddingDomain)
             .range([0, embeddingHeight])
 
@@ -417,35 +418,14 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
         embeddingXZoomScale = embeddingX;
         embeddingYZoomScale = embeddingY;
 
-        // let tip = d3.tip()
-        //     .attr('class', 'd3-tip')
-        //     .offset([-20, 0])
-        //     .html(function (d) { return d.name; });
-        // embeddingSVG.call(tip)
-
-        // let drPointSizeScale = d3.scaleLog()
-        //     .domain(d3.extent(data, d => d.accuracy))
-        //     .range([2,5])
-
-        // let drHoverCircle = embeddingG.append('circle')
-        //     .attr('id', 'dr-hover-circle')
-        //     // .attr('r', 40)
-        //     .attr('cx', 0)
-        //     .attr('cy', 0)
-        //     .style('visibility', 'hidden')
-        //     .style('fill', 'rgba(255, 193, 7, 0.2)')
-        //     .style('stroke', '#FFC107')
-        //     .style('stroke-width', '2px')
-
         let embeddingPoints = embeddingG.append('g')
             .selectAll('.embedding-point')
             .data(data)
             .enter()
             .append('circle')
-            // .attr('r', d => drPointSizeScale(d.accuracy))
             .attr('r', 3)
-            .attr('cx', d => embeddingX(d.embedding[layer].x))
-            .attr('cy', d => embeddingY(d.embedding[layer].y))
+            .attr('cx', d => embeddingX(d.embed[layer].x))
+            .attr('cy', d => embeddingY(d.embed[layer].y))
             .classed('embedding-point', true)
             .attr('id', d => 'point-' + d.synset)
             .on('mouseover', d => {
@@ -456,10 +436,10 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
                 // tip.show(d, document.getElementById(d.id))
                 // colorNearPoints(d)
                 // drHoverCircle.style('visibility', 'visible')
-                //     .attr('cx', embeddingXZoomScale(d.embedding[layer].x))
-                //     .attr('cy', embeddingYZoomScale(d.embedding[layer].y))
+                //     .attr('cx', embeddingXZoomScale(d.embed[layer].x))
+                //     .attr('cy', embeddingYZoomScale(d.embed[layer].y))
                 //     .attr('r', () => {
-                //         let temp = embeddingXZoomScale(d.embedding[layer].x + distanceRadius) - embeddingXZoomScale(d.embedding[layer].x)
+                //         let temp = embeddingXZoomScale(d.embed[layer].x + distanceRadius) - embeddingXZoomScale(d.embed[layer].x)
                 //         return temp
                 //     })
             })
@@ -499,8 +479,8 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
             .append('text')
             .attr('id', d => 'embedding-point-label-' + d.synset)
             .classed('embedding-point-label', true)
-            .attr('x', d => embeddingX(d.embedding[layer].x))
-            .attr('y', d => embeddingY(d.embedding[layer].y))
+            .attr('x', d => embeddingX(d.embed[layer].x))
+            .attr('y', d => embeddingY(d.embed[layer].y))
             .on('mouseover', d => {
                 d3.select('#embedding-point-label-' + d.synset)
                     .text(d => d.name.replace(/_/g, ' ').toLowerCase())
@@ -537,12 +517,12 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
             embeddingDomain = computeEmbeddingDomain(data, newLayer)
 
             embeddingX = d3.scaleLinear()
-                .domain(d3.extent(data, d => d.embedding[layer].x))
+                .domain(d3.extent(data, d => d.embed[layer].x))
                 // .domain(embeddingDomain)
                 .range([0, embeddingWidth])
 
             embeddingY = d3.scaleLinear()
-                .domain(d3.extent(data, d => d.embedding[layer].y))
+                .domain(d3.extent(data, d => d.embed[layer].y))
                 // .domain(embeddingDomain)
                 .range([0, embeddingHeight])
 
@@ -552,14 +532,14 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
             d3.selectAll('.embedding-point')
                 .transition()
                 .duration(embeddingTransitionDuration)
-                .attr('cx', d => embeddingX(d.embedding[newLayer].x))
-                .attr('cy', d => embeddingY(d.embedding[newLayer].y))
+                .attr('cx', d => embeddingX(d.embed[newLayer].x))
+                .attr('cy', d => embeddingY(d.embed[newLayer].y))
 
             d3.selectAll('.embedding-point-label-selected')
             .transition()
             .duration(embeddingTransitionDuration)
-                .attr('x', d => embeddingXZoomScale(d.embedding[layer].x) + 7)
-                .attr('y', d => embeddingYZoomScale(d.embedding[layer].y) + 4)
+                .attr('x', d => embeddingXZoomScale(d.embed[layer].x) + 7)
+                .attr('y', d => embeddingYZoomScale(d.embed[layer].y) + 4)
 
         }
 
@@ -706,13 +686,13 @@ function makeClassBars(data, layer, selectedClass, sortType) {
         let accuracySVG = d3.select('#accuracy-' + c.synset)
 
         let accuracyX = d3.scaleLinear()
-            .domain(d3.extent(c.accuracies)).nice()
+            .domain(d3.extent(c.accs)).nice()
             .range([0, accuracyWidth])
 
         let bins = d3.histogram()
             .domain(accuracyX.domain())
             .thresholds(accuracyX.ticks(20))
-            (c.accuracies)
+            (c.accs)
 
         let accuracyY = d3.scaleLinear()
             .domain([0, d3.max(bins, d => d.length)]).nice()
@@ -772,7 +752,7 @@ function computeEmbeddingDistancesFromPointCosine(data, layer, point) {
     function topChannelsToVector(point, layer) {
         let pointVector = new Array(layerChannelCounts[layer]).fill(0);
         point.topChannels[layer].forEach(channel => {
-            pointVector[channel.channel] = channel.count;
+            pointVector[channel.ch] = channel.ct;
         });
         return pointVector
     }
