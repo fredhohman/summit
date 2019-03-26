@@ -49,7 +49,7 @@ header {
 }
 
 .header-value {
-    height: 19px !important;
+    height: 20px !important;
 }
 
 /* material buttons */
@@ -270,6 +270,7 @@ button:active {
 
 .class-bar-text-histogram {
     flex: 0 0 100px;
+    padding-top: 3px;
 }
 
 .class-bar-bar-wrapper {

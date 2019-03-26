@@ -662,9 +662,9 @@ function makeClassBars(data, layer, selectedClass, sortType) {
         .classed('class-bar-text-histogram', true)
         // .text('h')
 
-    const accuracyMargin = { top: 7, right: 0, bottom: 2, left: 0 }
-    const accuracyWidth = 100 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
-    const accuracyHeight = 25 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
+    const accuracyMargin = { top: 0, right: 0, bottom: 1, left: 0 }
+    const accuracyWidth = 120 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
+    const accuracyHeight = 20 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
 
     classBarHistograms
         .append('svg')
@@ -728,7 +728,7 @@ function makeClassBars(data, layer, selectedClass, sortType) {
     
     let classBarBarsScale = d3.scaleLinear()
         .domain([0, 1]) // cosine similarity
-        .range([0, 100]) // div width percentage
+        .range([0, 120]) // div width percentage
     
     classBarBars.append('div')
         .classed('class-bar-bar-data', true)

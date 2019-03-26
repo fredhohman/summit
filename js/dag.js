@@ -205,9 +205,15 @@ let rightInnerOptionsClassAccHist = rightInnerOptions
     .append('div')
     .classed('right-inner-option-wrapper', true)
 
+rightInnerOptionsClassAccHist
+    .append('span')
+    .classed("smalltext-header", true)
+    .style('color', '#666666')
+    .text('softmax confidence')
+
 const accuracyMargin = { top: 7, right: 0, bottom: 2, left: 0 }
-const accuracyWidth = 100 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
-const accuracyHeight = 25 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
+const accuracyWidth = 120 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
+const accuracyHeight = 20 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
 
 rightInnerOptionsClassAccHist
     .append('svg')
@@ -1543,14 +1549,14 @@ export function dagVIS(selectedClass) {
                 .text((100 * selectedClass.topOneAcc).toFixed(1) + '%')
 
             let accHistFromClassBar = document.getElementById("accuracy-" + selectedClass.synset);
-            console.log(accHistFromClassBar)
+            // console.log(accHistFromClassBar)
             let accHistFromClassBarCopy = accHistFromClassBar.cloneNode(true);
             document.getElementById('accuracy-hist')
                 .appendChild(accHistFromClassBarCopy)
 
             let maxNumEdgesIn = []
             layers.forEach(l => {
-                console.log('compute layer ', l)
+                // console.log('compute layer ', l)
                 computeChannelCoordinates(l)
                 initializeChannelEdgeCount(l)
             });
