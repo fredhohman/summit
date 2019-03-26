@@ -119,7 +119,7 @@ d3.json('./data/imagenet.json').then(function (data) {
         .append('i')
         .classed('material-icons', true)
         .classed('md-24', true)
-        .text('home')
+        .text('sort')
         .attr('title', 'Sort classes selected class similarity')
 
     leftInnerClassBarOptionsButtonWrapper
