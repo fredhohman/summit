@@ -3,6 +3,9 @@ import { layerChannelCounts, layer } from './class-sidebar'
 import { createGunzip } from "zlib";
 import { createPrivateKey } from "crypto";
 
+// webpack variables
+// console.log(dataURL)
+
 let rightInner = d3.select('#right-inner')
 
 let rightInnerOptions = d3.select('#right-inner-options')
@@ -25,8 +28,6 @@ const fv_type = '.jpg'
 const exLayout = ({ offset: 10, top: 3, bottom: 3, right: 2, left: 2, TBPadding: 2 })
 const exRectLayout = ({ offset: 13, right: 2, left: 2 })
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
-
-const summitDataURL = 'https://raw.githubusercontent.com/fredhohman/summit-data/master/'
 
 let zoom = d3.zoom()
     .scaleExtent([.1, 1.5])
@@ -261,11 +262,11 @@ rightInnerOptionsFilter
 export function dagVIS(selectedClass) {
     console.log('selected class', selectedClass)
 
-    // d3.json('./data/dag/dag-270.json').then(function (dag) {
-    // d3.json('./data/dag/dag-270-unified.json').then(function (dag) {
-    // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-    // d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-unified.json').then(function (dag) {
-    d3.json('./data/dag/dag-' + selectedClass['target_class'] + '-separate.json').then(function (dag) {
+    // d3.json(dataURL + '/data/dag/dag-270.json').then(function (dag) {
+    // d3.json(dataURL + '/data/dag/dag-270-unified.json').then(function (dag) {
+    // d3.json(dataURL + '/data/dag/dag-' + selectedClass['target_class'] + '.json').then(function (dag) {
+    // d3.json(dataURL + '/data/dag/dag-' + selectedClass['target_class'] + '-unified.json').then(function (dag) {
+    d3.json(dataURL + '/data/dag/dag-' + selectedClass['target_class'] + '-separate.json').then(function (dag) {
         console.log(dag);
 
         let tempMins = []
@@ -398,7 +399,7 @@ export function dagVIS(selectedClass) {
                 .attr('y', 0)
                 .attr('width', deWidth)
                 .attr('height', deHeight)
-                .attr('xlink:href', '../data/feature-vis/dataset-p/' + layer + '-' + channel.channel + '-' + 'dataset-p-' + index + fv_type)
+                .attr('xlink:href', dataURL + '/data/feature-vis/dataset-p/' + layer + '-' + channel.channel + '-' + 'dataset-p-' + index + fv_type)
                 .classed('fv-de', true)
                 // .attr('clip-path', 'url(#de-clip-path)')
                 // .attr("transform", "translate(" + channel.x + ", " + (channel.y + fvHeight / 4) + ")") // hidden in middle of channel, left
@@ -581,7 +582,7 @@ export function dagVIS(selectedClass) {
                     // .attr('height', unitAttrImgSize)
                     .attr('width', attrFvWidth)
                     .attr('height', attrFvHeight)
-                    .attr('xlink:href', '../data/feature-vis/channel/' + attrChannelName + '-channel' + fv_type)
+                    .attr('xlink:href', dataURL + '/data/feature-vis/channel/' + attrChannelName + '-channel' + fv_type)
                     // .attr('clip-path', 'url(#fv-clip-path-' + layer + '-' + attrChannel.prev_channel + ')')
                     .attr('clip-path', 'url(#attr-fv-clip-path)')
                     .attr("transform", "translate(" + attrX + ',' + attrY + " )")
@@ -596,12 +597,12 @@ export function dagVIS(selectedClass) {
                     .on('mousemove', () => {
                         let [mouseX, mouseY] = d3.mouse(attrImg)
                         let diversity = d3.min([d3.max([parseInt(4 * mouseX / unitAttrImgSize), 0]),3])
-                        attrImg.setAttribute('href', '../data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
+                        attrImg.setAttribute('href', dataURL + '/data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
                     })
                     .on('mouseout', () => {
                         // let diversity = 0
-                        // attrImg.setAttribute('href', '../data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
-                        attrImg.setAttribute('href', '../data/feature-vis/channel/' + layer + '-' + channel.channel + '-channel' + fv_type)
+                        // attrImg.setAttribute('href', dataURL + '/data/feature-vis/diversity-' + diversity + '/' + attrChannelName + '-diversity-' + diversity + fv_type)
+                        attrImg.setAttribute('href', dataURL + '/data/feature-vis/channel/' + layer + '-' + channel.channel + '-channel' + fv_type)
                     })
                     .on('mouseover', () => {
                         let attrExClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
@@ -658,7 +659,7 @@ export function dagVIS(selectedClass) {
                         .attr('y', 0)
                         .attr('width', deWidth)
                         .attr('height', deHeight)
-                        .attr('xlink:href', '../data/feature-vis/dataset-p/' + prevLayer + '-' + attrChannel.prev_channel + '-' + 'dataset-p-' + index + fv_type)
+                        .attr('xlink:href', dataURL + '/data/feature-vis/dataset-p/' + prevLayer + '-' + attrChannel.prev_channel + '-' + 'dataset-p-' + index + fv_type)
                         .attr('transform', leftTranslation(attrX, attrY, unitAttrImgSize, index))
                         .style('visibility', initVisible ? 'visible' : 'hidden')
                         .classed('attr-de', true)
@@ -1122,10 +1123,10 @@ export function dagVIS(selectedClass) {
                 // .attr('width', d => fvWidth)
                 // .attr('height', d => fvHeight)
                 .attr('xlink:href', d => {
-                    let filename = '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type
+                    let filename = dataURL + '/data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type
                     return filename
                 })
-                // d => fvURL + '/data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
+                // d => dataURL + '/data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
                 // 'https://raw.githubusercontent.com/fredhohman/atlas/master/ui.png'
                 // .attr('clip-path', 'url(#fv-clip-path)')
                 .attr('clip-path', d => 'url(#fv-clip-path-' + layer + '-' + d.channel + ')')
@@ -1196,7 +1197,7 @@ export function dagVIS(selectedClass) {
                     let channelSelection = d3.select(this)
                     let diversity = d3.min([d3.max([parseInt(4 * mouseX / d.width),0]),3])
 
-                    channelSelection.attr('xlink:href', '../data/feature-vis/diversity-' + diversity + '/' + d.layer + '-' + d.channel + '-diversity-' + diversity + fv_type)
+                    channelSelection.attr('xlink:href', dataURL + '/data/feature-vis/diversity-' + diversity + '/' + d.layer + '-' + d.channel + '-diversity-' + diversity + fv_type)
 
                 })
                 .on('mouseout', function (d) {
@@ -1222,7 +1223,7 @@ export function dagVIS(selectedClass) {
                     d3.selectAll('.dag-edge-' + layer + '-' + d.channel + '-out')
                         .classed('dag-edge-animate-out', false)
 
-                    channelSelection.attr('xlink:href', d => '../data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
+                    channelSelection.attr('xlink:href', d => dataURL + '/data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
 
                     d3.selectAll('#' + hoveredChannel + '-ex-rect')
                         .style('visibility', 'hidden')
