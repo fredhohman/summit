@@ -83,7 +83,7 @@ export var selectedClass;
 var selectedLabel;
 let prevClassesSynset = [];
 
-d3.json(dataURL + '/data/imagenet.json').then(function (data) {
+d3.json(dataURL + 'data/imagenet.json').then(function (data) {
 
     console.log(data);
     window.data = data
@@ -124,7 +124,7 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
         .classed('material-icons', true)
         .classed('md-24', true)
         .text('sort')
-        .attr('title', 'Sort classes selected class similarity')
+        .attr('title', 'Sort classes by selected class similarity')
 
     leftInnerClassBarOptionsButtonWrapper
         .append('div')
@@ -277,7 +277,7 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
                 highlightEmbeddingPointLabel(selectedClass.synset, getCssVar('--highlight-clicked'))
                 selectedLabel = selectedClass.name
                 updateSearchBarText()
-                
+
             })
 
         networkSVG
