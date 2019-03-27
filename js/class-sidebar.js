@@ -77,6 +77,11 @@ let rightInnerDagWrapper = rightInner.append('div')
 
 const formatNumberThousands = d3.format(',')
 
+// accuracy histogram sizing
+const accuracyMargin = { top: 0, right: 0, bottom: 1, left: 0 }
+const accuracyWidth = 120 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
+const accuracyHeight = 20 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
+
 // global variable
 let selectedSynset;
 export var selectedClass;
@@ -85,22 +90,25 @@ let prevClassesSynset = [];
 
 d3.json(dataURL + 'data/imagenet.json').then(function (data) {
 
-    console.log(data);
-    window.data = data
+    // console.log(data);
+    // window.data = data
 
     d3.select('#classes-value').text(formatNumberThousands(data.length))
     d3.select('#instances-value').text(formatNumberThousands(d3.sum(data, d => d.numOfInstances)))
 
     selectedClass = data.filter(d => d['name'] === 'white_wolf')[0]
     selectedSynset = selectedClass.synset
-    
+
+    // const accuracyBinMax = computeAccuracyMax(data)
+    const accuracyBinMax = 1300
+
     leftInnerClassBarOptions
         .append('div')
         .classed('left-inner-option-wrapper', true)
         .append('div')
         .attr('id', 'search')
     
-    genSearchBar(data)
+    genSearchBar(data, accuracyBinMax)
 
     let leftInnerClassBarOptionsButtonWrapper = leftInnerClassBarOptions
         .append("div")
@@ -118,7 +126,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
             selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
-            makeClassBars(data, layer, selectedClass, 'dis')
+            makeClassBars(data, layer, selectedClass, 'dis', accuracyBinMax)
         })
         .append('i')
         .classed('material-icons', true)
@@ -137,7 +145,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
             selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
-            makeClassBars(data, layer, selectedClass, 'asc')
+            makeClassBars(data, layer, selectedClass, 'asc', accuracyBinMax)
         })
         .append('i')
         .classed('material-icons', true)
@@ -156,7 +164,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
             selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
-            makeClassBars(data, layer, selectedClass, 'dsc')
+            makeClassBars(data, layer, selectedClass, 'dsc', accuracyBinMax)
         })
         .append('i')
         .classed('material-icons', true)
@@ -172,7 +180,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
     }
     computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
 
-    makeClassBars(data, layer, selectedClass, 'dis')
+    makeClassBars(data, layer, selectedClass, 'dis', accuracyBinMax)
 
     // embedding
     function makeEmbedding(data, layer) {
@@ -264,7 +272,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
                 computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-                makeClassBars(data, layer, selectedClass, 'dis')
+                makeClassBars(data, layer, selectedClass, 'dis', accuracyBinMax)
 
                 // update embedding
                 centerEmbedding()
@@ -302,7 +310,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
                 computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-                makeClassBars(data, layer, selectedClass, 'dis')
+                makeClassBars(data, layer, selectedClass, 'dis', accuracyBinMax)
 
                 // update embedding
                 centerEmbedding()
@@ -490,7 +498,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             .on('click', (d) => {
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-                makeClassBars(data, layer, d, 'dis')
+                makeClassBars(data, layer, d, 'dis', accuracyBinMax)
                 removeDagVIS()
                 dagVIS(d)
                 colorEmbeddingPointsInViewbox()
@@ -529,7 +537,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             .on('click', (d) => {
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-                makeClassBars(data, layer, d, 'dis')
+                makeClassBars(data, layer, d, 'dis', accuracyBinMax)
                 removeDagVIS()
                 dagVIS(d)
                 colorEmbeddingPointsInViewbox()
@@ -587,7 +595,7 @@ function removeClassBars() {
     d3.selectAll('.class-bar').remove()
 }
 
-function makeClassBars(data, layer, selectedClass, sortType) {
+function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
     // sortTypes:
     // 'dis': sort by class distance
     // 'asc': sort by class accuracy ascending
@@ -666,7 +674,7 @@ function makeClassBars(data, layer, selectedClass, sortType) {
         .on('click', d => {
             removeClassBars()
             document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-            makeClassBars(data, layer, d, 'dis')
+            makeClassBars(data, layer, d, 'dis', accuracyBinMax)
             // selectedClass = d
             removeDagVIS()
             dagVIS(d)
@@ -702,10 +710,6 @@ function makeClassBars(data, layer, selectedClass, sortType) {
         .classed('class-bar-text-histogram', true)
         // .text('h')
 
-    const accuracyMargin = { top: 0, right: 0, bottom: 1, left: 0 }
-    const accuracyWidth = 120 - accuracyMargin.left - accuracyMargin.right // 100 from flex-basis width of class-bar-text-accuracy
-    const accuracyHeight = 20 - accuracyMargin.top - accuracyMargin.bottom // 100 from flex-basis width of class-bar-text-accuracy
-
     classBarHistograms
         .append('svg')
         .attr("width", accuracyWidth + accuracyMargin.left + accuracyMargin.right)
@@ -729,6 +733,7 @@ function makeClassBars(data, layer, selectedClass, sortType) {
 
         let accuracyY = d3.scaleLinear()
             .domain([0, d3.max(bins, d => d.length)]).nice()
+            // .domain([0, accuracyBinMax]).nice()
             .range([accuracyHeight, 0])
 
         let accuracyXAxis = accuracySVG
@@ -883,7 +888,7 @@ function getCssVar(name) {
     return getComputedStyle(document.body).getPropertyValue(name)
 }
 
-function genSearchBar(data) {
+function genSearchBar(data, accuracyBinMax) {
     // Get all class names
     let classNames = data.map(x => x.name.replace(/_/g, ' ').toLowerCase())
     
@@ -898,7 +903,7 @@ function genSearchBar(data) {
     Awesomplete.$('.awesomplete').addEventListener("awesomplete-selectcomplete", function() {
         let searchbox = document.getElementById('searchbox')
         let selectedSearchLabel = searchbox.value
-        updateSelectedSearch(data, selectedSearchLabel)
+        updateSelectedSearch(data, selectedSearchLabel, accuracyBinMax)
     });
 }
 
@@ -913,13 +918,13 @@ function getSearchBarInnerHTML(dataList) {
     return innerHtml
 }
 
-function updateSelectedSearch(data, selectedSearchLabel) {
+function updateSelectedSearch(data, selectedSearchLabel, accuracyBinMax) {
     let d = data.filter(x => selectedSearchLabel === x.name.replace(/_/g, ' ').toLowerCase())[0]
     selectedClass = d
     
     removeClassBars()
     document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-    makeClassBars(data, layer, d, 'dis')
+    makeClassBars(data, layer, d, 'dis', accuracyBinMax)
     removeDagVIS()
     dagVIS(d)
     colorEmbeddingPointsInViewbox()
@@ -931,4 +936,25 @@ function updateSelectedSearch(data, selectedSearchLabel) {
 function updateSearchBarText() {
     let searchbox = document.getElementById('searchbox')
     searchbox.value = selectedLabel.replace(/_/g, ' ').toLowerCase()
+}
+
+function computeAccuracyMax(data) {
+
+    let binMaxs = []
+
+    data.forEach(c => {
+        let tempAccuracyX = d3.scaleLinear()
+            .domain(d3.extent(c.accs)).nice()
+            .range([0, accuracyWidth])
+
+        let bins = d3.histogram()
+            .domain(tempAccuracyX.domain())
+            .thresholds(tempAccuracyX.ticks(20))
+            (c.accs)
+
+        binMaxs.push(d3.max(bins, d => d.length))
+        
+    })
+
+    return d3.max(binMaxs)
 }

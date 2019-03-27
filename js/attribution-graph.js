@@ -264,11 +264,11 @@ rightInnerOptionsFilter
     .attr('title', 'Filter graph by removing less important channels')
 
 export function dagVIS(selectedClass) {
-    console.log('selected class', selectedClass)
+    // console.log('selected class', selectedClass)
 
     // d3.json(dataURL + 'data/ag/ag-270.json').then(function (dag) {
     d3.json(dataURL + 'data/ag/ag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-        console.log(dag);
+        // console.log(dag);
 
         let tempMins = []
         let tempMaxs = []
