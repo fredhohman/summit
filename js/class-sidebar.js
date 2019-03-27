@@ -255,6 +255,15 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
             .classed('layer-glyph', true)
             .attr('id', d => 'layer-glyph-' + d)
             .on('click', (d) => {
+
+                // update classbars (takes a little time to recompute cosine similarity)
+                selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
+                computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
+                removeClassBars()
+                document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+                makeClassBars(data, layer, selectedClass, 'dis')
+
+                // update embedding
                 layer = d
                 centerEmbedding()
                 updateEmbedding(layer)
@@ -263,15 +272,12 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
                 d3.select('#layer-glyph-' + layer)
                     .classed('layer-glyph-selected', true)
 
-                selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
-                computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
-                removeClassBars()
-                document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-                makeClassBars(data, layer, selectedClass, 'dis')
+                // update selected points
                 colorEmbeddingPointsInViewbox()
                 highlightEmbeddingPointLabel(selectedClass.synset, getCssVar('--highlight-clicked'))
                 selectedLabel = selectedClass.name
                 updateSearchBarText()
+                
             })
 
         networkSVG
@@ -285,6 +291,15 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
             .attr('text-anchor', 'middle')
             .classed('layer-glyph-label', true)
             .on('click', (d) => {
+
+                // update classbars (takes a little time to recompute cosine similarity)
+                selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
+                computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
+                removeClassBars()
+                document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
+                makeClassBars(data, layer, selectedClass, 'dis')
+
+                // update embedding
                 layer = d
                 centerEmbedding()
                 updateEmbedding(layer)
@@ -292,6 +307,13 @@ d3.json(dataURL + '/data/imagenet.json').then(function (data) {
                     .classed('layer-glyph-selected', false)
                 d3.select('#layer-glyph-' + layer)
                     .classed('layer-glyph-selected', true)
+
+                // update selected points
+                colorEmbeddingPointsInViewbox()
+                highlightEmbeddingPointLabel(selectedClass.synset, getCssVar('--highlight-clicked'))
+                selectedLabel = selectedClass.name
+                updateSearchBarText()
+
             })
         
         leftInnerEmbeddingOptions
