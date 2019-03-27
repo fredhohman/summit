@@ -256,6 +256,9 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             .attr('id', d => 'layer-glyph-' + d)
             .on('click', (d) => {
 
+                // update layer 
+                layer = d
+
                 // update classbars (takes a little time to recompute cosine similarity)
                 selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
                 computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
@@ -264,7 +267,6 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
                 makeClassBars(data, layer, selectedClass, 'dis')
 
                 // update embedding
-                layer = d
                 centerEmbedding()
                 updateEmbedding(layer)
                 d3.selectAll('.layer-glyph')
@@ -292,6 +294,9 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             .classed('layer-glyph-label', true)
             .on('click', (d) => {
 
+                // update layer 
+                layer = d
+
                 // update classbars (takes a little time to recompute cosine similarity)
                 selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
                 computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
@@ -300,7 +305,6 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
                 makeClassBars(data, layer, selectedClass, 'dis')
 
                 // update embedding
-                layer = d
                 centerEmbedding()
                 updateEmbedding(layer)
                 d3.selectAll('.layer-glyph')
@@ -566,10 +570,17 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
         }
 
     }
+
+    // initial load in view
     makeEmbedding(data, layer)
 
-    // dagVIS(data[selectedClassIdx])
     dagVIS(selectedClass)
+
+    colorEmbeddingPointsInViewbox()
+    highlightEmbeddingPointLabel(selectedClass.synset, getCssVar('--highlight-clicked'))
+    selectedLabel = selectedClass.name
+    updateSearchBarText()
+    
 });
 
 function removeClassBars() {
