@@ -496,11 +496,14 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             //     drHoverCircle.style('visibility', 'hidden')
             })
             .on('click', (d) => {
+                
                 removeClassBars()
                 document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
                 makeClassBars(data, layer, d, 'dis', accuracyBinMax)
+                
                 removeDagVIS()
                 dagVIS(d)
+            
                 colorEmbeddingPointsInViewbox()
                 highlightEmbeddingPointLabel(d.synset, getCssVar('--highlight-clicked'))
                 selectedLabel = d.name
