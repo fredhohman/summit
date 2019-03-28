@@ -594,6 +594,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
     
 });
 
+
 function removeClassBars() {
     d3.selectAll('.class-bar').remove()
 }
