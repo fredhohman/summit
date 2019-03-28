@@ -444,6 +444,11 @@ button:active {
     cursor: pointer;
 }
 
+.example-text {
+    font-size: 12px;
+    fill: var(--dark);
+}
+
 .dag-edge {
     stroke: var(--gray);
     fill: none;
