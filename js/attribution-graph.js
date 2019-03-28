@@ -523,14 +523,14 @@ export function dagVIS(selectedClass) {
             dagG.append('rect')
                 .attr('x', x)
                 .attr('y', y)
+                .attr('left', x)
+                .attr('top', y)
                 .attr('width', width)
                 .attr('height', height)
                 .attr('fill', 'white')
-                // .attr('stroke', '#444444')
-                // .attr('stroke-width', '1px')
                 .style('visibility', initVisible ? 'visible' : 'hidden')
                 .attr('id', attrRectId)
-                .attr('filter', 'url(#drop-shadow)')
+                .attr('filter', 'url(#drop-shadow)')            
         }
 
         function drawAttrRects(layer, channel) {
