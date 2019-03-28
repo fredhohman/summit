@@ -29,7 +29,7 @@ let k = 1; // dag zoom scale
 let numTopAttr = 3;
 const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
-const exLayout = ({ offset: 16, top: 5, bottom: 5, right: 2, left: 5, TBPadding: 2 })
+const exLayout = ({ offset: 16, top: 20, bottom: 5, right: 2, left: 5, TBPadding: 2, textPadding: 5 })
 const exRectLayout = ({ offset: 13, right: 2, left: 5 })
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
 
@@ -395,6 +395,17 @@ export function dagVIS(selectedClass) {
                 for (let i = 0; i < 10; i++) {
                     drawDatasetExamples(layer, channel, i)
                 }
+
+                // Write guide text
+                let textX = getTextX(channel)
+                let textY = getTextY(channel)
+                dagG.append('text')
+                    .text('Examples from data')
+                    .attr('x', textX)
+                    .attr('y', textY)
+                    .style('visibility', 'hidden')
+                    .attr('id', layer + '-' + channel.channel + '-ex-text')
+                    .classed('example-text', true)
             }
         }
 
@@ -407,6 +418,19 @@ export function dagVIS(selectedClass) {
         function getExRectY(channel) {
             let topPadding = exLayout.top
             return channel.y + (channel.width / 2) - (fvHeight / 2) - topPadding
+        }
+
+        function getTextX(channel) {
+            let rightOffset = exLayout.offset
+            let textX = channel.x + channel.width + rightOffset
+            return textX
+        }
+
+        function getTextY(channel) {
+            let topBottomPadding = exLayout.TBPadding
+            let textY = channel.y + (channel.width / 2) - deHeight - topBottomPadding - exLayout.textPadding
+
+            return textY
         }
 
         function drawDatasetExamples(layer, channel, index) {
@@ -1046,11 +1070,15 @@ export function dagVIS(selectedClass) {
                     .attr('id', attrEdgeID)
                     .style('visibility', initVisible ? 'visible' : 'hidden')
                     .on('mouseover', () => {
-                        // XXX
                         // console.log('mouse over')
                         // Show top rect
                         let topRectId = layer + '-' + channel.channel + '-ex-rect'
                         dagG.select('#' + topRectId)
+                            .style('visibility', 'visible')
+
+                        // Show top text
+                        let topTextId = layer + '-' + channel.channel + '-ex-text'
+                        dagG.select('#' + topTextId)
                             .style('visibility', 'visible')
 
                         // Show top exs
@@ -1071,24 +1099,29 @@ export function dagVIS(selectedClass) {
                             .style('visibility', 'visible')              
                     })
                     .on('mouseout', () => {
-                        // Hide top rect
+                        // Hide ex rect
                         let topRectId = layer + '-' + channel.channel + '-ex-rect'
                         dagG.select('#' + topRectId)
                             .style('visibility', 'hidden')
 
-                        // Hide top exs
+                        // Hide ex text
+                        let exTextId = layer + '-' + channel.channel + '-ex-text'
+                        dagG.select('#' + exTextId)
+                            .style('visibility', 'hidden')
+
+                        // Hide ex exs
                         let topExampleClass = layer + '-' + channel.channel + '-dataset-p'
                         dagG.selectAll('.' + topExampleClass)
                             .style('visibility', 'hidden')
                             // .style('opacity', 0)
                             // .style('display', 'none')
 
-                        // Hide bottom rect
+                        // Hide attr rect
                         let botRectId = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-attr-ex-rect'
                         dagG.select('#' + botRectId)
                             .style('visibility', 'hidden')
 
-                        // Hide bottom exs
+                        // Hide attr exs
                         let botExampleClass = layer + '-' + channel.channel + '-' + attrChannel.prev_channel + '-dataset-p'
                         dagG.selectAll('.' + botExampleClass)
                             .style('visibility', 'hidden')
@@ -1200,6 +1233,9 @@ export function dagVIS(selectedClass) {
 
                     d3.selectAll('#' + hoveredChannel + '-ex-rect')
                         .style('visibility', 'visible')
+                    
+                        d3.selectAll('#' + hoveredChannel + '-ex-text')
+                        .style('visibility', 'visible')
 
                     d3.selectAll('#' + hoveredChannel + '-attr-rect')
                         .style('visibility', 'visible')
@@ -1249,6 +1285,9 @@ export function dagVIS(selectedClass) {
                     channelSelection.attr('xlink:href', d => dataURL + 'data/feature-vis/channel/' + layer + '-' + d.channel + '-channel' + fv_type)
 
                     d3.selectAll('#' + hoveredChannel + '-ex-rect')
+                        .style('visibility', 'hidden')
+                    
+                    d3.selectAll('#' + hoveredChannel + '-ex-text')
                         .style('visibility', 'hidden')
 
                     d3.selectAll('#' + hoveredChannel + '-attr-rect')
@@ -1426,6 +1465,12 @@ export function dagVIS(selectedClass) {
                     d3.select('#' + bottomLayer + '-' + bottomChannel + '-ex-rect')
                         .style('visibility', 'visible')
 
+                    d3.select('#' + topLayer + '-' + topChannel + '-ex-text')
+                        .style('visibility', 'visible')
+                    
+                    d3.select('#' + bottomLayer + '-' + bottomChannel + '-ex-text')
+                        .style('visibility', 'visible')
+
                 })
                 .on('mouseout', function () {
                     let edgeID = d3.select(this).attr('id').split('-')
@@ -1443,6 +1488,12 @@ export function dagVIS(selectedClass) {
                         .style('visibility', 'hidden')
                     
                     d3.select('#' + bottomLayer + '-' + bottomChannel + '-ex-rect')
+                        .style('visibility', 'hidden')
+
+                    d3.select('#' + topLayer + '-' + topChannel + '-ex-text')
+                        .style('visibility', 'hidden')
+                    
+                    d3.select('#' + bottomLayer + '-' + bottomChannel + '-ex-text')
                         .style('visibility', 'hidden')
                 })
         }
@@ -1527,6 +1578,14 @@ export function dagVIS(selectedClass) {
                         d3.select('#' + rectId)
                             .attr('x', x)
                             .attr('y', y)
+
+                        // Update guide text
+                        let textId = layer + '-' + currChannel.channel + '-ex-text'
+                        let textX = getTextX(currChannel)
+                        let textY = getTextY(currChannel)
+                        d3.select('#' + textId)
+                            .attr('x', textX)
+                            .attr('y', textY)
                     }
                 }
             })
