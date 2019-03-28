@@ -725,13 +725,13 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
         let accuracySVG = d3.select('#accuracy-' + c.synset)
 
         let accuracyX = d3.scaleLinear()
-            .domain(d3.extent(c.accs)).nice()
+            .domain(d3.extent(c.accs.map(parseFloat))).nice()
             .range([0, accuracyWidth])
 
         let bins = d3.histogram()
             .domain(accuracyX.domain())
             .thresholds(accuracyX.ticks(20))
-            (c.accs)
+            (c.accs.map(parseFloat))
 
         let accuracyY = d3.scaleLinear()
             .domain([0, d3.max(bins, d => d.length)]).nice()
@@ -792,7 +792,7 @@ function computeEmbeddingDistancesFromPointCosine(data, layer, point) {
     function topChannelsToVector(point, layer) {
         let pointVector = new Array(layerChannelCounts[layer]).fill(0);
         point.topChannels[layer].forEach(channel => {
-            pointVector[channel.ch] = channel.ct;
+            pointVector[channel.c] = channel.c;
         });
         return pointVector
     }
@@ -946,13 +946,13 @@ function computeAccuracyMax(data) {
 
     data.forEach(c => {
         let tempAccuracyX = d3.scaleLinear()
-            .domain(d3.extent(c.accs)).nice()
+            .domain(d3.extent(c.accs.map(parseFloat))).nice()
             .range([0, accuracyWidth])
 
         let bins = d3.histogram()
             .domain(tempAccuracyX.domain())
             .thresholds(tempAccuracyX.ticks(20))
-            (c.accs)
+            (c.accs.map(parseFloat))
 
         binMaxs.push(d3.max(bins, d => d.length))
         
