@@ -29,7 +29,7 @@ let k = 1; // dag zoom scale
 let numTopAttr = 3;
 const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
-const exLayout = ({ offset: 16, top: 20, bottom: 5, right: 2, left: 5, TBPadding: 2, textPadding: 5 })
+const exLayout = ({ offset: 20, top: 20, bottom: 5, right: 2, left: 5, TBPadding: 2, textPadding: 5 })
 const exRectLayout = ({ offset: 13, right: 2, left: 5 })
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
 

@@ -696,6 +696,7 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
         .classed('class-bar-text-name', true)
         .append('a')
         .text(d => d.name.replace(/_/g, ' ').toLowerCase())
+        .attr('title', d => d.name.replace(/_/g, ' ').toLowerCase())
         .attr('target', '_blank')
         .attr('href', d => 'http://www.google.com/search?q=' + d.name.replace('_', '+').toLowerCase())
 

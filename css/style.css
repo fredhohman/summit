@@ -10,7 +10,7 @@ html, body {
     --main-color: #1A237E;
     --main-light: #7986CB;
     --search-highlight: #C5CAE9;
-    --search-highlight-hover: #9E9E9E;
+    --search-highlight-hover: #7986CB;
     --border-color: rgba(0, 0, 0, 0.1);
     --background-color: #fafafa;
     --background-color-hover: #e3e3e3;
@@ -227,10 +227,12 @@ button:active {
 }
 
 .class-bar-text-name, .class-bar-text-name a {
-    font-size: 14px;
+    font-size: 16px;
+    display: block;
     color: var(--darker);
     text-decoration: none;
-    width: 120px;
+    width: 180px;
+    /* same as .class-bar-bar-wrapper */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -252,9 +254,9 @@ button:active {
 }
 
 .class-bar-text-accuracy {
-    flex: 0 0 40px;
+    flex: 0 0 45px;
     color: var(--dark);
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .class-bar-text-accuracy-svg {
@@ -269,7 +271,7 @@ button:active {
 }
 
 .class-bar-text-histogram {
-    flex: 0 0 100px;
+    flex: 0 0 120px;
     padding-top: 3px;
 }
 

@@ -1,11 +1,12 @@
 @import '~awesomplete/awesomplete.css';
 input.awesomplete {
-    height: 30px;
+    height: 40px;
     width: 210px;
     padding: 12px 12px;
     margin: 8px 0;
     box-sizing: border-box;
     border: 1px solid var(--border-color);
+    font-size: 16px;
 }
 
 input.awesomplete:focus, input.awesomplete:focus {
@@ -16,12 +17,26 @@ input.awesomplete:focus, input.awesomplete:focus {
     background: var(--main-color);
 }
 
+ul[role=listbox] {
+    font-size: 16px !important;
+    padding-top: 0.4em !important;
+    padding-bottom: 0.4em !important;
+    /* padding-left: 0.4em !important;
+    padding-right: 0.4em !important; */
+}
+
 .awesomplete mark {
     background: var(--search-highlight);
 }
 
 .awesomplete li[aria-selected="true"] mark {
     background: var(--search-highlight-hover);
+}
+
+.awesomplete>ul>li {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 12px;
 }
 
 .awesomplete>ul>li:hover {
@@ -31,4 +46,12 @@ input.awesomplete:focus, input.awesomplete:focus {
 
 .awesomplete li[aria-selected="false"]:hover mark {
     background: var(--search-highlight-hover);
+    /* color: #000000 !important; */
+}
+
+.awesomplete>ul {
+    /* border-color: var(--border-color) !important; */
+    border: none;
+    box-shadow: 0em 0em 1em rgba(0, 0, 0, .3);
+    background-color: #ffffff;
 }
