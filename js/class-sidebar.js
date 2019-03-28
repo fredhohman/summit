@@ -90,7 +90,7 @@ let prevClassesSynset = [];
 
 d3.json(dataURL + 'data/imagenet.json').then(function (data) {
 
-    // console.log(data);
+    console.log(data);
     // window.data = data
 
     d3.select('#classes-value').text(formatNumberThousands(data.length))
@@ -246,7 +246,7 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             .append('feDropShadow')
             .attr('dx', "0")
             .attr('dy', "0")
-            .attr('stdDeviation', "4")
+            .attr('stdDeviation', "3")
             .attr('flood-color', "rgba(0, 0, 0, 0.6)")
             .attr('flood-opacity', "1")
 

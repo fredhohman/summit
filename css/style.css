@@ -329,7 +329,7 @@ button:active {
 
 .layer-glyph {
     /* fill: var(--gray); */
-    fill: rgb(213, 213, 213);
+    fill: rgb(200, 200, 200);
     rx: 3px;
     ry: 3px;
 }
@@ -516,6 +516,7 @@ button:active {
     border-radius: 50%;
     background: var(--main-light);
     cursor: pointer;
+    border: none;
 }
 
 .slider:hover {
