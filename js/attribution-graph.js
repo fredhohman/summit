@@ -29,8 +29,8 @@ let k = 1; // dag zoom scale
 let numTopAttr = 3;
 const filterTransitionSpeed = 1000
 const fv_type = '.jpg'
-const exLayout = ({ offset: 16, top: 4, bottom: 4, right: 2, left: 4, TBPadding: 2 })
-const exRectLayout = ({ offset: 13, right: 2, left: 4 })
+const exLayout = ({ offset: 16, top: 5, bottom: 5, right: 2, left: 5, TBPadding: 2 })
+const exRectLayout = ({ offset: 13, right: 2, left: 5 })
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
 
 let zoom = d3.zoom()
@@ -55,6 +55,18 @@ dagSVG.append('filter')
     .append('feColorMatrix')
     .attr('type', 'matrix')
     .attr('values', '0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0')
+
+dagSVG.append('filter')
+    .attr('id', 'drop-shadow')
+    .attr('y',"-50%")
+    .attr('width', "200%")
+    .attr('height', "200%")
+    .append('feDropShadow')
+    .attr('dx',"0")
+    .attr('dy',"0")
+    .attr('stdDeviation',"8")
+    .attr('flood-color', "rgba(0, 0, 0, 0.6)")
+    .attr('flood-opacity',"1")
 
 let zoomRect = dagSVG.append("rect")
     .attr("width", dagWidth + dagMargin.left + dagMargin.right)
@@ -265,9 +277,11 @@ rightInnerOptionsFilter
 
 export function dagVIS(selectedClass) {
     // console.log('selected class', selectedClass)
+    console.log('outside data')
 
     // d3.json(dataURL + 'data/ag/ag-270.json').then(function (dag) {
     d3.json(dataURL + 'data/ag/ag-' + selectedClass['target_class'] + '.json').then(function (dag) {
+        console.log('inside data')
         // console.log(dag);
 
         let tempMins = []
@@ -488,10 +502,11 @@ export function dagVIS(selectedClass) {
                 .attr('width', width)
                 .attr('height', height)
                 .attr('fill', 'white')
-                .attr('stroke', '#444444')
-                .attr('stroke-width', '1px')
+                // .attr('stroke', '#444444')
+                // .attr('stroke-width', '1px')
                 .style('visibility', initVisible ? 'visible' : 'hidden')
                 .attr('id', attrRectId)
+                .attr('filter', 'url(#drop-shadow)')
         }
 
         function drawAttrRects(layer, channel) {
@@ -1658,6 +1673,7 @@ export function dagVIS(selectedClass) {
 }
 
 export function removeDagVIS() {
+    console.log('removed')
     d3.select("#dagG").remove()
     d3.selectAll("#dag defs > clipPath").remove()
     d3.select("#accuracy-hist > *").remove()
