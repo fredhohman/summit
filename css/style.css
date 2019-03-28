@@ -323,6 +323,10 @@ button:active {
     display: flex;
 }
 
+.layer-glyph-wrapper:hover {
+    cursor: pointer;
+}
+
 .layer-glyph {
     /* fill: var(--gray); */
     fill: rgb(213, 213, 213);
@@ -330,19 +334,18 @@ button:active {
     ry: 3px;
 }
 
-.layer-glyph:hover {
+.layer-glyph-hover {
     fill: var(--main-color);
-    cursor: pointer;
 }
 
 .layer-glyph-label {
     font-size: 12px;
-    fill: var(--dark);
+    /* fill: var(--dark); */
+    fill: #ffffff;
 }
 
 .layer-glyph-label:hover {
     font-weight: 600;
-    cursor: pointer;
 }
 
 .layer-glyph-selected {

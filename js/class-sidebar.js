@@ -225,10 +225,9 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
         //         updateEmbedding(layer)
         //     })
 
-        const netMargin = ({ top: 0, right: 20, bottom: 0, left: 20 })
+        const netMargin = ({ top: 13, right: 20, bottom: 13, left: 20 })
         const netWidth = 300 - netMargin.left - netMargin.right
-        const netHeight = 64 - netMargin.top - netMargin.bottom
-        const middleLineHeight = 25;
+        const netHeight = 64// - netMargin.top - netMargin.bottom
 
         let networkSVG = leftInnerEmbeddingOptions
             .append('svg')
@@ -238,30 +237,49 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             .attr("transform", "translate(" + netMargin.left + "," + netMargin.top + ")")
             .attr('id', 'net')
         
+        networkSVG.append('filter')
+            .attr('id', 'glyph-drop-shadow')
+            .attr('x', "-50%")
+            .attr('y', "-50%")
+            .attr('width', "200%")
+            .attr('height', "200%")
+            .append('feDropShadow')
+            .attr('dx', "0")
+            .attr('dy', "0")
+            .attr('stdDeviation', "4")
+            .attr('flood-color', "rgba(0, 0, 0, 0.6)")
+            .attr('flood-opacity', "1")
+
         let layers = Object.keys(layerChannelCounts);
 
         const netLayerWidth = 20
         const netLayerPadding = (netWidth - netMargin.left - netMargin.right - (layers.length-1) * netLayerWidth) / layers.length
 
-        networkSVG
-            .append('line')
-            .attr('x1', 0)
-            .attr('x2', layers.length * netLayerWidth + (layers.length - 1) * netLayerPadding)
-            .attr('y1', middleLineHeight)
-            .attr('y2', middleLineHeight)
-            .style('stroke', 'rgba(0, 0, 0, 0.15)')
+        // networkSVG
+        //     .append('line')
+        //     .attr('x1', 0)
+        //     .attr('x2', layers.length * netLayerWidth + (layers.length - 1) * netLayerPadding)
+        //     .attr('y1', (netHeight - netMargin.top - netMargin.bottom)/2)
+        //     .attr('y2', (netHeight - netMargin.top - netMargin.bottom)/2)
+        //     .style('stroke', 'rgba(0, 0, 0, 0.15)')
+        //     .style('stroke-width', '2px')
             
-        networkSVG
-            .selectAll('.layer-glyph')
+        let layerGGlyphs = networkSVG
+            .selectAll('.layer-glyph-wrapper')
             .data(layers)
             .enter()
-            .append('rect')
-            .attr('x', (d, i) => i * (netLayerWidth + netLayerPadding))
-            .attr('y', 10)
-            .attr('width', netLayerWidth)
-            .attr('height', middleLineHeight+5)
-            .classed('layer-glyph', true)
-            .attr('id', d => 'layer-glyph-' + d)
+            .append('g')
+            .classed('layer-glyph-wrapper', true)
+            .on('mouseover', d => {
+                d3.select('#layer-glyph-' + d)
+                    .classed('layer-glyph-hover', true)
+                    .attr('filter', 'url(#glyph-drop-shadow)')     
+            })
+            .on('mouseout', d => {
+                d3.select('#layer-glyph-' + d)
+                    .classed('layer-glyph-hover', false)
+                    .attr('filter', null)
+            })
             .on('click', (d) => {
 
                 // update layer 
@@ -289,44 +307,23 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
                 updateSearchBarText()
 
             })
+        
+        layerGGlyphs.append('rect')
+            .attr('x', (d, i) => i * (netLayerWidth + netLayerPadding))
+            .attr('y', 0)
+            .attr('width', netLayerWidth)
+            .attr('height', netHeight - netMargin.top - netMargin.bottom)
+            .classed('layer-glyph', true)
+            .attr('id', d => 'layer-glyph-' + d)
 
-        networkSVG
-            .selectAll('.layer-glyph-label')
-            .data(layers)
-            .enter()
+        layerGGlyphs
             .append('text')
             .text(d => d.slice(5))
             .attr('x', (d, i) => i * (netLayerWidth + netLayerPadding) + netLayerWidth/2)
-            .attr('y', netHeight - 10)
+            // .attr('y', netHeight - 10)
+            .attr('y', (netHeight - netMargin.top - netMargin.bottom)/2 + 4)
             .attr('text-anchor', 'middle')
             .classed('layer-glyph-label', true)
-            .on('click', (d) => {
-
-                // update layer 
-                layer = d
-
-                // update classbars (takes a little time to recompute cosine similarity)
-                selectedClass = data.filter(d => d['synset'] === selectedSynset)[0]
-                computeEmbeddingDistancesFromPointCosine(data, layer, selectedClass)
-                removeClassBars()
-                document.getElementById('left-inner-class-bar-wrapper').scrollTop = 0;
-                makeClassBars(data, layer, selectedClass, 'dis', accuracyBinMax)
-
-                // update embedding
-                centerEmbedding()
-                updateEmbedding(layer)
-                d3.selectAll('.layer-glyph')
-                    .classed('layer-glyph-selected', false)
-                d3.select('#layer-glyph-' + layer)
-                    .classed('layer-glyph-selected', true)
-
-                // update selected points
-                colorEmbeddingPointsInViewbox()
-                highlightEmbeddingPointLabel(selectedClass.synset, getCssVar('--highlight-clicked'))
-                selectedLabel = selectedClass.name
-                updateSearchBarText()
-
-            })
         
         leftInnerEmbeddingOptions
             .append('div')
