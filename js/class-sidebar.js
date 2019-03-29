@@ -690,12 +690,20 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
         .classed('class-bar-text-wrapper', true)
     
     classBarTexts.append('div')
-        .classed('class-bar-text-name', true)
+        .classed('class-bar-text-search', true)
         .append('a')
-        .text(d => d.name.replace(/_/g, ' ').toLowerCase())
         .attr('title', d => d.name.replace(/_/g, ' ').toLowerCase())
         .attr('target', '_blank')
         .attr('href', d => 'http://www.google.com/search?q=' + d.name.replace('_', '+').toLowerCase())
+        .append('i')
+        .classed('material-icons', true)
+        .classed('md-16', true)
+        .text('image_search')
+        .attr('title', 'Google search class')
+
+    classBarTexts.append('div')
+        .classed('class-bar-text-name', true)
+        .text(d => d.name.replace(/_/g, ' ').toLowerCase())
 
     // classBarTexts.append('div')
     //     .classed('class-bar-text-instances', true)
@@ -707,6 +715,7 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
     classBarTexts.append('div')
         .classed('class-bar-text-accuracy', true)
         .text(d => (100 * d.topOneAcc).toFixed(1) + '%')
+        // .text(d => (d.numOfInstances))
 
     let classBarHistograms = classBarTexts.append('div')
         .classed('class-bar-text-histogram', true)

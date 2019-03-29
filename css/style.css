@@ -102,6 +102,10 @@ button:active {
     transition-delay: 0s;
 }
 
+.md-16 {
+    font-size: 16px;
+}
+
 .md-18 {
     font-size: 18px;
 }
@@ -221,7 +225,7 @@ button:active {
     height: 25px;
 }
 
-.class-bar-text-name, .class-bar-text-instances, .class-bar-text-accuracy {
+.class-bar-text-name, .class-bar-text-instances, .class-bar-text-accuracy, .class-bar-text-search {
     flex: 1;
     align-self: flex-end;
 }
@@ -231,16 +235,21 @@ button:active {
     display: block;
     color: var(--darker);
     text-decoration: none;
-    width: 180px;
-    /* same as .class-bar-bar-wrapper */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    width: 160px;
+    /* 180 - minus search width*/
 }
 
-.class-bar-text-name a:hover {
-    text-decoration: underline;
+.class-bar-text-name {
+    /* same as .class-bar-bar-wrapper */
+    width: 160px;
 }
+
+/* .class-bar-text-name a:hover {
+    text-decoration: underline;
+} */
 
 .class-bar-text-instances {
     flex: 0 0 40px;
@@ -257,6 +266,23 @@ button:active {
     flex: 0 0 45px;
     color: var(--dark);
     font-size: 14px;
+}
+
+.class-bar-text-search {
+    flex: 0 0 16px;
+    padding-right: 4px;
+}
+
+.class-bar-text-search a {
+    text-decoration: none;
+    color: var(--darker) !important;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2px;
+}
+
+.class-bar-text-search a:hover {
+    cursor: alias;
 }
 
 .class-bar-text-accuracy-svg {
