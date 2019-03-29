@@ -7,7 +7,7 @@
     "dev": "webpack --mode development",
     "build": "./build.sh",
     "start": "webpack-dev-server --env.dataURL='local' --mode development --open",
-    "deploy": "gh-pages -d dist"
+    "deploy": "./deploy.sh"
   },
   "author": "Fred Hohman",
   "repository": {
