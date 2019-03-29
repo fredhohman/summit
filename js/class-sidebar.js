@@ -90,7 +90,7 @@ let prevClassesSynset = [];
 
 d3.json(dataURL + 'data/imagenet.json').then(function (data) {
 
-    console.log(data);
+    // console.log(data);
     // window.data = data
 
     d3.select('#classes-value').text(formatNumberThousands(data.length))
