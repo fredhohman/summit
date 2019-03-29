@@ -715,7 +715,6 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
     classBarTexts.append('div')
         .classed('class-bar-text-accuracy', true)
         .text(d => (100 * d.topOneAcc).toFixed(1) + '%')
-        // .text(d => (d.numOfInstances))
 
     let classBarHistograms = classBarTexts.append('div')
         .classed('class-bar-text-histogram', true)

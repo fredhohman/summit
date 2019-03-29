@@ -275,7 +275,7 @@ button:active {
 
 .class-bar-text-search a {
     text-decoration: none;
-    color: var(--darker) !important;
+    color: var(--dark) !important;
     display: flex;
     flex-direction: column;
     margin-bottom: 2px;
