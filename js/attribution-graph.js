@@ -34,7 +34,7 @@ const exRectLayout = ({ offset: 13, right: 2, left: 5 })
 const attrLayout = ({ topOffset: 60, top: 15, left: 3, right: 3, bottom: 3 })
 
 let zoom = d3.zoom()
-    .scaleExtent([.1, 1.5])
+    .scaleExtent([.1, 3.5])
     .extent([[0, 0], [dagWidth, dagHeight]])
     .on("zoom", zoomed);
 
