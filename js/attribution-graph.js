@@ -87,8 +87,8 @@ const deHeight = deWidth
 const attrFvWidth = 60
 const attrFvHeight = attrFvWidth
 
-const layerVerticalSpace = 300
-const fvHorizontalSpace = 50
+let layerVerticalSpace = 300
+let fvHorizontalSpace = 50
 
 const layerIndex = {
     'mixed3a': 8,
@@ -275,6 +275,48 @@ rightInnerOptionsFilter
     .classed('slider', true)
     .attr('title', 'Filter graph by removing less important channels')
 
+let rightInnerOptionsFilterWidth = rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+
+rightInnerOptionsFilterWidth.append('span')
+    .classed("smalltext-header", true)
+    .style('color', '#666666')
+    .text('adjust width')
+
+rightInnerOptionsFilterWidth
+    .append('div')
+    .classed('header-value', true)
+    .append('input')
+    .attr('type', 'range')
+    .attr('id', 'dag-width-filter-slider')
+    .attr('min', 1)
+    .attr('max', 100)
+    .attr('value', 0)
+    .classed('slider', true)
+    .attr('title', 'Change width of attribution graph')
+
+let rightInnerOptionsFilterHeight = rightInnerOptions
+    .append('div')
+    .classed('right-inner-option-wrapper', true)
+
+rightInnerOptionsFilterHeight.append('span')
+    .classed("smalltext-header", true)
+    .style('color', '#666666')
+    .text('adjust height')
+
+rightInnerOptionsFilterHeight
+    .append('div')
+    .classed('header-value', true)
+    .append('input')
+    .attr('type', 'range')
+    .attr('id', 'dag-height-filter-slider')
+    .attr('min', 50)
+    .attr('max', 500)
+    .attr('value', 0)
+    .classed('slider', true)
+    .attr('title', 'Change height of attribution graph')
+
 export function dagVIS(selectedClass) {
     // console.log('selected class', selectedClass)
     console.log('outside data')
@@ -343,25 +385,40 @@ export function dagVIS(selectedClass) {
 
         }
 
-        function computeChannelCoordinatesFilter(layer, filterValue) {
+        function computeChannelCoordinatesFilter(layer, filterValue, filterOperation) {
+            // filterOperation
+            // filter: filter graph and remove channels/edges
+            // width: update width
+            // height: update height
+            
 
-            let i = 0
-            let dagFiltered = dag[layer].filter(function (ch) {
-                return ch.count > filterValue
-            })
+            if (filterOperation == 'filter') {
+                let i = 0
+                let dagFiltered = dag[layer].filter(function (ch) {
+                    return ch.count > filterValue
+                })
 
-            let currLayerLength = dagFiltered.length
+                let currLayerLength = dagFiltered.length
 
-            dag[layer].forEach(ch => {
-                if (ch.count > filterValue) {
-                    ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2)) + (fvWidth - ch.width) / 2
-                    // ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))
-                    ch.y = layerIndex[layer] * layerVerticalSpace + (fvWidth - ch.width) / 2
-                    i = i + 1
-                } else {
-                    ch.x = 0 - fvWidth / 2
-                }
-            });
+                dag[layer].forEach(ch => {
+                    if (ch.count > filterValue) {
+                        ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2)) + (fvWidth - ch.width) / 2
+                        // ch.x = (((fvWidth + fvHorizontalSpace) * i) - ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))
+                        ch.y = layerIndex[layer] * layerVerticalSpace + (fvWidth - ch.width) / 2
+                        i = i + 1
+                    } else {
+                        ch.x = 0 - fvWidth / 2
+                    }
+                });   
+            }
+
+            if (filterOperation == 'width') {
+                computeChannelCoordinates(layer)
+            }
+
+            if (filterOperation == 'height') {
+                computeChannelCoordinates(layer)
+            }
 
         }
 
@@ -1701,7 +1758,7 @@ export function dagVIS(selectedClass) {
 
                     // move fv and edges on filter change
                     layers.forEach(l => {
-                        computeChannelCoordinatesFilter(l, filterValue)
+                        computeChannelCoordinatesFilter(l, filterValue, 'filter')
                     });
 
                     // Update visibility of edges
@@ -1722,6 +1779,55 @@ export function dagVIS(selectedClass) {
 
                 })
                 .property('value', 0)
+
+            d3.select('#dag-width-filter-slider')
+                .on('input', function () {
+
+                    let filterValue = this.value
+ 
+                    console.log(filterValue)
+
+                    fvHorizontalSpace = filterValue
+
+                    // move fv and edges on filter change
+                    layers.forEach(l => {
+                        computeChannelCoordinatesFilter(l, filterValue, 'width')
+                    });
+
+                    updateChannels()
+                    updateChannelLabels()
+                    updateLayerLabels(filterValue)
+                    updateEdges()
+                    updateDatasetExamples()
+                    // updateAttrChannels()
+                    // updateAttrLabels()
+                    // updateAttrExRect()
+
+                })
+
+            d3.select('#dag-height-filter-slider')
+                .on('input', function () {
+
+                    let filterValue = this.value
+
+                    console.log(filterValue)
+                    layerVerticalSpace = filterValue
+
+                    // move fv and edges on filter change
+                    layers.forEach(l => {
+                        computeChannelCoordinatesFilter(l, filterValue, 'height')
+                    });
+
+                    updateChannels()
+                    updateChannelLabels()
+                    updateLayerLabels(filterValue)
+                    updateEdges()
+                    updateDatasetExamples()
+                    // updateAttrChannels()
+                    // updateAttrLabels()
+                    // updateAttrExRect()
+
+                })
 
         }
 
