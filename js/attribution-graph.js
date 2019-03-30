@@ -28,6 +28,7 @@ const dagHeight = 800 - dagMargin.top - dagMargin.bottom // 790 based on laptop 
 let k = 1; // dag zoom scale
 let numTopAttr = 3;
 const filterTransitionSpeed = 1000
+let filterFilterValue = 0;
 const fv_type = '.jpg'
 const exLayout = ({ offset: 20, top: 20, bottom: 5, right: 2, left: 5, TBPadding: 2, textPadding: 5 })
 const exRectLayout = ({ offset: 13, right: 2, left: 5 })
@@ -292,7 +293,7 @@ rightInnerOptionsFilterWidth
     .attr('id', 'dag-width-filter-slider')
     .attr('min', 1)
     .attr('max', 100)
-    .attr('value', 0)
+    .attr('value', fvHorizontalSpace)
     .classed('slider', true)
     .attr('title', 'Change width of attribution graph')
 
@@ -313,7 +314,7 @@ rightInnerOptionsFilterHeight
     .attr('id', 'dag-height-filter-slider')
     .attr('min', 50)
     .attr('max', 500)
-    .attr('value', 0)
+    .attr('value', layerVerticalSpace)
     .classed('slider', true)
     .attr('title', 'Change height of attribution graph')
 
@@ -374,7 +375,6 @@ export function dagVIS(selectedClass) {
         })
 
         function computeChannelCoordinates(layer) {
-
             let i = 0
             dag[layer].forEach(ch => {
                 ch.width = fvScale(ch.count)
@@ -397,7 +397,6 @@ export function dagVIS(selectedClass) {
                 let dagFiltered = dag[layer].filter(function (ch) {
                     return ch.count > filterValue
                 })
-
                 let currLayerLength = dagFiltered.length
 
                 dag[layer].forEach(ch => {
@@ -1598,7 +1597,11 @@ export function dagVIS(selectedClass) {
                 d3.select('#dag-layer-label-' + layer)
                     .transition()
                     .duration(filterTransitionSpeed)
-                    .attr('transform', d => 'translate(' + (0 - (fvWidth / 4 + ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))) + ',' + (layerIndex[d] * layerVerticalSpace + fvHeight / 2) + ')')
+                    .attr('transform', d => {
+                        let layerLabelX = 0 - (fvWidth / 4 + ((currLayerLength * fvWidth + (currLayerLength - 1) * fvHorizontalSpace) / 2))
+                        let layerLabelY = layerIndex[d] * layerVerticalSpace + fvHeight / 2
+                        return 'translate(' + layerLabelX + ',' + layerLabelY + ')'
+                    })
 
             })
         }
@@ -1733,7 +1736,7 @@ export function dagVIS(selectedClass) {
                 .on('input', function () {
 
                     let filterValue = this.value
-                    // console.log('filterValue:', filterValue)
+                    filterFilterValue =filterValue
 
                     d3.selectAll('.fv-ch')
                         .attr('display', d => {
@@ -1782,10 +1785,7 @@ export function dagVIS(selectedClass) {
 
             d3.select('#dag-width-filter-slider')
                 .on('input', function () {
-
-                    let filterValue = this.value
- 
-                    console.log(filterValue)
+                    let filterValue = parseInt(this.value)
 
                     fvHorizontalSpace = filterValue
 
@@ -1796,7 +1796,7 @@ export function dagVIS(selectedClass) {
 
                     updateChannels()
                     updateChannelLabels()
-                    updateLayerLabels(filterValue)
+                    updateLayerLabels(filterFilterValue)
                     updateEdges()
                     updateDatasetExamples()
                     // updateAttrChannels()
@@ -1809,9 +1809,7 @@ export function dagVIS(selectedClass) {
                 .on('input', function () {
 
                     let filterValue = this.value
-
-                    console.log(filterValue)
-                    layerVerticalSpace = filterValue
+                    layerVerticalSpace = parseInt(filterValue)
 
                     // move fv and edges on filter change
                     layers.forEach(l => {
@@ -1820,7 +1818,7 @@ export function dagVIS(selectedClass) {
 
                     updateChannels()
                     updateChannelLabels()
-                    updateLayerLabels(filterValue)
+                    updateLayerLabels(filterFilterValue)
                     updateEdges()
                     updateDatasetExamples()
                     // updateAttrChannels()
