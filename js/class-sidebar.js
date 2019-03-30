@@ -611,24 +611,30 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
 
     if (sortType === 'asc') {
         classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
-        .data(data
-            .sort(function (x, y) {
-                return d3.ascending(x.topOneAcc, y.topOneAcc);
-            })
-            .slice(0, numClassesInClassBar)
-        )
+        .data(() => {
+            let topSortedData = data.sort(function (x, y) {
+                    return d3.ascending(x.topOneAcc, y.topOneAcc);
+                }).slice(0, numClassesInClassBar)
+            
+            let shownData = [selectedClass].concat(topSortedData)
+
+            return shownData
+        })
         .enter()
         .append('div')
         .classed('class-bar', true)
 
     } else if (sortType === 'dsc') {
         classBars = leftInnerClassBarWrapper.selectAll('.class-bar')
-        .data(data
-            .sort(function (x, y) {
-                return d3.descending(x.topOneAcc, y.topOneAcc);
-            })
-            .slice(0, numClassesInClassBar)
-        )
+        .data(() => {
+            let topSortedData = data.sort(function (x, y) {
+                    return d3.descending(x.topOneAcc, y.topOneAcc);
+                }).slice(0, numClassesInClassBar)
+            
+            let shownData = [selectedClass].concat(topSortedData)
+
+            return shownData
+        })
         .enter()
         .append('div')
         .classed('class-bar', true)
@@ -792,7 +798,7 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
         .classed('class-bar-bar-background', true)
         .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')
 
-    // Pin selected class
+    // Pin selected class 
     let pinnedSynset = selectedClass.synset
     let pinnedClassBar = document.getElementById('class-bar-' + pinnedSynset)
     let pinnedClassBarParent = document.getElementById('left-inner-pinned-class')
