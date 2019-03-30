@@ -186,8 +186,13 @@ button:active {
     flex: 0 0 64px;
     /* padding: 15px; */
     display: flex;
-    border-bottom: 1px solid var(--border-color);
+    /* border-bottom: 1px solid var(--border-color); */
     justify-content: space-between;
+}
+
+#left-inner-pinned-class {
+    /* border-top: 1px solid var(--border-color); */
+    border-bottom: 1px solid var(--border-color);
 }
 
 #left-inner-class-bar-wrapper {

@@ -46,6 +46,9 @@ let leftInnerEmbedding = leftInner.append('div')
 
 let leftInnerClassBarOptions = leftInner.append('div')
     .attr('id', 'left-inner-class-bar-options')
+
+let leftInnerPinnedClass = leftInner.append('div')
+    .attr('id', 'left-inner-pinned-class')
     
 let leftInnerClassBarWrapper = leftInner.append('div')
     .attr('id', 'left-inner-class-bar-wrapper')
@@ -305,7 +308,6 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
                 highlightEmbeddingPointLabel(selectedClass.synset, getCssVar('--highlight-clicked'))
                 selectedLabel = selectedClass.name
                 updateSearchBarText()
-
             })
         
         layerGGlyphs.append('rect')
@@ -791,7 +793,13 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
 
     classBarBars.append('div')
         .classed('class-bar-bar-background', true)
-        .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')        
+        .style('width', d => 100-classBarBarsScale(d.distanceFromQueryPoint) + '%')
+
+    // Pin selected class
+    let pinnedSynset = selectedClass.synset
+    let pinnedClassBar = document.getElementById('class-bar-' + pinnedSynset)
+    let pinnedClassBarParent = document.getElementById('left-inner-pinned-class')
+    pinnedClassBarParent.appendChild(pinnedClassBar)
 
 }
 
