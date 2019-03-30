@@ -711,9 +711,6 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
     //     .classed('class-bar-text-instances', true)
     //     .text(d => d.numOfInstances)
 
-    // classBarTexts.append('div')
-    //     .classed('class-bar-text-image', true)
-
     classBarTexts.append('div')
         .classed('class-bar-text-accuracy', true)
         .text(d => (100 * d.topOneAcc).toFixed(1) + '%')
@@ -768,7 +765,7 @@ function makeClassBars(data, layer, selectedClass, sortType, accuracyBinMax) {
         // accuracySVG
         //     .append('text')
         //     .attr('x', accuracyWidth / 2)
-        //     .attr('y', accuracyHeight / 2)
+        //     .attr('y', accuracyHeight / 2 + 5)
         //     // .attr('x', accuracyMargin.left)
         //     // .attr('y', accuracyHeight - accuracyMargin.bottom)
         //     .attr('text-anchor', 'middle')

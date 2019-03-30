@@ -250,24 +250,14 @@ button:active {
 .class-bar-text-name {
     /* same as .class-bar-bar-wrapper */
     width: 160px;
+    /* padding-right: 22px; */
 }
 
 /* .class-bar-text-name a:hover {
     text-decoration: underline;
 } */
 
-.class-bar-text-instances {
-    flex: 0 0 40px;
-    color: var(--dark);
-    font-size: 12px;
-}
-
-.class-bar-text-image {
-    flex: 0 0 100px;
-    /* background-image: url(../data/kit_fox.jpg); */
-}
-
-.class-bar-text-accuracy {
+.class-bar-text-accuracy, .class-bar-text-instances {
     flex: 0 0 45px;
     color: var(--dark);
     font-size: 14px;
