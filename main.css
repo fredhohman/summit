@@ -710,12 +710,12 @@ input.awesomplete {
     box-sizing: border-box;
     border: 1px solid var(--border-color);
     font-size: 16px;
-    background-position: 5px -10px;
+    background-position: 5px 8px;
     background-image: 
         linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), 
         url(https://material.io/tools/icons/static/icons/baseline-search-24px.svg);
     background-repeat: no-repeat;
-    background-size: 20px 60px;
+    /* background-size: 20px 60px; */
 }
 
 input.awesomplete:focus, input.awesomplete:focus {
