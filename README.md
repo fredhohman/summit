@@ -12,7 +12,7 @@ For the Summit Data, go to [https://github.com/fredhohman/summit-data][summit-da
 
 ## Live Demo
 
-For a live demo, visit: 
+For a live demo, visit: [fredhohman.com/summit][demo]
 
 
 ## Installation
@@ -58,3 +58,4 @@ For questions or support [open an issue][issues] or contact [Fred Hohman][fred].
 [npm]: https://www.npmjs.com
 [fred]: http://www.fredhohman.com
 [issues]: https://github.com/fredhohman/summit/issues
+[demo]: https://fredhohman.com/summit/
