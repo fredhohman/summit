@@ -8,7 +8,7 @@ NOTE: this project has not been announced yet, but will be at a later date. Plea
 
 Summit is a an interactive system that summarizes and visualizes what features a deep learning model has learned and how those features interact to make predictions.
 
-![thumbnail.png](thumbnail.png)
+[![Summit overview YouTube video](thumbnail.png)](https://youtu.be/J4GMLvoH1ZU)
 
 For the Summit Notebooks code, go to [https://github.com/fredhohman/summit-notebooks][summit-notebooks].
 
