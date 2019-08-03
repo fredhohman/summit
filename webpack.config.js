@@ -57,12 +57,12 @@ module.exports = env => {
                 filename: "[name].css",
                 chunkFilename: "[id].css"
             }),
-            new CopyWebpackPlugin([
-                {
-                    from: path.join(__dirname, 'data'),
-                    to: path.join(__dirname, 'dist') + '/data'
-                }
-            ]),
+            // new CopyWebpackPlugin([
+            //     {
+            //         from: path.join(__dirname, 'data'),
+            //         to: path.join(__dirname, 'dist') + '/data'
+            //     }
+            // ]),
             new webpack.DefinePlugin({
                 dataURL: JSON.stringify(dataURLs[env.dataURL])
             })
