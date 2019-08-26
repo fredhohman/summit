@@ -320,11 +320,11 @@ rightInnerOptionsFilterHeight
 
 export function dagVIS(selectedClass) {
     // console.log('selected class', selectedClass)
-    console.log('outside data')
+    // console.log('outside data')
 
     // d3.json(dataURL + 'data/ag/ag-270.json').then(function (dag) {
     d3.json(dataURL + 'data/ag/ag-' + selectedClass['target_class'] + '.json').then(function (dag) {
-        console.log('inside data')
+        // console.log('inside data')
         // console.log(dag);
 
         let tempMins = []
@@ -1836,7 +1836,7 @@ export function dagVIS(selectedClass) {
 }
 
 export function removeDagVIS() {
-    console.log('removed')
+    // console.log('removed')
     d3.select("#dagG").remove()
     d3.selectAll("#dag defs > clipPath").remove()
     d3.select("#accuracy-hist > *").remove()
