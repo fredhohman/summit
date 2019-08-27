@@ -1,0 +1,26 @@
+#post-wrapper {
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+#post {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+#post h1 {
+    font-size: 36px;
+    color: var(--darkest);
+}
+
+#post p {
+    font-size: 18px;
+    line-height: 34px;
+    color: var(--darker);
+}
+
+.main-color-text {
+    color: var(--main-color);
+}
