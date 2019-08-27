@@ -63,6 +63,12 @@ module.exports = env => {
             //         to: path.join(__dirname, 'dist') + '/data'
             //     }
             // ]),
+            new CopyWebpackPlugin([
+                {
+                    from: path.join(__dirname, 'static'),
+                    to: path.join(__dirname, 'dist') + '/static'
+                }
+            ]),
             new webpack.DefinePlugin({
                 dataURL: JSON.stringify(dataURLs[env.dataURL])
             })
