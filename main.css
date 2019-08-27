@@ -579,11 +579,7 @@ button:active {
     color: #ffffff;
 }
 
-#header-icon-link {
-    cursor: pointer;
-}
-
-#header-icon-link:link, #header-icon-link:visited, #header-icon-link:link:hover, #header-icon-link:focus, #header-icon-link:active, #menu-icon {
+.header-icon-link, #menu-icon {
     color: #ffffff;
 }
 
@@ -597,6 +593,12 @@ button:active {
     justify-content: center;
     padding-left: 20px;
     padding-right: 20px;
+}
+
+.header-icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .awesomplete [hidden] {
     display: none;
@@ -710,12 +712,12 @@ input.awesomplete {
     box-sizing: border-box;
     border: 1px solid var(--border-color);
     font-size: 16px;
-    background-position: 5px 8px;
+    background-position: 5px 10px;
     background-image: 
         linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), 
-        url(https://material.io/tools/icons/static/icons/baseline-search-24px.svg);
+        url(80773ef1e3834cb91f11838347a82de2.svg);
     background-repeat: no-repeat;
-    /* background-size: 20px 60px; */
+    background-size: 20px 20px;    
 }
 
 input.awesomplete:focus, input.awesomplete:focus {
