@@ -23,11 +23,7 @@
     color: #ffffff;
 }
 
-#header-icon-link {
-    cursor: pointer;
-}
-
-#header-icon-link:link, #header-icon-link:visited, #header-icon-link:link:hover, #header-icon-link:focus, #header-icon-link:active, #menu-icon {
+.header-icon-link, #menu-icon {
     color: #ffffff;
 }
 
@@ -41,4 +37,10 @@
     justify-content: center;
     padding-left: 20px;
     padding-right: 20px;
+}
+
+.header-icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
