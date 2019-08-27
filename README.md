@@ -2,7 +2,7 @@
 
 <!-- *Summit: Scaling Deep Learning Interpretability by Visualizing Activation and Attribution Summarizations* -->
 
-Summit is	an interactive system that summarizes and visualizes what features a deep learning model has learned and how those features interact to make predictions.
+Summit is an interactive system that scalably and systematically summarizes and visualizes what features a deep learning model has learned and how those features interact to make predictions.
 
 🏔️ Live demo: [fredhohman.com/summit][demo]  
 📘 Paper: [https://fredhohman.com/papers/19-summit-vast.pdf][paper]  
