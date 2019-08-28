@@ -8,6 +8,7 @@
 #post {
     max-width: 640px;
     margin: 0 auto;
+    color: var(--darker);
 }
 
 #post h1 {
@@ -38,4 +39,32 @@
 
 #post a:hover {
     text-decoration: underline;
+}
+
+#paper {
+    width: 100%;
+    display: flex;
+}
+
+#paper-image-wrapper {
+    flex: 0 0 120px;
+    border: 1px solid var(--border-color);
+}
+
+#paper-image-wrapper:hover {
+    border: 1px solid white;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: 0.2s;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+
+#paper-image {
+    width: 120px;
+}
+
+#paper-citation {
+    flex: 1;
+    padding-top: 30px;
+    padding-left: 20px;
+    font-size: 15px;
 }
