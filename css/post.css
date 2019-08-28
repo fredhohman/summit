@@ -13,9 +13,10 @@
 #post h1 {
     font-size: 36px;
     color: var(--darkest);
+    padding-top: 12px
 }
 
-#post p {
+#post p, #post li {
     font-size: 18px;
     line-height: 34px;
     color: var(--darker);
@@ -23,4 +24,18 @@
 
 .main-color-text {
     color: var(--main-color);
+}
+
+.summit {
+    color: var(--main-color);
+    font-variant: small-caps;
+}
+
+#post a {
+    color: var(--main-light);
+    text-decoration: none;
+}
+
+#post a:hover {
+    text-decoration: underline;
 }
