@@ -9,8 +9,8 @@
     width: 70px;
     /* enforces cursor changes only on title */
     cursor: pointer;
-    color: #ffffff;
-    font-size: 22px;
+    color: white;
+    font-size: 24px;
     font-variant: small-caps;
 }
 
@@ -20,11 +20,11 @@
     /* flex-direction: column; */
     justify-content: flex-end;
     text-align: right;
-    color: #ffffff;
+    color: white;
 }
 
 .header-icon-link, #menu-icon {
-    color: #ffffff;
+    color: white;
 }
 
 .header-value {
@@ -43,4 +43,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+.header-message a {
+    text-decoration: none !important;
+    border: 1px solid white;
+    padding: 8px 12px;
+    border-radius: 2px;
+    background-color: white;
+    color: var(--main-color);
+    transition: 0.2s;
+}
+
+.header-message a:hover {
+    background-color: var(--background-color);
+    transition: 0.2s;
 }

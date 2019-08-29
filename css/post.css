@@ -68,3 +68,11 @@
     padding-left: 20px;
     font-size: 15px;
 }
+
+#attribution-graph-image {
+    width: 75%;
+}
+
+.video-part-link {
+    cursor: pointer;
+}
