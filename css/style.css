@@ -27,7 +27,7 @@ html, body {
     display: flex;
     flex-flow: column;
     /* height: 100%; */
-    height: 1000px;
+    height: 900px;
     /* height: 95%; */
 }
 

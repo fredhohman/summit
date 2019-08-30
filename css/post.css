@@ -71,8 +71,14 @@
 
 #attribution-graph-image {
     width: 75%;
+    display: block;
+    margin: 0 auto;
 }
 
 .video-part-link {
     cursor: pointer;
+}
+
+#video-demo-iframe {
+    border: solid 1px var(--background-color);
 }

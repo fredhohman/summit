@@ -9,11 +9,20 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'UA-42146340-1');
-</script>
+      gtag('config', 'UA-42146340-1');</script>
 
     <meta charset="utf-8">
     <title>Summit: Scaling Deep Learning Interpretability by Visualizing Activation and Attribution Summarizations</title>
+
+    <!-- Share card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@fredhohman" />
+    <meta name="twitter:creator" content="@fredhohman" />
+    <meta property="og:url" content="https://fredhohman.com/summit" />
+    <meta property="og:title" content="Summit" />
+    <meta property="og:description"
+        content="Summit: Scaling Deep Learning Interpretability by Visualizing Activation and Attribution Summarizations" />
+    <meta property="og:image" content="http://fredhohman.com/summit/share.png" />
 
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -81,8 +90,6 @@
                 </div>
             </header>
 
-            
-
             <div id="main">
                 <div id="left"></div>
                 <!-- <div id="middle"></div> -->
@@ -96,28 +103,37 @@
 
             <h1>What is <span class="summit">Summit</span>?</h1>
             <p>
-                Deep learning is increasingly used in decision-making tasks. However, understanding how neural networks produce final
-                predictions remains a fundamental challenge. Existing work on interpreting neural network predictions for images often
-                focuses on explaining predictions for single images or neurons. As predictions are often computed from millions of
-                weights that are optimized over millions of images, such explanations can easily miss a bigger picture. We present
-                Summit, an interactive system that scalably and systematically summarizes and visualizes what features a deep learning
-                model has learned and how those features interact to make predictions. Summit introduces two new scalable summarization
-                techniques: (1) activation aggregation discovers important neurons, and (2) neuron-influence aggregation identifies
-                relationships among such neurons. Summit combines these techniques to create the novel attribution graph that reveals
-                and summarizes crucial neuron associations and substructures that contribute to a model’s outcomes. Summit scales to
-                large data, such as the ImageNet dataset with 1.2M images, and leverages neural network feature visualization and
-                dataset examples to help users distill large, complex neural network models into compact, interactive visualizations. We
-                present neural network exploration scenarios where Summit helps us discover multiple surprising insights into a
-                prevalent, large-scale image classifier’s learned representations and informs future neural network architecture design.
-                The Summit visualization runs in modern web browsers and is open-sourced.
+                Understanding how neural networks make predictions remains a fundamental challenge.
+                Existing work on interpreting neural network predictions for images often focuses on explaining predictions for single images or neurons, yet predictions are computed from millions of weights optimized over millions of images—such explanations can easily miss a bigger picture.
             </p>
-
-            <h1>Another section</h1>
             <p>
+                We present <span class=summit>Summit</span>, an interactive system that scalably and systematically summarizes and visualizes what features a deep learning model has learned and how those features interact to make predictions.
             </p>
 
-            <img id="attribution-graph-image" src="static/attribution-graph.png">
+            <h1>How does it work?</h1>
+            <p>
+                Summit introduces two new scalable summarization techniques that aggregate activations and neuron-influences to create <i>attribution graphs</i>: a class-specific visualization that simultaneously highlights <i>what</i> features a neural network detects and <i>how</i> they are related.
+            </p>
             <img id="attribution-graph-image" src="static/attribution-graph.svg">
+            <p>
+                By using a graph representation, we can leverage the abundant research in graph algorithms to extract attribution graphs from a network that show neuron relationships and substructures within the entire neural network that contribute to a model’s outcomes.
+            </p>
+
+            <h1>Scaling neural network interpretability</h1>
+            <p>
+                Summit scales to large data and leverages neural network feature visualization and dataset examples to help distill large, complex neural network models into compact, interactive visualizations.
+            </p>
+            <p>
+                In our paper, we present neural network exploration scenarios where <span class="summit">Summit</span> helps us discover multiple surprising insights into the Inception network's learned representations trained on ImageNet.
+            </p>
+
+            <h1>Broader impact for visualization in AI</h1>
+            <p>
+                Our work joins a growing body of open-access research that aims to use interactive visualization to explain complex
+                inner workings of modern machine learning techniques.
+                We believe our summarization approach that builds entire class representations is an important step for developing higher-level explanations for neural networks.
+                We hope our work will inspire deeper engagement from both the information visualization and machine learning communities to further develop human-centered tools for artificial intelligence.
+            </p>
 
             <h1>Summit features</h1>
             <p>
@@ -141,7 +157,7 @@
             <p>
                 <span class="summit">Summit</span> was created by <a href="https://fredhohman.com">Fred Hohman</a>, <a href="https://haekyu.com">Haekyu Park</a>, <a href="https://calebrob.com">Caleb Robinson</a>, and <a href="https://poloclub.github.io/polochau/">Polo Chau</a> at Georgia Tech.
                 We also thank Nilaksh Das and the Georgia Tech Visualization Lab for their support and constructive feedback.
-                <!-- This work is supported by a NASA Space Technology Research Fellowship and NSF grants IIS-1563816, CNS-1704701, and TWC-1526254. -->
+                This work is supported by a NASA Space Technology Research Fellowship and NSF grants IIS-1563816, CNS-1704701, and TWC-1526254.
             </p>
             <div id="paper">
                 <div id="paper-image-wrapper">
@@ -153,16 +169,15 @@
                     <a href="https://fredhohman.com">Fred Hohman</a>, <a href="https://haekyu.com">Haekyu Park</a>, <a href="https://calebrob.com">Caleb Robinson</a>, and <a href="https://poloclub.github.io/polochau/">Duen Horng (Polo) Chau</a>.
                     <br>
                     <i>IEEE Transactions on Visualization and Computer Graphics (TVCG, Proc. VAST'19). 2020.</i>
-
                 </div>
             </div>
             <p>
                 <ul style="list-style: none; padding-left: 0px;">
-                    <li>🏔️<strong>Live demo:</strong> <a href="fredhohman.com/summit">fredhohman.com/summit</a></li>
-                    <li>📘<strong>Paper:</strong> <a href="https://fredhohman.com/papers/19-summit-vast.pdf">https://fredhohman.com/papers/19-summit-vast.pdf</a></li>
-                    <li>🎥<strong>Video:</strong> <a href="https://www.youtube.com/watch?v=J4GMLvoH1ZU">https://www.youtube.com/watch?v=J4GMLvoH1ZU</a></li>
-                    <li>💻<strong>Code:</strong> <a href="https://github.com/fredhohman/summit">https://github.com/fredhohman/summit</a></li>
-                    <li>📺<strong>Slides:</strong> coming October 2019!</li>
+                    <li>🏔️ <strong>Live demo:</strong> <a href="fredhohman.com/summit">fredhohman.com/summit</a></li>
+                    <li>📘 <strong>Paper:</strong> <a href="https://fredhohman.com/papers/19-summit-vast.pdf">https://fredhohman.com/papers/19-summit-vast.pdf</a></li>
+                    <li>🎥 <strong>Video:</strong> <a href="https://www.youtube.com/watch?v=J4GMLvoH1ZU">https://www.youtube.com/watch?v=J4GMLvoH1ZU</a></li>
+                    <li>💻 <strong>Code:</strong> <a href="https://github.com/fredhohman/summit">https://github.com/fredhohman/summit</a></li>
+                    <li>📺 <strong>Slides:</strong> coming October 2019!</li>
                 </ul>
             </p>
 
@@ -170,34 +185,34 @@
 
         </div>
     </div>
-<!-- <script src="js/video.js"></script> -->
+
     <script type="text/javascript">
-    const tag = document.createElement('script');
-    tag.id = 'iframe-demo';
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  
-    let player;
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('video-demo-iframe', {
-        events: {
-          'onReady': onPlayerReady
-        }
-      });
-    }
-    function onPlayerReady(event) {
-      player.mute()
-    }
+        const tag = document.createElement('script');
+        tag.id = 'iframe-demo';
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     
-    const videoLinks = document.querySelectorAll('.video-part-link');
-    Array.from(videoLinks).forEach((linkElement) => {
-      linkElement.addEventListener('click', () => {
-        const startSecond = linkElement.getAttribute('data-start');
-        player.seekTo(startSecond);
-        player.playVideo();
-      });
-    });</script>
+        let player;
+        function onYouTubeIframeAPIReady() {
+        player = new YT.Player('video-demo-iframe', {
+            events: {
+            'onReady': onPlayerReady
+            }
+        });
+        }
+        function onPlayerReady(event) {
+        player.mute()
+        }
+        
+        const videoLinks = document.querySelectorAll('.video-part-link');
+        Array.from(videoLinks).forEach((linkElement) => {
+        linkElement.addEventListener('click', () => {
+            const startSecond = linkElement.getAttribute('data-start');
+            player.seekTo(startSecond);
+            player.playVideo();
+        });
+        });</script>
 
 </body>
 </html>
