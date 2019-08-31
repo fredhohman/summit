@@ -356,8 +356,6 @@ button:active {
 .layer-glyph {
     /* fill: var(--gray); */
     fill: rgb(200, 200, 200);
-    rx: 3px;
-    ry: 3px;
 }
 
 .layer-glyph-hover {
