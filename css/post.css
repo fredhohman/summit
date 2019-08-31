@@ -1,20 +1,36 @@
-#post-wrapper {
+#post {
     width: 100%;
     border-top: 1px solid var(--border-color);
     padding-top: 50px;
     padding-bottom: 50px;
+    font-weight: 300;
 }
 
-#post {
-    max-width: 640px;
-    margin: 0 auto;
+#post-inner {
+    /* max-width: 640px; */
+    width: 960px;
     color: var(--darker);
+    margin: 0 auto;
+}
+
+#post h1, #post h2, #post p, #post ul, #attribution-graph-image, #unexpected-i-image, #unexpected-ii-image, #post figcaption {
+    max-width: 640px;
+    padding-left: 160px;
+    padding-right: 160px;
 }
 
 #post h1 {
     font-size: 36px;
     color: var(--darkest);
-    padding-top: 12px
+    margin-top: 38px;
+    margin-bottom: 0px;
+}
+
+#post h2 {
+    font-size: 24px;
+    color: var(--darkest);
+    margin-top: 38px;
+    margin-bottom: 0px;
 }
 
 #post p, #post li {
@@ -30,6 +46,7 @@
 .summit {
     color: var(--main-color);
     font-variant: small-caps;
+    font-weight: 500;
 }
 
 #post a {
@@ -42,8 +59,9 @@
 }
 
 #paper {
-    width: 100%;
+    width: 640px;
     display: flex;
+    margin: 0 auto;
 }
 
 #paper-image-wrapper {
@@ -69,10 +87,26 @@
     font-size: 15px;
 }
 
-#attribution-graph-image {
-    width: 75%;
+.post-image {
     display: block;
     margin: 0 auto;
+}
+
+#attribution-graph-figure {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#attribution-graph-image {
+    width: 50%;
+}
+
+#discriminable-features-image {
+    width: 100%;
+}
+
+#discriminable-features-figure {
+    /* width: 640px; */
 }
 
 .video-part-link {
@@ -80,5 +114,28 @@
 }
 
 #video-demo-iframe {
-    border: solid 1px var(--background-color);
+    border: solid 1px var(--border-color);
+}
+
+#post figcaption {
+    color: var(--light);
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.class {
+    font-weight: 500;
+    font-style: italic;
+}
+
+#post figure {
+    margin: 0 auto;
+}
+
+#unexpected-i-image {
+    width: 50%
+}
+
+#unexpected-ii-image {
+    width: 50%;
 }

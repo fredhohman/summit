@@ -12,6 +12,7 @@
     color: white;
     font-size: 24px;
     font-variant: small-caps;
+    font-weight: 400;
 }
 
 #header-icon {
@@ -28,7 +29,7 @@
 }
 
 .header-value {
-    font-weight: 100 !important;
+    font-weight: 400 !important;
 }
 
 .header-content {
@@ -53,6 +54,7 @@
     background-color: white;
     color: var(--main-color);
     transition: 0.2s;
+    font-weight: 400;
 }
 
 .header-message a:hover {

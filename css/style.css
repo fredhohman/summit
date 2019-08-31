@@ -19,6 +19,7 @@ html, body {
     --darkest: #222222;
     --darker: #444444;
     --dark: #666666;
+    --light: #888888;
     --highlight-clicked: #1A237E;
     --highlight-scroll: #1A237E;
 }
@@ -46,7 +47,7 @@ header {
 
 .smalltext-header {
     color: #dddddd;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: .8px;
@@ -370,7 +371,6 @@ button:active {
 }
 
 .layer-glyph-label:hover {
-    font-weight: 600;
 }
 
 .layer-glyph-selected {
@@ -445,7 +445,7 @@ button:active {
 .dag-layer-label {
     font-size: 18px;
     color: var(--darker);
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .fv-ch:hover {
