@@ -9,13 +9,22 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'UA-42146340-1');
-      </script>
+      gtag('config', 'UA-42146340-1');</script>
 
     <meta charset="utf-8">
-    <title>Summit</title>
+    <title>Summit: Scaling Deep Learning Interpretability by Visualizing Activation and Attribution Summarizations</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <!-- Share card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@fredhohman" />
+    <meta name="twitter:creator" content="@fredhohman" />
+    <meta property="og:url" content="https://fredhohman.com/summit" />
+    <meta property="og:title" content="Summit" />
+    <meta property="og:description"
+        content="Summit: Scaling Deep Learning Interpretability by Visualizing Activation and Attribution Summarizations" />
+    <meta property="og:image" content="http://fredhohman.com/summit/share.png" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://kit.fontawesome.com/1ad6753a8b.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/fontawesome.css"
@@ -58,6 +67,11 @@
                 </div>
                 
                 <div id="header-icon">
+                    <div class="header-icon-wrapper header-message" style="padding-right: 20px;">
+                        <a class="header-icon-link" href="#post">
+                            What is <span class="summit">Summit</span>?
+                        </a>
+                    </div>
                     <div class="header-icon-wrapper" style="padding-right: 20px;">
                         <a class="header-icon-link" href="https://fredhohman.com/papers/19-summit-vast.pdf">
                             <i class="fas fa-lg fa-book"></i>
@@ -76,8 +90,6 @@
                 </div>
             </header>
 
-            
-
             <div id="main">
                 <div id="left"></div>
                 <!-- <div id="middle"></div> -->
@@ -85,6 +97,209 @@
             </div>
 
     </div>
+
+    <div id="post">
+        <div id="post-inner">
+
+            <h1>What is <span class="summit">Summit</span>?</h1>
+            <p>
+                Understanding how neural networks make predictions remains a fundamental challenge.
+                Existing work on interpreting neural network predictions for images often focuses on explaining predictions for single images or neurons, yet predictions are computed from millions of weights optimized over millions of images—such explanations can easily miss a bigger picture.
+            </p>
+            <p>
+                We present <span class=summit>Summit</span>, an interactive system that scalably and systematically summarizes and visualizes what features a deep learning model has learned and how those features interact to make predictions.
+            </p>
+
+            <h1>How does it work?</h1>
+            <p>
+                <span class="summit">Summit</span> introduces two new scalable summarization techniques that aggregate activations and neuron-influences to create <i>attribution graphs:</i> a class-specific visualization that simultaneously highlights <i>what</i> features a neural network detects and <i>how</i> they are related.
+            </p>
+            <figure id="attribution-graph-figure">
+                <img id="attribution-graph-image" class="post-image" src="static/attribution-graph.svg">
+                <figcaption>
+                    An illustration of how <span class="summit">Summit</span> takes thousands of images for a given class, e.g., images from <span class="class">white wolf</span> class, computes their top activations and attributions, and combines them to form an <span class="class" style="color: var(--main-color)">attribution graph</span> that shows how lower-level features ("legs") contribute to higher-level ones ("white fur"), and ultimately the final prediction.
+                </figcaption>
+            </figure>
+            <p>
+                By using a graph representation, we can leverage the abundant research in graph algorithms to extract attribution graphs from a network that show neuron relationships and substructures within the entire neural network that contribute to a model’s outcomes.
+            </p>
+
+            <p>
+                Above we demonstrate <span class="summit">Summit</span> by visualizing the attributions graphs for each of the 1,000 classes of InceptionV1 trained on ImageNet.
+            </p>
+
+            <h1>Scaling neural network interpretability</h1>
+            <p>
+                <span class="summit">Summit</span> scales to large data and leverages neural network feature visualization and dataset examples to help distill large, complex neural network models into compact, interactive visualizations.
+            </p>
+            <p>
+                <a href="https://fredhohman.com/papers/19-summit-vast.pdf">In our paper</a>, we present neural network exploration scenarios where <span class="summit">Summit</span> helps us discover multiple surprising insights into the Inception network's learned representations trained on ImageNet.
+            </p>
+
+            <h2>Example I: Unexpected semantics within a class</h2>
+            <p>
+                Can model developers be confident that their network has learned what they think it has learned?
+                We can start to answer questions like these with attribution graphs.
+                For example, consider the <span class="class">tench</span> class (a type of yellow-brown fish).
+                Starting from the first layer, we notice the attribution graph for <span class="class">tench</span> does not contain any fish or water features, but instead shows many <i>"finger,"</i> <i>"hand,"</i> and <i>"people"</i> detectors.
+                It is not until a middle layer, mixed4d, that the first fish and scale detectors are seen; however, even these detectors focus solely on the body of the fish (there is no fish eye, face, or fin detectors).
+            </p>
+            <p>
+                Inspecting dataset examples reveals many image patches where we see people's fingers holding fish, presumably after catching them.
+                This prompted us to inspect the raw data for the <span class="class">tench</span> class, where indeed, most of the images are of a person holding the fish.
+                We conclude that, unexpectedly, the network uses people detectors and in combination with brown fish body and scale detectors to represent the <span class="class">tench</span> class.
+                Generally, we would not expect "people" as an essential feature for classifying fish.
+            </p>
+            
+            <figure id="unexpected-i-figure">
+                <img id="unexpected-ii-image" class="post-image" src="static/unexpected-i.svg">
+                <figcaption>
+                    In this example, the model accurately classifies images of <span class="class">tench</span> (a yellow-brown fish).
+                    However, <span class="summit">Summit</span> reveals surprising associations in the network (e.g., using parts of people)
+                    that contribute to its
+                    final outcome: the <span class="class">tench</span> prediction is dependent on an intermediate <i>"hands holding fish"</i> feature, which is influenced
+                    by lower-level features like <i>"scales"</i>, <i>"person"</i>, and <i>"fish"</i>.
+                </figcaption>
+            </figure>
+
+            <p>
+                This surprising finding motivated us to find another class of fish that people do not normally hold to compare against, such as a <span class="class" style="color: #FFB300">lionfish</span> (due to their venomous spiky fin rays).
+                Visualizing the <span class="class" style="color: #FFB300">lionfish</span> attribution confirms our suspicion: there are no people object detectors in its attribution graph.
+                However, we discover yet another unexpected combination of features: while there are few fish part detectors there are many texture features, e.g., stripes and quills.
+                It is not until the final layers of the network where a highly activated channel appears to detect an orange fish in water, which uses the stripe and quill detectors.
+            </p>
+
+            <figure id="unexpected-ii-figure">
+                <img id="unexpected-ii-image" class="post-image" src="static/unexpected-ii.svg">
+                <figcaption>
+                    An example substructure from the <span class="class" style="color: #FFB300">lionfish</span> attribution graph
+                    that shows unexpected texture features, like <i>"quills"</i> and <i>"stripes,"</i> influencing top activated
+                    channels for a final layer's <i>"orange fish"</i> feature (some <span class="class"
+                        style="color: #FFB300">lionfish</span> are reddish-orange, and have white fin rays).
+                </figcaption>
+            </figure>
+
+            <p>
+                Therefore we deduce that the <span class="class" style="color: #FFB300">lionfish</span> class is composed of a striped body in the water with long, thin quills.
+                Whereas the <span class="class">tench</span> had unexpected people features, the <span class="class" style="color: #FFB300">lionfish</span> lacked fish features.
+                Regardless, findings such as these can help people more confidently deploy models when they know what composition of features results in a specific  prediction.
+            </p>
+
+            <h2>Example II: Discriminable features in similar classes</h2>
+            <p>
+                Since neural networks are loosely inspired by the human brain, in the broader machine learning literature there is interest to understand if decision rationale in neural networks is similar to that of humans.
+                With attribution graphs, we begin to investigate this question by comparing classes throughout layers of a network.
+            </p>
+            <p>                
+                For example, consider the <span class="class" style="color: #444444">black bear</span> and <span class="class" style="color: #A97138">brown bear</span> classes.
+                A person would likely say that color is the discriminating difference between these classes.
+                By taking the <i>intersection</i> of their attribution graphs, we can see what features are shared between the classes, as well as any discriminable features and connections.
+            </p>
+
+            <figure id="discriminable-features-figure">
+                <img id="discriminable-features-image" class="post-image" src="static/discriminable-features.svg">
+                <figcaption>
+                    With attribution graphs, we can compare classes throughout layers of a network.
+                    Here we compare two similar classes: <span class="class" style="color: #444444">black bear</span> and <span class="class" style="color: #A97138">brown bear</span>.
+                    From the intersection of their attribution graphs, we see both classes share features related to <span class="class" style="color: #999999">bear-ness</span>, but
+                    diverge towards the end of the network using fur color and face color as discriminable features.
+                    This feature discrimination aligns with how humans might classify bears.
+                </figcaption>
+            </figure>
+
+            <p>
+                In the figure above, we see in earlier layers (mixed4c) that both <span class="class" style="color: #444444">black bear</span> and <span class="class" style="color: #A97138">brown bear</span> share many features, but as we move towards the output, we see multiple diverging paths and channels that distinguish features for each class.
+                Ultimately, we see individual black and brown fur and bear face detectors, while some channels represent general <span class="class" style="color: #999999">bear-ness</span>.
+                Therefore, it appears the network classifies <span class="class" style="color: #444444">black bear</span> and <span class="class" style="color: #A97138">brown bear</span> based on color, which may be the primary feature humans may classify by.
+                This is only one example, and it is likely that these discriminable features do not always align with what we would expect; however, attribution graphs give us a mechanism to test hypotheses like these.
+            </p>
+
+
+            <h1><span class="summit">Summit</span> features</h1>
+            <p>
+                Check out the following video for a quick look at <span class="summit">Summit</span>'s features.
+            </p>
+            <ul>
+                <li class="video-part-link" data-start="0" data-end="41"><a>Background in deep learning interpretability <small>(0:00 - 0:42)</small></a></li>
+                <li class="video-part-link" data-start="42" data-end="67"><a>Introduction to <span class="summit">Summit</span> <small>(0:42 - 1:07)</small></a></li>
+                <li class="video-part-link" data-start="67" data-end="152"><a>Visualizing an attribution graph <small>(1:07 - 2:32)</small></a></li>
+                <li class="video-part-link" data-start="152" data-end="167"><a>Exploring the Embedding View <small>(2:32 - 2:47)</small></a></li>
+                <li class="video-part-link" data-start="167" data-end="192"><a>Scrolling through the Class Sidebar <small>(2:47 - 3:12)</small></a></li>
+                <li class="video-part-link" data-start="192" data-end="232"><a>Searching for and visualizing another attribution graph <small>(3:12 - 3:52)</small></a></li>
+                <li class="video-part-link" data-start="232" data-end="248"><a>Open-source and live demo link <small>(3:51 - 4:08)</small></a></li>
+            </ul>
+
+            <iframe id="video-demo-iframe" width="100%" height="540" src="https://www.youtube.com/embed/J4GMLvoH1ZU?rel=0&amp;enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+            <h1>Broader impact for visualization in AI</h1>
+            <p>
+                Our work joins a growing body of open-access research that aims to use interactive visualization to explain complex
+                inner workings of modern machine learning techniques.
+                We believe our summarization approach that builds entire class representations is an important step for developing
+                higher-level explanations for neural networks.
+                We hope our work will inspire deeper engagement from both the information visualization and machine learning
+                communities to further develop human-centered tools for artificial intelligence.
+            </p>
+
+            <h1>Credits</h1>
+            <p>
+                <span class="summit">Summit</span> was created by <a href="https://fredhohman.com">Fred Hohman</a>, <a href="https://haekyu.com">Haekyu Park</a>, <a href="https://calebrob.com">Caleb Robinson</a>, and <a href="https://poloclub.github.io/polochau/">Polo Chau</a> at Georgia Tech.
+                We also thank Nilaksh Das and the Georgia Tech Visualization Lab for their support and constructive feedback.
+                This work is supported by a NASA Space Technology Research Fellowship and NSF grants IIS-1563816, CNS-1704701, and TWC-1526254.
+            </p>
+            <div id="paper">
+                <div id="paper-image-wrapper">
+                    <a href="https://fredhohman.com/papers/19-summit-vast.pdf"><img id="paper-image" src="./static/19-summit-vast-paper-cover.png"></img></a>
+                </div>
+                <div id="paper-citation">
+                    <strong>Summit: Scaling Deep Learning Interpretability by Visualizing Activation and Attribution Summarizations</strong>
+                    <br>
+                    <a href="https://fredhohman.com">Fred Hohman</a>, <a href="https://haekyu.com">Haekyu Park</a>, <a href="https://calebrob.com">Caleb Robinson</a>, and <a href="https://poloclub.github.io/polochau/">Duen Horng (Polo) Chau</a>.
+                    <br>
+                    <i>IEEE Transactions on Visualization and Computer Graphics (TVCG, Proc. VAST'19). 2020.</i>
+                </div>
+            </div>
+            <br>
+            <ul style="list-style: none;">
+                <li>🏔️ <strong>Live demo:</strong> <a href="fredhohman.com/summit">fredhohman.com/summit</a></li>
+                <li>📘 <strong>Paper:</strong> <a href="https://fredhohman.com/papers/19-summit-vast.pdf">https://fredhohman.com/papers/19-summit-vast.pdf</a></li>
+                <li>🎥 <strong>Video:</strong> <a href="https://www.youtube.com/watch?v=J4GMLvoH1ZU">https://www.youtube.com/watch?v=J4GMLvoH1ZU</a></li>
+                <li>💻 <strong>Code:</strong> <a href="https://github.com/fredhohman/summit">https://github.com/fredhohman/summit</a></li>
+                <li>📺 <strong>Slides:</strong> coming October 2019!</li>
+            </ul>
+
+
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        const tag = document.createElement('script');
+        tag.id = 'iframe-demo';
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    
+        let player;
+        function onYouTubeIframeAPIReady() {
+        player = new YT.Player('video-demo-iframe', {
+            events: {
+            'onReady': onPlayerReady
+            }
+        });
+        }
+        function onPlayerReady(event) {
+        player.mute()
+        }
+        
+        const videoLinks = document.querySelectorAll('.video-part-link');
+        Array.from(videoLinks).forEach((linkElement) => {
+        linkElement.addEventListener('click', () => {
+            const startSecond = linkElement.getAttribute('data-start');
+            player.seekTo(startSecond);
+            player.playVideo();
+        });
+        });</script>
 
 </body>
 </html>

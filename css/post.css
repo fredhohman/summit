@@ -1,0 +1,141 @@
+#post {
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+    padding-top: 50px;
+    padding-bottom: 50px;
+    font-weight: 300;
+}
+
+#post-inner {
+    /* max-width: 640px; */
+    width: 960px;
+    color: var(--darker);
+    margin: 0 auto;
+}
+
+#post h1, #post h2, #post p, #post ul, #attribution-graph-image, #unexpected-i-image, #unexpected-ii-image, #post figcaption {
+    max-width: 640px;
+    padding-left: 160px;
+    padding-right: 160px;
+}
+
+#post h1 {
+    font-size: 36px;
+    color: var(--darkest);
+    margin-top: 38px;
+    margin-bottom: 0px;
+}
+
+#post h2 {
+    font-size: 24px;
+    color: var(--darkest);
+    margin-top: 38px;
+    margin-bottom: 0px;
+}
+
+#post p, #post li {
+    font-size: 18px;
+    line-height: 34px;
+    color: var(--darker);
+}
+
+.main-color-text {
+    color: var(--main-color);
+}
+
+.summit {
+    color: var(--main-color);
+    font-variant: small-caps;
+    font-weight: 500;
+}
+
+#post a {
+    color: var(--main-light);
+    text-decoration: none;
+}
+
+#post a:hover {
+    text-decoration: underline;
+}
+
+#paper {
+    width: 640px;
+    display: flex;
+    margin: 0 auto;
+}
+
+#paper-image-wrapper {
+    flex: 0 0 120px;
+    border: 1px solid var(--border-color);
+}
+
+#paper-image-wrapper:hover {
+    border: 1px solid white;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: 0.2s;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+
+#paper-image {
+    width: 120px;
+}
+
+#paper-citation {
+    flex: 1;
+    padding-top: 30px;
+    padding-left: 20px;
+    font-size: 15px;
+}
+
+.post-image {
+    display: block;
+    margin: 0 auto;
+}
+
+#attribution-graph-figure {
+    /* padding-top: 20px; */
+    /* padding-bottom: 20px; */
+}
+
+#attribution-graph-image {
+    width: 50%;
+}
+
+#discriminable-features-image {
+    width: 100%;
+}
+
+#discriminable-features-figure {
+    /* width: 640px; */
+}
+
+.video-part-link {
+    cursor: pointer;
+}
+
+#video-demo-iframe {
+    border: solid 1px var(--border-color);
+}
+
+#post figcaption {
+    color: var(--light);
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.class {
+    font-weight: 500;
+    font-style: italic;
+}
+
+#post figure {
+    margin: 0 auto;
+}
+
+#unexpected-i-image {
+    width: 50%
+}
+
+#unexpected-ii-image {
+    width: 50%;
+}

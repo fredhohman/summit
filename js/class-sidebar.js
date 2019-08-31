@@ -315,6 +315,8 @@ d3.json(dataURL + 'data/imagenet.json').then(function (data) {
             .attr('y', 0)
             .attr('width', netLayerWidth)
             .attr('height', netHeight - netMargin.top - netMargin.bottom)
+            .attr('rx', '3px')
+            .attr('ry', '3px')
             .classed('layer-glyph', true)
             .attr('id', d => 'layer-glyph-' + d)
 
