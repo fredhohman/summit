@@ -47,6 +47,7 @@
     color: var(--main-color);
     font-variant: small-caps;
     font-weight: 500;
+    font-size: 1.1em;
 }
 
 #post a {

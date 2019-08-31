@@ -107,7 +107,7 @@
                 Existing work on interpreting neural network predictions for images often focuses on explaining predictions for single images or neurons, yet predictions are computed from millions of weights optimized over millions of images—such explanations can easily miss a bigger picture.
             </p>
             <p>
-                We present <span class=summit>Summit</span>, an interactive system that scalably and systematically summarizes and visualizes what features a deep learning model has learned and how those features interact to make predictions.
+                We present <span class=summit>Summit</span>, an interactive visualization that scalably summarizes what features a deep learning model has learned and how those features interact to make predictions.
             </p>
 
             <h1>How does it work?</h1>
@@ -115,7 +115,7 @@
                 <span class="summit">Summit</span> introduces two new scalable summarization techniques that aggregate activations and neuron-influences to create <i>attribution graphs:</i> a class-specific visualization that simultaneously highlights <i>what</i> features a neural network detects and <i>how</i> they are related.
             </p>
             <figure id="attribution-graph-figure">
-                <img id="attribution-graph-image" class="post-image" src="static/attribution-graph.svg">
+                <img id="attribution-graph-image" class="post-image" src="static/attribution-graph.png">
                 <figcaption>
                     An illustration of how <span class="summit">Summit</span> takes thousands of images for a given class, e.g., images from <span class="class">white wolf</span> class, computes their top activations and attributions, and combines them to form an <span class="class" style="color: var(--main-color)">attribution graph</span> that shows how lower-level features ("legs") contribute to higher-level ones ("white fur"), and ultimately the final prediction.
                 </figcaption>
@@ -124,13 +124,12 @@
                 By using a graph representation, we can leverage the abundant research in graph algorithms to extract attribution graphs from a network that show neuron relationships and substructures within the entire neural network that contribute to a model’s outcomes.
             </p>
 
-            <p>
-                Above we demonstrate <span class="summit">Summit</span> by visualizing the attributions graphs for each of the 1,000 classes of InceptionV1 trained on ImageNet.
-            </p>
-
             <h1>Scaling neural network interpretability</h1>
             <p>
                 <span class="summit">Summit</span> scales to large data and leverages neural network feature visualization and dataset examples to help distill large, complex neural network models into compact, interactive visualizations.
+            </p>
+            <p>
+                Above we demonstrate <span class="summit">Summit</span> by visualizing the attributions graphs for each of the 1,000 classes of InceptionV1 trained on ImageNet.
             </p>
             <p>
                 <a href="https://fredhohman.com/papers/19-summit-vast.pdf">In our paper</a>, we present neural network exploration scenarios where <span class="summit">Summit</span> helps us discover multiple surprising insights into the Inception network's learned representations trained on ImageNet.
@@ -152,7 +151,7 @@
             </p>
             
             <figure id="unexpected-i-figure">
-                <img id="unexpected-ii-image" class="post-image" src="static/unexpected-i.svg">
+                <img id="unexpected-ii-image" class="post-image" src="static/unexpected-i.png">
                 <figcaption>
                     In this example, the model accurately classifies images of <span class="class">tench</span> (a yellow-brown fish).
                     However, <span class="summit">Summit</span> reveals surprising associations in the network (e.g., using parts of people)
@@ -170,7 +169,7 @@
             </p>
 
             <figure id="unexpected-ii-figure">
-                <img id="unexpected-ii-image" class="post-image" src="static/unexpected-ii.svg">
+                <img id="unexpected-ii-image" class="post-image" src="static/unexpected-ii.png">
                 <figcaption>
                     An example substructure from the <span class="class" style="color: #FFB300">lionfish</span> attribution graph
                     that shows unexpected texture features, like <i>"quills"</i> and <i>"stripes,"</i> influencing top activated
@@ -197,7 +196,7 @@
             </p>
 
             <figure id="discriminable-features-figure">
-                <img id="discriminable-features-image" class="post-image" src="static/discriminable-features.svg">
+                <img id="discriminable-features-image" class="post-image" src="static/discriminable-features.png">
                 <figcaption>
                     With attribution graphs, we can compare classes throughout layers of a network.
                     Here we compare two similar classes: <span class="class" style="color: #444444">black bear</span> and <span class="class" style="color: #A97138">brown bear</span>.
