@@ -132,7 +132,8 @@
                 Above we demonstrate <span class="summit">Summit</span> by visualizing the attributions graphs for each of the 1,000 classes of InceptionV1 trained on ImageNet.
             </p>
             <p>
-                <a href="https://fredhohman.com/papers/19-summit-vast.pdf">In our paper</a>, we present neural network exploration scenarios where <span class="summit">Summit</span> helps us discover multiple surprising insights into the Inception network's learned representations trained on ImageNet.
+                <a href="https://fredhohman.com/papers/19-summit-vast.pdf">In our paper</a>, we present neural network exploration scenarios where <span class="summit">Summit</span> helps us discover multiple surprising insights into InceptionV1's learned representations.
+                Below we describe two such examples. 
             </p>
 
             <h2>Example I: Unexpected semantics within a class</h2>
@@ -163,8 +164,8 @@
 
             <p>
                 This surprising finding motivated us to find another class of fish that people do not normally hold to compare against, such as a <span class="class" style="color: #FFB300">lionfish</span> (due to their venomous spiky fin rays).
-                Visualizing the <span class="class" style="color: #FFB300">lionfish</span> attribution confirms our suspicion: there are no people object detectors in its attribution graph.
-                However, we discover yet another unexpected combination of features: while there are few fish part detectors there are many texture features, e.g., stripes and quills.
+                Visualizing the <span class="class" style="color: #FFB300">lionfish</span> attribution graph confirms our suspicion: there are no people object detectors in its attribution graph.
+                However, we discover yet another unexpected combination of features: while there are few fish-part detectors there are many texture features, e.g., stripes and quills.
                 It is not until the final layers of the network where a highly activated channel appears to detect an orange fish in water, which uses the stripe and quill detectors.
             </p>
 
@@ -186,12 +187,12 @@
 
             <h2>Example II: Discriminable features in similar classes</h2>
             <p>
-                Since neural networks are loosely inspired by the human brain, in the broader machine learning literature there is interest to understand if decision rationale in neural networks is similar to that of humans.
+                Since neural networks are loosely inspired by the human brain, in the broader machine learning literature there is interest to understand if decision rationale in neural networks is similar to that of people.
                 With attribution graphs, we begin to investigate this question by comparing classes throughout layers of a network.
             </p>
             <p>                
                 For example, consider the <span class="class" style="color: #444444">black bear</span> and <span class="class" style="color: #A97138">brown bear</span> classes.
-                A person would likely say that color is the discriminating difference between these classes.
+                A person would likely say that color is the discriminating difference between these animal classes.
                 By taking the <i>intersection</i> of their attribution graphs, we can see what features are shared between the classes, as well as any discriminable features and connections.
             </p>
 
@@ -288,7 +289,7 @@
         });
         }
         function onPlayerReady(event) {
-        player.mute()
+        // player.mute()
         }
         
         const videoLinks = document.querySelectorAll('.video-part-link');
