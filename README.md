@@ -4,7 +4,7 @@ Summit is an interactive system that scalably and systematically summarizes and 
 
 🏔️ **Live demo**: [fredhohman.com/summit][demo]  
 📘 **Paper**: [https://fredhohman.com/papers/19-summit-vast.pdf][paper]  
-🎥 **Video**: [https://www.youtube.com/watch?v=J4GMLvoH1ZU][video]  
+🎥 **Video**: [https://youtu.be/J4GMLvoH1ZU][video]  
 💻 **Code**: [https://github.com/fredhohman/summit][summit]  
 📺 **Slides**: coming October 2019!
 
@@ -85,5 +85,5 @@ For questions or support [open an issue][issues] or contact [Fred Hohman][fred].
 [fred]: http://www.fredhohman.com
 [issues]: https://github.com/fredhohman/summit/issues
 [demo]: https://fredhohman.com/summit/
-[video]: https://www.youtube.com/watch?v=J4GMLvoH1ZU
+[video]: https://youtu.be/J4GMLvoH1ZU
 [paper]: https://fredhohman.com/papers/19-summit-vast.pdf
