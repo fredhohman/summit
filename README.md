@@ -68,7 +68,7 @@ MIT License. See [`LICENSE.md`](LICENSE.md).
   author={Hohman, Fred and Park, Haekyu and Robinson, Caleb and Chau, Duen Horng},
   journal={IEEE Transactions on Visualization and Computer Graphics (TVCG)},
   year={2020},
-  publisher={IEEE}
+  publisher={IEEE},
   url={https://fredhohman.com/summit/}
 }
 ```
