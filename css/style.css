@@ -447,7 +447,7 @@ button:active {
 }
 
 .fv-ch:hover {
-    cursor: pointer;
+    cursor: crosshair;
 }
 
 .fv-de:hover {
