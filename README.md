@@ -2,11 +2,12 @@
 
 Summit is an interactive system that scalably and systematically summarizes and visualizes what features a deep learning model has learned and how those features interact to make predictions.
 
-🏔️ **Live demo**: [fredhohman.com/summit][demo]  
-📘 **Paper**: [https://fredhohman.com/papers/19-summit-vast.pdf][paper]  
-🎥 **Video**: [https://youtu.be/J4GMLvoH1ZU][video]  
-💻 **Code**: [https://github.com/fredhohman/summit][summit]  
-📺 **Slides**: coming October 2019!
+🏔️ **Live demo:** [fredhohman.com/summit][demo]  
+📘 **Paper:** [https://fredhohman.com/papers/19-summit-vast.pdf][paper]  
+🎥 **Video:** [https://youtu.be/J4GMLvoH1ZU][video]  
+💻 **Code:** [https://github.com/fredhohman/summit][summit]  
+📺 **Slides:** [https://fredhohman.com/slides/19-summit-vast-slides.pdf][slides]  
+🎤 **Recording:** [https://vimeo.com/368704428][recording]
 
 **[Summit: Scaling Deep Learning Interpretability by Visualizing Activation and Attribution Summarizations](https://fredhohman.com/papers/summit)**  
 Fred Hohman, Haekyu Park, Caleb Robinson, Duen Horng (Polo) Chau  
@@ -87,3 +88,5 @@ For questions or support [open an issue][issues] or contact [Fred Hohman][fred].
 [demo]: https://fredhohman.com/summit/
 [video]: https://youtu.be/J4GMLvoH1ZU
 [paper]: https://fredhohman.com/papers/19-summit-vast.pdf
+[slides]: https://fredhohman.com/slides/19-summit-vast-slides.pdf
+[recording]: https://vimeo.com/368704428
